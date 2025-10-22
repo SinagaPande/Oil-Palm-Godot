@@ -1,0 +1,49 @@
+[gd_scene load_steps=5 format=3 uid="uid://ce7kun3axgivb"]
+
+[ext_resource type="Script" uid="uid://cix5mto7iuouh" path="res://Script/Tree.gd" id="1_72j6q"]
+[ext_resource type="PackedScene" uid="uid://fihfib6eqs53" path="res://fruit.tscn" id="1_nbyt5"]
+[ext_resource type="PackedScene" uid="uid://bc7wuehpwl8yu" path="res://3D Asset/glb/Pohon_Sawit.glb" id="3_72j6q"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_dn7q5"]
+height = 3.79779
+
+[node name="Node3D" type="Node3D"]
+script = ExtResource("1_72j6q")
+fruit_scene = ExtResource("1_nbyt5")
+spawn_points = Array[NodePath]([NodePath("Pohon_Sawit/Batang/Marker3D"), NodePath("Pohon_Sawit/Batang/Marker3D2"), NodePath("Pohon_Sawit/Batang/Marker3D3"), NodePath("Pohon_Sawit/Batang/Marker3D4"), NodePath("Pohon_Sawit/Batang/Marker3D5"), NodePath("Pohon_Sawit/Batang/Marker3D6"), NodePath("Pohon_Sawit/Batang/Marker3D7"), NodePath("Pohon_Sawit/Batang/Marker3D8")])
+
+[node name="Pohon_Sawit" parent="." instance=ExtResource("3_72j6q")]
+
+[node name="Marker3D" type="Marker3D" parent="Pohon_Sawit/Batang" index="0"]
+transform = Transform3D(2.29258, 0.312793, 0.372535, 0.000460925, -1.7881, 1.50225, 0.488119, -1.46742, -1.75113, -0.175798, 10.376, 1.19542)
+
+[node name="Marker3D2" type="Marker3D" parent="Pohon_Sawit/Batang" index="1"]
+transform = Transform3D(-0.00759583, -1.50038, -1.79031, -0.00438554, -1.78809, 1.50226, -2.34395, 0.00820766, 0.00299097, 1.23058, 10.4691, -0.0375035)
+
+[node name="Marker3D3" type="Marker3D" parent="Pohon_Sawit/Batang" index="2"]
+transform = Transform3D(1.65521, -1.06334, -1.26682, -0.00181649, -1.7881, 1.50225, -1.65966, -1.05853, -1.26507, 0.798121, 10.3818, 0.925867)
+
+[node name="Marker3D4" type="Marker3D" parent="Pohon_Sawit/Batang" index="3"]
+transform = Transform3D(1.3407, 1.46898, 1.2302, 0.00122548, -1.50226, 1.78809, 1.92269, -1.02337, -0.858961, -1.06651, 10.1666, 0.679751)
+
+[node name="Marker3D5" type="Marker3D" parent="Pohon_Sawit/Batang" index="4"]
+transform = Transform3D(-1.5975, -1.31057, -1.09744, 0.0010222, -1.50226, 1.78809, -1.71528, 1.21968, 1.02315, 0.949307, 10.1782, -0.878988)
+
+[node name="Marker3D6" type="Marker3D" parent="Pohon_Sawit/Batang" index="5"]
+transform = Transform3D(-2.02892, 0.7521, 0.895852, -0.00117518, -1.7881, 1.50225, 1.17375, 1.29828, 1.55006, -0.691471, 10.3528, -1.00791)
+
+[node name="Marker3D7" type="Marker3D" parent="Pohon_Sawit/Batang" index="6"]
+transform = Transform3D(-0.197356, 1.49533, 1.78374, -0.00401859, -1.78809, 1.50225, 2.33564, 0.123275, 0.153306, -1.2259, 10.4028, -0.268256)
+
+[node name="Marker3D8" type="Marker3D" parent="Pohon_Sawit/Batang" index="7"]
+transform = Transform3D(-2.34154, -0.0790737, -0.0710601, 6.39878e-05, -1.56344, 1.73507, -0.106686, 1.73456, 1.56066, 0.070319, 10.1084, -1.26574)
+
+[node name="SpawnPoints" type="Node3D" parent="."]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(1.15, 0, 0, 0, 1, 0, 0, 0, 1.15, 0, 1.85, 0)
+shape = SubResource("CylinderShape3D_dn7q5")
+
+[editable path="Pohon_Sawit"]

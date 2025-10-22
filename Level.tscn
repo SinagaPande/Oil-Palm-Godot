@@ -1,0 +1,58 @@
+[gd_scene load_steps=9 format=3 uid="uid://b21n6dxr2ma3k"]
+
+[ext_resource type="PackedScene" uid="uid://cro4dsaaw46m6" path="res://Player.tscn" id="1_bexhn"]
+[ext_resource type="PackedScene" uid="uid://ce7kun3axgivb" path="res://Tree.tscn" id="2_t7iv1"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_bexhn"]
+sky_top_color = Color(0.529412, 0.807843, 0.921569, 1)
+sky_horizon_color = Color(0.529412, 0.807843, 0.921569, 1)
+ground_bottom_color = Color(0, 0.74902, 1, 1)
+ground_horizon_color = Color(0.529412, 0.807843, 0.921569, 1)
+
+[sub_resource type="Sky" id="Sky_t7iv1"]
+sky_material = SubResource("ProceduralSkyMaterial_bexhn")
+
+[sub_resource type="Environment" id="Environment_t7iv1"]
+background_mode = 2
+background_color = Color(4.23551e-06, 0.628075, 0.872912, 1)
+sky = SubResource("Sky_t7iv1")
+ambient_light_source = 3
+ambient_light_color = Color(1, 1, 1, 1)
+tonemap_mode = 2
+tonemap_exposure = 0.75
+glow_enabled = true
+
+[sub_resource type="GDScript" id="GDScript_bexhn"]
+script/source = "extends WorldEnvironment
+"
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_qhyq2"]
+size = Vector2(20, 20)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_bexhn"]
+size = Vector3(20, 0.1, 20)
+
+[node name="Node3D" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_t7iv1")
+script = SubResource("GDScript_bexhn")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.707107, -0.353553, 0.612372, 0, 0.866025, 0.5, -0.707107, -0.353553, 0.612372, 0, 10, 0)
+light_energy = 2.0
+
+[node name="CharacterBody3D" parent="." instance=ExtResource("1_bexhn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
+mesh = SubResource("PlaneMesh_qhyq2")
+skeleton = NodePath("../..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+shape = SubResource("BoxShape3D_bexhn")
+
+[node name="Tree" parent="." instance=ExtResource("2_t7iv1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, 0)
