@@ -1,7 +1,9 @@
-[gd_scene load_steps=9 format=3 uid="uid://b21n6dxr2ma3k"]
+[gd_scene load_steps=14 format=3 uid="uid://b21n6dxr2ma3k"]
 
 [ext_resource type="PackedScene" uid="uid://cro4dsaaw46m6" path="res://Player.tscn" id="1_bexhn"]
 [ext_resource type="PackedScene" uid="uid://ce7kun3axgivb" path="res://Tree.tscn" id="2_t7iv1"]
+[ext_resource type="Script" uid="uid://d1eqpbdwh5vd" path="res://Script/Fruit.gd" id="3_wkftn"]
+[ext_resource type="PackedScene" uid="uid://bmwgtg76vwd3i" path="res://3D Asset/glb/Buah_Sawit.glb" id="4_q4iis"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_bexhn"]
 sky_top_color = Color(0.529412, 0.807843, 0.921569, 1)
@@ -32,6 +34,36 @@ size = Vector2(20, 20)
 [sub_resource type="BoxShape3D" id="BoxShape3D_bexhn"]
 size = Vector3(20, 0.1, 20)
 
+[sub_resource type="SphereShape3D" id="SphereShape3D_7yftu"]
+
+[sub_resource type="PackedScene" id="PackedScene_wkftn"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), ExtResource("4_q4iis")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_q4iis"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), ExtResource("4_q4iis")],
+"version": 3
+}
+
 [node name="Node3D" type="Node3D"]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
@@ -56,3 +88,8 @@ shape = SubResource("BoxShape3D_bexhn")
 
 [node name="Tree" parent="." instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, 0)
+fruit_scene = SubResource("PackedScene_wkftn")
+
+[node name="Node3D" parent="." instance=ExtResource("2_t7iv1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, 5)
+fruit_scene = SubResource("PackedScene_q4iis")

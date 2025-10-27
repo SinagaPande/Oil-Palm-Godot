@@ -3,12 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://c1hl1d5dm1h5f"
-valid=false
+uid="uid://cldfugbgjbpxy"
+path="res://.godot/imported/Egrek.glb-9998423d3ae424c2d894ff9061ef4caf.scn"
 
 [deps]
 
-source_file="res://3D Asset/glb/Buah_Sawit_Compress.glb"
+source_file="res://3D Asset/glb/Egrek.glb"
+dest_files=["res://.godot/imported/Egrek.glb-9998423d3ae424c2d894ff9061ef4caf.scn"]
 
 [params]
 

@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://fihfib6eqs53"]
 
 [ext_resource type="Script" uid="uid://d1eqpbdwh5vd" path="res://Script/Fruit.gd" id="1_dajs1"]
-[ext_resource type="PackedScene" uid="uid://crg7un833u3tf" path="res://3D Asset/Sawit.fbx" id="2_t45jj"]
+[ext_resource type="PackedScene" uid="uid://bmwgtg76vwd3i" path="res://3D Asset/glb/Buah_Sawit.glb" id="2_t45jj"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_7yftu"]
 
@@ -9,7 +9,7 @@
 script = ExtResource("1_dajs1")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, -0.06, 0)
+transform = Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0)
 shape = SubResource("SphereShape3D_7yftu")
 
-[node name="Sawit" parent="." instance=ExtResource("2_t45jj")]
+[node name="Buah_Sawit" parent="." instance=ExtResource("2_t45jj")]
