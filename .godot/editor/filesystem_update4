@@ -1,0 +1,6 @@
+res://Level.tscn
+res://Script/PlayerController.gd
+res://Script/performancemonitor.gd
+res://Tree.tscn
+res://fruit.tscn
+res://Player.tscn

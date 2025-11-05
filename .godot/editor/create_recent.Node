@@ -1,0 +1,14 @@
+Node3D
+AnimationPlayer
+Marker3D
+StaticBody3D
+CollisionShape3D
+MeshInstance3D
+MultiMeshInstance3D
+RigidBody3D
+Control
+Label
+CanvasLayer
+Container
+Camera3D
+CharacterBody3D
