@@ -52,7 +52,11 @@ func handle_target_interaction():
 		current_target.fall_from_tree(player_position)
 		
 	elif current_target.is_in_group("buah_jatuh") and current_target.has_touched_surface:
-		collect_fruit(current_target)
+		# ✅ MODIFIKASI: Cek apakah buah sudah bisa dikumpulkan (sudah menyentuh tanah)
+		if current_target.can_be_collected:
+			collect_fruit(current_target)
+		else:
+			print("Buah belum bisa dikumpulkan - belum menyentuh tanah")
 
 func raycast_system():
 	if !camera:
@@ -92,7 +96,12 @@ func handle_raycast_result(collider):
 		current_target = collider
 		var fruit_type = collider.get("fruit_type")
 		var type_text = "masak" if fruit_type == "Masak" else "mentah"
-		show_interaction_label("Klik untuk mengumpulkan buah " + type_text)
+		
+		# ✅ UPDATE TEXT: Tampilkan status apakah buah bisa dikumpulkan
+		if collider.can_be_collected:
+			show_interaction_label("Klik untuk mengumpulkan buah " + type_text)
+		else:
+			show_interaction_label("Buah " + type_text + " (belum menyentuh tanah)")
 	else:
 		clear_target()
 
@@ -102,7 +111,10 @@ func is_fruit(collider) -> bool:
 func is_collectable_fruit(collider) -> bool:
 	return (collider.is_in_group("buah_jatuh") and 
 			collider.get("has_touched_surface") and 
-			collider.has_touched_surface)
+			collider.has_touched_surface and
+			# ✅ MODIFIKASI: Tambahkan cek can_be_collected
+			collider.get("can_be_collected") and
+			collider.can_be_collected)
 
 func show_interaction_label(text):
 	if interaction_label:
@@ -122,7 +134,7 @@ func collect_fruit(fruit):
 		clear_target()
 		return
 		
-	if fruit.is_in_group("buah_jatuh") and fruit.has_touched_surface:
+	if fruit.is_in_group("buah_jatuh") and fruit.has_touched_surface and fruit.can_be_collected:
 		var fruit_type = fruit.get("fruit_type")
 		
 		if fruit_type == "Masak":

@@ -22,12 +22,11 @@ func connect_to_inventory_system():
 	
 	if inventory_system:
 		inventory_system.permanent_inventory_updated.connect(update_permanent_display)
-		inventory_system.temporary_inventory_updated.connect(update_temporary_display)
 		print("UI_Inventory terhubung ke InventorySystem")
 	else:
 		print("Warning: InventorySystem tidak ditemukan untuk UI")
 
-func update_temporary_display(carried_ripe: int, carried_unripe: int):
+func update_temporary_display(carried_ripe: int, _carried_unripe: int):  # ✅ PERBAIKAN: tambahkan underscore
 	if ripe_label:
 		ripe_label.text = "Buah matang dibawa: %d" % carried_ripe
 	if unripe_label:
@@ -39,7 +38,7 @@ func update_temporary_display(carried_ripe: int, carried_unripe: int):
 		else:
 			unripe_label.text = "Poin buah mentah: 0"  # Fallback
 
-func update_permanent_display(delivered_ripe: int, collected_unripe: int):
+func update_permanent_display(_delivered_ripe: int, collected_unripe: int):  # ✅ PERBAIKAN: tambahkan underscore
 	# Update UI untuk menampilkan poin permanen
 	if unripe_label:
 		unripe_label.text = "Poin buah mentah: %d" % collected_unripe

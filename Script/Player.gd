@@ -85,17 +85,10 @@ func add_to_inventory(fruit_type: String):
 		carried_ripe_fruits += 1
 		print("Buah matang ditambahkan ke inventory (Total: ", carried_ripe_fruits, ")")
 	
-	# ❌ HAPUS: Buah mentah tidak masuk inventory
-	
-	# Update UI
-	if inventory_system:
-		inventory_system.temporary_inventory_updated.emit(carried_ripe_fruits, 0)  # Unripe selalu 0
-	else:
-		print("Warning: InventorySystem tidak tersedia untuk update UI")
-	
 	# Update kecepatan
 	update_speed()
 
+# Di dalam function deliver_fruits():
 func deliver_fruits():
 	if not in_delivery_zone or not current_delivery_zone:
 		return false
@@ -109,8 +102,6 @@ func deliver_fruits():
 		print("Mengantar ", carried_ripe_fruits, " buah matang")
 		carried_ripe_fruits = 0
 		
-		if inventory_system:
-			inventory_system.temporary_inventory_updated.emit(carried_ripe_fruits, 0)
 		update_speed()
 		
 		return true

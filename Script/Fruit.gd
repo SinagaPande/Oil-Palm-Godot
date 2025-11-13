@@ -4,6 +4,9 @@ var has_touched_surface = false
 var is_falling = false
 var fruit_type: String = "Masak"
 
+# ✅ VARIABLE BARU: Untuk menentukan apakah buah bisa dikumpulkan
+var can_be_collected: bool = false
+
 # Hybrid system variables
 var lod_self_update_timer: float = 0.0
 var culling_self_update_timer: float = 0.0
@@ -340,14 +343,12 @@ func _on_body_entered(body):
 		body is CharacterBody3D or body is Node3D):
 		if not body.is_in_group("player") and not body.is_in_group("buah"):
 			has_touched_surface = true
-			print("Buah menyentuh permukaan: ", fruit_type, " - is_falling: ", is_falling)
+			# ✅ VARIABLE BARU: Buah bisa dikumpulkan setelah menyentuh tanah
+			can_be_collected = true
+			print("Buah menyentuh permukaan: ", fruit_type, " - is_falling: ", is_falling, " - can_be_collected: ", can_be_collected)
 			
-			# ✅ BUAH MENTAH: Auto-hapus setelah jatuh (tidak bisa dikumpulkan)
-			if fruit_type == "Mentah" and is_falling:
-				print("Buah mentah jatuh - akan dihapus dalam 3 detik")
-				await get_tree().create_timer(3.0).timeout
-				if is_instance_valid(self):
-					queue_free()
+			# ❌ HAPUS: Sistem auto-hapus buah mentah
+			# Buah mentah tetap ada di dunia setelah jatuh
 
 func fall_from_tree(target_position: Vector3 = Vector3.ZERO):
 	if is_falling or is_culled or has_been_collected:
@@ -378,9 +379,3 @@ func fall_from_tree(target_position: Vector3 = Vector3.ZERO):
 		)
 	
 	apply_impulse(force_direction)
-	
-	# ✅ BUAH MENTAH: Auto-cleanup setelah waktu tertentu
-	if fruit_type == "Mentah":
-		await get_tree().create_timer(10.0).timeout  # Hapus setelah 10 detik
-		if is_instance_valid(self):
-			queue_free()

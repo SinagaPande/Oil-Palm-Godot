@@ -8,7 +8,8 @@ var collected_unripe_fruits: int = 0
 
 # SIGNAL untuk UI
 signal permanent_inventory_updated(delivered_ripe, collected_unripe)
-signal temporary_inventory_updated(carried_ripe, carried_unripe)
+# ✅ PERBAIKAN: Hapus signal yang tidak digunakan
+# signal temporary_inventory_updated(carried_ripe, carried_unripe)  # ❌ DIHAPUS
 
 func _ready():
 	add_to_group("inventory_system")
