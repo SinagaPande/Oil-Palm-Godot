@@ -4,8 +4,8 @@ extends Node3D
 @export var camera_node: Camera3D
 @export var egrek_node: Node3D
 
-# Movement constants
-const SPEED = 5.5
+# Movement constants - HAPUS BASE_SPEED DARI SINI
+var current_speed = 5.5  # ✅ GUNAKAN VARIABLE BIASA, BUKAN CONST
 const JUMP_VELOCITY = 7.0
 const GRAVITY = 20.0
 
@@ -26,6 +26,16 @@ var egrek_tween: Tween
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	update_egrek_position()
+	
+	# ✅ INISIALISASI KECEPATAN AWAL
+	if player_body and player_body.has_method("get_base_speed"):
+		current_speed = player_body.get_base_speed()
+	else:
+		current_speed = 5.5  # Fallback
+
+# ✅ SET KECEPATAN BARU
+func set_current_speed(new_speed: float):
+	current_speed = new_speed
 
 func _input(event):
 	if event is InputEventMouseMotion:
@@ -84,8 +94,9 @@ func _physics_process(delta):
 	var input_direction_2D = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 	var direction = player_body.transform.basis * Vector3(input_direction_2D.x, 0.0, input_direction_2D.y)
 	
-	player_body.velocity.x = direction.x * SPEED	
-	player_body.velocity.z = direction.z * SPEED	
+	# ✅ GUNAKAN current_speed BUKAN BASE_SPEED
+	player_body.velocity.x = direction.x * current_speed
+	player_body.velocity.z = direction.z * current_speed
 	player_body.velocity.y -= GRAVITY * delta
 	
 	if Input.is_action_just_pressed("jump") and player_body.is_on_floor():

@@ -7,10 +7,13 @@ extends Node3D
 const RAY_LENGTH = 5.25
 
 var current_target = null
+var player_node: Node3D = null
 
 func _ready():
 	if interaction_label:
 		interaction_label.visible = false
+	
+	player_node = get_parent()
 
 func _input(event):
 	if event.is_action_pressed("shoot"):
@@ -25,16 +28,38 @@ func handle_interaction():
 	
 	if current_target:
 		handle_target_interaction()
+	else:
+		if player_node and player_node.has_method("deliver_fruits"):
+			var can_deliver = player_node.deliver_fruits()
+			if can_deliver:
+				show_interaction_label("Buah matang berhasil diantar!")
+			elif player_node.in_delivery_zone and player_node.get_carried_ripe_fruits() == 0:
+				show_interaction_label("Tidak ada buah matang untuk diantar")
 
 func handle_target_interaction():
 	if current_target.is_in_group("buah"):
 		var player_position = get_parent().global_position
+		
+		# ✅ MODIFIKASI RADIKAL: +1 POIN LANGSUNG UNTUK BUAH MENTAH
+		var fruit_type = current_target.get("fruit_type")
+		if fruit_type == "Mentah":
+			# Beri poin langsung saat menjatuhkan buah mentah
+			var inventory_system = get_node("/root/Node3D/InventorySystem")
+			if inventory_system:
+				inventory_system.add_unripe_fruit_direct()
+				print("✅ Buah mentah dijatuhkan: +1 poin langsung")
+		
 		current_target.fall_from_tree(player_position)
+		
 	elif current_target.is_in_group("buah_jatuh") and current_target.has_touched_surface:
 		collect_fruit(current_target)
 
 func raycast_system():
 	if !camera:
+		return
+	
+	if player_node and player_node.in_delivery_zone and player_node.get_carried_ripe_fruits() > 0:
+		show_interaction_label("Tekan untuk menyerahkan buah")
 		return
 		
 	var space_state = get_world_3d().direct_space_state
@@ -56,7 +81,13 @@ func handle_raycast_result(collider):
 		current_target = collider
 		var fruit_type = collider.get("fruit_type")
 		var type_text = "masak" if fruit_type == "Masak" else "mentah"
-		show_interaction_label("Klik untuk menjatuhkan buah " + type_text)
+		
+		# ✅ UPDATE TEXT INTERAKSI
+		if fruit_type == "Mentah":
+			show_interaction_label("Klik untuk menjatuhkan buah mentah (+1 poin langsung)")
+		else:
+			show_interaction_label("Klik untuk menjatuhkan buah " + type_text)
+			
 	elif is_collectable_fruit(collider):
 		current_target = collider
 		var fruit_type = collider.get("fruit_type")
@@ -93,10 +124,14 @@ func collect_fruit(fruit):
 		
 	if fruit.is_in_group("buah_jatuh") and fruit.has_touched_surface:
 		var fruit_type = fruit.get("fruit_type")
+		
 		if fruit_type == "Masak":
-			print("Mengumpulkan buah masak (+10 poin)")
-		else:
-			print("Mengumpulkan buah mentah (+5 poin)")
+			# ✅ BUAH MATANG: tambah ke inventory sementara
+			if player_node and player_node.has_method("add_to_inventory"):
+				player_node.add_to_inventory("Masak")
+				print("Buah matang dikumpulkan ke inventory")
+		# ❌ BUAH MENTAH: Tidak bisa dikumpulkan setelah jatuh
+		# (hanya dapat poin saat dijatuhkan dari poon)
 		
 		fruit.queue_free()
 		clear_target()

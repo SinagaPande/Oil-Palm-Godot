@@ -53,6 +53,9 @@ var is_initialized: bool = false
 # ⚠️ PERBAIKAN: Tambahkan variabel untuk sync dengan tree
 var use_tree_culling: bool = true
 
+# ✅ VARIABLE BARU: Untuk mencegah double collection
+var has_been_collected: bool = false
+
 func _ready():
 	add_to_group("buah")
 	freeze = true
@@ -327,16 +330,27 @@ func setup_area_detector():
 	area_detector.collision_layer = 0
 	area_detector.body_entered.connect(_on_body_entered)
 
+# ✅ PERBAIKAN: Ganti "Terrain" dengan tipe yang valid
 func _on_body_entered(body):
-	if has_touched_surface or freeze or not is_falling or is_culled:
+	if has_touched_surface or is_culled or has_been_collected:
 		return
 	
-	if body is StaticBody3D or body is RigidBody3D:
+	# ✅ PERBAIKAN: Gunakan tipe yang valid, bukan "Terrain"
+	if (body is StaticBody3D or body is RigidBody3D or 
+		body is CharacterBody3D or body is Node3D):
 		if not body.is_in_group("player") and not body.is_in_group("buah"):
 			has_touched_surface = true
+			print("Buah menyentuh permukaan: ", fruit_type, " - is_falling: ", is_falling)
+			
+			# ✅ BUAH MENTAH: Auto-hapus setelah jatuh (tidak bisa dikumpulkan)
+			if fruit_type == "Mentah" and is_falling:
+				print("Buah mentah jatuh - akan dihapus dalam 3 detik")
+				await get_tree().create_timer(3.0).timeout
+				if is_instance_valid(self):
+					queue_free()
 
 func fall_from_tree(target_position: Vector3 = Vector3.ZERO):
-	if is_falling or is_culled:
+	if is_falling or is_culled or has_been_collected:
 		return
 	
 	# ⚠️ PERBAIKAN: Non-aktifkan tree culling saat fruit jatuh
@@ -364,3 +378,9 @@ func fall_from_tree(target_position: Vector3 = Vector3.ZERO):
 		)
 	
 	apply_impulse(force_direction)
+	
+	# ✅ BUAH MENTAH: Auto-cleanup setelah waktu tertentu
+	if fruit_type == "Mentah":
+		await get_tree().create_timer(10.0).timeout  # Hapus setelah 10 detik
+		if is_instance_valid(self):
+			queue_free()

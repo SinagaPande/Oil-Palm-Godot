@@ -479,6 +479,9 @@ func spawn_fruit_with_type(marker: Marker3D, fruit_type: String) -> RigidBody3D:
 		if fruit_instance.has_method("setup_fruit_model"):
 			fruit_instance.setup_fruit_model()
 	
+	# ✅ DEBUG: Print jenis buah yang di-spawn
+	print("Tree spawned fruit: ", fruit_type, " at position: ", marker.global_position)
+	
 	# ⚠️ PERBAIKAN: Selalu aktifkan fruit selama initialization
 	# Fruit akan diatur ulang oleh culling system nanti
 	fruit_instance.visible = true

@@ -1,9 +1,13 @@
 res://Scene/Level.tscn
 res://Script/PlayerController.gd
-res://Script/performancemonitor.gd
 res://Scene/Tree.tscn
 res://Scene/fruit.tscn
 res://Scene/Player.tscn
+res://Scene/DeliveryZone.tscn
+res://Scene/UI_Inventory.tscn
 res://Script/Fruit.gd
+res://Script/InteractionSystem.gd
 res://Script/Tree.gd
+res://Script/UI_Inventory.gd
 res://Script/Player.gd
+res://Script/DeliveryZone.gd

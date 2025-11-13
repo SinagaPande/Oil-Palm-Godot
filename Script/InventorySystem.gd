@@ -2,29 +2,36 @@ extends Node
 
 class_name InventorySystem
 
-var ripe_fruit_count: int = 0
-var unripe_fruit_count: int = 0
+# POIN PERMANEN (sudah diantar)
+var delivered_ripe_fruits: int = 0
+var collected_unripe_fruits: int = 0
 
-signal inventory_updated(ripe_count, unripe_count)
+# SIGNAL untuk UI
+signal permanent_inventory_updated(delivered_ripe, collected_unripe)
+signal temporary_inventory_updated(carried_ripe, carried_unripe)
 
 func _ready():
 	add_to_group("inventory_system")
 
-func add_fruit(fruit_type: String):
-	if fruit_type == "Masak":
-		ripe_fruit_count += 1
-	else:
-		unripe_fruit_count += 1
-	
-	inventory_updated.emit(ripe_fruit_count, unripe_fruit_count)
+# ✅ BUAH MENTAH: tambah poin langsung
+func add_unripe_fruit_direct():
+	collected_unripe_fruits += 1
+	permanent_inventory_updated.emit(delivered_ripe_fruits, collected_unripe_fruits)
+	print("Buah mentah dikumpulkan: +1 poin (Total: ", collected_unripe_fruits, ")")
 
-func get_ripe_count() -> int:
-	return ripe_fruit_count
+# ✅ BUAH MATANG: tambah ke poin permanen setelah diantar
+func add_delivered_ripe_fruits(count: int):
+	delivered_ripe_fruits += count
+	permanent_inventory_updated.emit(delivered_ripe_fruits, collected_unripe_fruits)
+	print("Buah matang diantar: +", count, " poin (Total: ", delivered_ripe_fruits, ")")
 
-func get_unripe_count() -> int:
-	return unripe_fruit_count
+func get_delivered_ripe_count() -> int:
+	return delivered_ripe_fruits
+
+func get_collected_unripe_count() -> int:
+	return collected_unripe_fruits
 
 func reset_inventory():
-	ripe_fruit_count = 0
-	unripe_fruit_count = 0
-	inventory_updated.emit(ripe_fruit_count, unripe_fruit_count)
+	delivered_ripe_fruits = 0
+	collected_unripe_fruits = 0
+	permanent_inventory_updated.emit(delivered_ripe_fruits, collected_unripe_fruits)

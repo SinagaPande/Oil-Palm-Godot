@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://cro4dsaaw46m6"]
+[gd_scene load_steps=7 format=3 uid="uid://cro4dsaaw46m6"]
 
 [ext_resource type="Script" uid="uid://xrqu7ocbd6ce" path="res://Script/PlayerController.gd" id="1_kpjcp"]
 [ext_resource type="Script" uid="uid://bpfyr0a0ogs5x" path="res://Script/Player.gd" id="1_xhfnw"]
 [ext_resource type="PackedScene" uid="uid://cldfugbgjbpxy" path="res://3D Asset/Egrek.glb" id="3_e80uo"]
 [ext_resource type="Script" uid="uid://d2113ln4fmisb" path="res://Script/InteractionSystem.gd" id="4_cxr5p"]
+[ext_resource type="PackedScene" uid="uid://s32mga8hhl4v" path="res://Scene/UI_Inventory.tscn" id="5_fvocf"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_0rwas"]
 
@@ -48,3 +49,9 @@ theme_override_font_sizes/font_size = 50
 text = "pgvrtvr"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="UI_Inventory" parent="InteractionSystem/CanvasLayer/UI_Container" instance=ExtResource("5_fvocf")]
+offset_left = 15.0
+offset_top = 15.0
+offset_right = 55.0
+offset_bottom = 55.0

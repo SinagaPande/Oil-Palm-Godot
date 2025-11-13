@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://ce7kun3axgivb"]
+[gd_scene load_steps=6 format=3 uid="uid://ce7kun3axgivb"]
 
 [ext_resource type="Script" uid="uid://cix5mto7iuouh" path="res://Script/Tree.gd" id="1_72j6q"]
 [ext_resource type="PackedScene" uid="uid://fihfib6eqs53" path="res://Scene/fruit.tscn" id="2_72j6q"]
+[ext_resource type="PackedScene" uid="uid://b2quauiv873h3" path="res://3D Asset/Pohon_Sawit_LowMesh.gltf" id="3_1l8h6"]
 [ext_resource type="PackedScene" uid="uid://8577xvcn1iun" path="res://3D Asset/Pohon_Sawit.gltf" id="3_72j6q"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_dn7q5"]
@@ -10,7 +11,9 @@ height = 3.79779
 [node name="Pohon_Sawit" type="Node3D"]
 script = ExtResource("1_72j6q")
 fruit_scene = ExtResource("2_72j6q")
-min_ripe_chance = 0.6
+min_ripe_chance = 0.4
+max_ripe_chance = 1.0
+tree_model_low = ExtResource("3_1l8h6")
 
 [node name="3d model Pohon_Sawit" parent="." instance=ExtResource("3_72j6q")]
 
