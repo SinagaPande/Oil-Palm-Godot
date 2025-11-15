@@ -79,6 +79,7 @@ func set_parent_tree(tree: Node3D):
 	if parent_tree and parent_tree.player_node:
 		player_node = parent_tree.player_node
 		camera_node = parent_tree.camera_node
+		print("Fruit: Menggunakan player reference dari parent tree")
 
 # ✅ FUNGSI BARU: Ambil parent tree dari WeakRef
 func get_parent_tree():
@@ -92,25 +93,27 @@ func initialize_fruit():
 	if parent_tree and parent_tree.player_node:
 		player_node = parent_tree.player_node
 		camera_node = parent_tree.camera_node
-		print("Fruit: Using player reference from parent tree")
+		print("Fruit: Menggunakan player reference dari parent tree")
 	else:
 		# Fallback: cari player sendiri
+		print("Fruit: Parent tree tidak memiliki player reference, mencari sendiri...")
 		find_player_and_camera()
 	
 	if player_node and camera_node:
 		last_camera_forward = -camera_node.global_transform.basis.z
 		last_player_position = player_node.global_position
 		update_culling_priority()
-		print("Fruit: Successfully initialized with player reference")
+		print("Fruit: Successfully initialized dengan player reference")
 	else:
-		print("Fruit: Waiting for player reference...")
-		# ⚠️ PERBAIKAN: Coba lagi next frame
+		print("Fruit: Menunggu player reference...")
+		# ⚠️ PERBAIKAN: Coba lagi next frame dengan timeout
 		await get_tree().process_frame
 		if not player_node:
 			find_player_and_camera()
 	
 	is_initialized = true
 	set_process(true)
+	print("Fruit: Initialization complete - Player: ", player_node != null, ", Camera: ", camera_node != null)
 
 func _process(delta):
 	# ⚠️ PERBAIKAN: Skip processing jika belum initialized

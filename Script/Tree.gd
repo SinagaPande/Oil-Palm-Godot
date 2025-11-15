@@ -40,7 +40,7 @@ const MAX_SPAWN_RETRIES: int = 3
 
 # ⚠️ PERBAIKAN: Tambahkan variabel untuk menunggu player
 var player_search_attempts: int = 0
-const MAX_PLAYER_SEARCH_ATTEMPTS: int = 10
+const MAX_PLAYER_SEARCH_ATTEMPTS: int = 30  # ✅ DITINGKATKAN: 30 attempts (6 detik)
 
 func _ready():
 	add_to_group("tree")
@@ -49,9 +49,15 @@ func _ready():
 		ripe_chance = randf_range(min_ripe_chance, max_ripe_chance)
 	
 	# ⚠️ PERBAIKAN: Tunggu player sebelum setup sistem apapun
+	call_deferred("initialize_tree")
+
+# ✅ FUNGSI BARU: Initialize tree dengan deferred call
+func initialize_tree():
+	print("Tree: Memulai initialization...")
 	var player_found = await wait_for_player()
 	if not player_found:
 		push_error("Tree: Gagal menemukan player, skip initialization")
+		is_initializing = false
 		return
 	
 	# ⚠️ PERBAIKAN: Setup semua sistem sekaligus setelah player ready
@@ -71,61 +77,79 @@ func _exit_tree():
 	camera_node = null
 	original_mesh = null
 
-# ⚠️ PERBAIKAN: Fungsi baru untuk menunggu player ready
+# ⚠️ PERBAIKAN: Fungsi baru untuk menunggu player ready - DIPERBAIKI
 func wait_for_player():
-	print("Tree: Mencari player...")
+	print("Tree: Menunggu player fully initialized...")
 	player_search_attempts = 0
 	
-	# Coba method 1: Cek existing players
-	while player_search_attempts < MAX_PLAYER_SEARCH_ATTEMPTS:
+	# ✅ PERBAIKAN: Tunggu sampai player benar-benar ready dengan timeout
+	var max_wait_time = 6.0  # 6 detik timeout
+	var wait_start = Time.get_unix_time_from_system()
+	
+	while Time.get_unix_time_from_system() - wait_start < max_wait_time:
 		var players = get_tree().get_nodes_in_group("player")
 		if players.size() > 0:
-			player_node = players[0]
+			var player = players[0]
 			
-			# ⚠️ PERBAIKAN: Update pemanggilan function yang baru
-			if is_player_ready(player_node):
-				if setup_camera_from_player(player_node):
+			# ✅ PERBAIKAN: Cek multiple conditions untuk player readiness
+			if is_player_ready(player):
+				player_node = player
+				if setup_camera_from_player(player):
 					print("Tree: Player dan camera ready setelah ", player_search_attempts + 1, " attempts")
 					return true
+				else:
+					print("Tree: Player ready tapi camera belum, attempt ", player_search_attempts + 1)
 			else:
 				print("Tree: Player found tapi belum ready, attempt ", player_search_attempts + 1)
 		else:
 			print("Tree: Player tidak ditemukan, attempt ", player_search_attempts + 1)
 		
 		player_search_attempts += 1
-		await get_tree().create_timer(0.2).timeout  # ⚠️ PERBAIKAN: Increase delay
+		await get_tree().create_timer(0.2).timeout  # ⚠️ PERBAIKAN: 200ms interval
 	
-	# ⚠️ PERBAIKAN: Method 2: Coba cari player di scene tree
+	# ⚠️ PERBAIKAN: Method 2: Coba cari player di scene tree sebagai fallback
 	print("Tree: Mencoba method alternatif mencari player...")
 	player_node = find_player_in_scene()
 	if player_node and is_player_ready(player_node) and setup_camera_from_player(player_node):
 		print("Tree: Player ditemukan via scene search")
 		return true
 	
-	push_error("Tree: Gagal menemukan player setelah " + str(MAX_PLAYER_SEARCH_ATTEMPTS) + " attempts")
+	push_error("Tree: Gagal menemukan player setelah " + str(MAX_PLAYER_SEARCH_ATTEMPTS) + " attempts dan " + str(max_wait_time) + " detik")
 	return false
 
-# ⚠️ PERBAIKAN: Helper function untuk cek player readiness - UPDATE
+# ⚠️ PERBAIKAN: Helper function untuk cek player readiness - DIPERBAIKI
 func is_player_ready(player: Node) -> bool:
 	if player == null:
 		return false
 	
 	# Method 1: Cek method exists - UPDATE nama function
 	if player.has_method("is_player_ready"):
-		return player.is_player_ready()
+		var result = player.is_player_ready()
+		print("Tree: Player.is_player_ready() = ", result)
+		return result
 	
 	# Method 2: Cek method alternatif
 	if player.has_method("get_initialization_status"):
-		return player.get_initialization_status()
+		var result = player.get_initialization_status()
+		print("Tree: Player.get_initialization_status() = ", result)
+		return result
 	
 	# Method 3: Cek property exists
 	if player.has_method("get") and player.get("is_fully_initialized") != null:
-		return player.get("is_fully_initialized")
+		var result = player.get("is_fully_initialized")
+		print("Tree: Player.is_fully_initialized = ", result)
+		return result
 	
-	# Method 4: Asumsikan ready setelah beberapa detik
+	# Method 4: Cek signal (jika ada)
+	if player.has_signal("player_fully_ready"):
+		print("Tree: Player memiliki signal player_fully_ready")
+		return true
+	
+	# Method 5: Asumsikan ready setelah beberapa detik
+	print("Tree: Fallback - asumsikan player ready")
 	return true  # Fallback: assume ready after timeout
 
-# ⚠️ PERBAIKAN: Helper function untuk setup camera
+# ⚠️ PERBAIKAN: Helper function untuk setup camera - DIPERBAIKI
 func setup_camera_from_player(player: Node) -> bool:
 	if player == null:
 		return false
@@ -135,14 +159,18 @@ func setup_camera_from_player(player: Node) -> bool:
 		"PlayerController/Camera3D",
 		"Camera3D",
 		"Head/Camera3D",
-		"Camera"
+		"Camera",
+		"../Camera3D"  # ✅ TAMBAHKAN path alternatif
 	]
 	
 	for path in camera_paths:
 		if player.has_node(path):
 			camera_node = player.get_node(path)
-			print("Tree: Camera ditemukan di path: ", path)
-			return true
+			if camera_node and camera_node is Camera3D:
+				print("Tree: Camera ditemukan di path: ", path)
+				return true
+			else:
+				print("Tree: Path ditemukan tapi bukan Camera3D: ", path)
 	
 	# Fallback: cari camera recursively
 	camera_node = find_camera_recursive(player)
@@ -150,11 +178,14 @@ func setup_camera_from_player(player: Node) -> bool:
 		print("Tree: Camera ditemukan via recursive search")
 		return true
 	
-	print("Tree: Camera tidak ditemukan")
+	print("Tree: Camera tidak ditemukan setelah mencoba semua path")
 	return false
 
-# ⚠️ PERBAIKAN: Recursive camera search
+# ⚠️ PERBAIKAN: Recursive camera search - DIPERBAIKI
 func find_camera_recursive(node: Node) -> Camera3D:
+	if node == null:
+		return null
+	
 	for child in node.get_children():
 		if child is Camera3D:
 			return child
@@ -163,19 +194,22 @@ func find_camera_recursive(node: Node) -> Camera3D:
 			return found
 	return null
 
-# ⚠️ PERBAIKAN: Alternative player search
+# ⚠️ PERBAIKAN: Alternative player search - DIPERBAIKI
 func find_player_in_scene() -> Node:
 	# Coba cari di root scene
 	var root = get_tree().root
 	return find_player_recursive(root)
 
 func find_player_recursive(node: Node) -> Node:
+	if node == null:
+		return null
+	
 	# Cek jika node ini player
 	if node.is_in_group("player"):
 		return node
 	
 	# Cek jika node memiliki method player
-	if node.has_method("is_fully_initialized") or node.has_method("get_player_position"):
+	if node.has_method("is_player_ready") or node.has_method("get_initialization_status"):
 		return node
 	
 	# Recurse melalui children
@@ -186,15 +220,18 @@ func find_player_recursive(node: Node) -> Node:
 	
 	return null
 
-# ⚠️ PERBAIKAN: Setup semua sistem dalam satu fungsi
+# ⚠️ PERBAIKAN: Setup semua sistem dalam satu fungsi - DIPERBAIKI
 func setup_all_systems():
+	print("Tree: Setup semua systems...")
 	setup_tree_lod_system()
 	setup_tree_culling_system()
 	
 	if player_node and camera_node:
 		tree_last_camera_forward = -camera_node.global_transform.basis.z
 		tree_last_player_position = player_node.global_position
-		print("Tree: Semua sistem setup complete")
+		print("Tree: Semua sistem setup complete - Player: ", player_node != null, ", Camera: ", camera_node != null)
+	else:
+		push_error("Tree: Gagal setup systems - Player atau Camera null")
 
 func _process(delta):
 	# ⚠️ PERBAIKAN: Skip processing selama initialization
@@ -213,6 +250,10 @@ func _process(delta):
 			tree_culling_update_timer = 0.0
 			update_tree_culling()
 			update_tree_culling_priority()
+	else:
+		# ✅ DEBUG: Log status initialization
+		if is_initializing:
+			print("Tree: Masih initializing...")
 
 func check_tree_immediate_culling_trigger():
 	if not camera_node or not player_node:
@@ -412,11 +453,13 @@ func spawn_initial_fruits():
 		# ⚠️ PERBAIKAN: Retry mechanism jika node belum ready
 		if spawn_retry_count < MAX_SPAWN_RETRIES:
 			spawn_retry_count += 1
+			print("Tree: SpawnPoints belum ready, retry ", spawn_retry_count)
 			await get_tree().process_frame
 			call_deferred("spawn_initial_fruits")
 			return
 		else:
 			push_error("Failed to find SpawnPoints after " + str(MAX_SPAWN_RETRIES) + " attempts")
+			is_initializing = false
 			return
 	
 	var markers = []
@@ -451,7 +494,7 @@ func spawn_initial_fruits():
 	
 	# ⚠️ PERBAIKAN: Tandai initialization selesai setelah semua fruit ter-spawn
 	is_initializing = false
-	print("Tree initialized with ", all_fruits.size(), " fruits")
+	print("Tree initialized dengan ", all_fruits.size(), " fruits (", ripe_count, " matang, ", total_markers - ripe_count, " mentah)")
 
 func shuffle_array(arr: Array):
 	for i in range(arr.size() - 1, 0, -1):
