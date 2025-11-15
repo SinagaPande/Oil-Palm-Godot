@@ -63,6 +63,14 @@ func _ready():
 	await get_tree().process_frame
 	spawn_initial_fruits()
 
+# ⚠️ PERBAIKAN: Cleanup untuk mencegah memory leak
+func _exit_tree():
+	# ✅ BERSIHKAN SEMUA REFERENCE SAAT TREE DI-DESTROY
+	all_fruits.clear()
+	player_node = null
+	camera_node = null
+	original_mesh = null
+
 # ⚠️ PERBAIKAN: Fungsi baru untuk menunggu player ready
 func wait_for_player():
 	print("Tree: Mencari player...")
@@ -468,7 +476,7 @@ func spawn_fruit_with_type(marker: Marker3D, fruit_type: String) -> RigidBody3D:
 	fruit_instance.global_position = marker.global_position
 	fruit_instance.global_rotation = marker.global_rotation
 	
-	# ⚠️ PERBAIKAN: Berikan reference tree ke fruit untuk sync
+	# ⚠️ PERBAIKAN: Berikan reference tree ke fruit untuk sync (dengan WeakRef)
 	if fruit_instance.has_method("set_parent_tree"):
 		fruit_instance.set_parent_tree(self)
 	

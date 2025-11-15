@@ -28,8 +28,8 @@ var current_lod_level: String = "high"
 var player_node: Node3D = null
 var camera_node: Camera3D = null
 
-# ⚠️ PERBAIKAN: Tambahkan reference ke parent tree
-var parent_tree: Node3D = null
+# ⚠️ PERBAIKAN: Gunakan WeakRef untuk menghindari circular reference
+var parent_tree_ref: WeakRef = null
 
 # Hybrid culling system
 const CULLING_DISTANCE: float = 50.0
@@ -71,16 +71,24 @@ func _ready():
 	# ⚠️ PERBAIKAN: Tunggu parent tree selesai initialization
 	call_deferred("initialize_fruit")
 
-# ⚠️ PERBAIKAN: Fungsi untuk set parent tree
+# ⚠️ PERBAIKAN: Fungsi untuk set parent tree dengan WeakRef
 func set_parent_tree(tree: Node3D):
-	parent_tree = tree
+	parent_tree_ref = weakref(tree)  # ✅ GUNAKAN WEAKREF
 	# Jika tree sudah punya player reference, gunakan itu
+	var parent_tree = get_parent_tree()
 	if parent_tree and parent_tree.player_node:
 		player_node = parent_tree.player_node
 		camera_node = parent_tree.camera_node
 
+# ✅ FUNGSI BARU: Ambil parent tree dari WeakRef
+func get_parent_tree():
+	if parent_tree_ref:
+		return parent_tree_ref.get_ref()
+	return null
+
 func initialize_fruit():
 	# ⚠️ PERBAIKAN: Prioritaskan player dari parent tree
+	var parent_tree = get_parent_tree()
 	if parent_tree and parent_tree.player_node:
 		player_node = parent_tree.player_node
 		camera_node = parent_tree.camera_node
@@ -108,6 +116,8 @@ func _process(delta):
 	# ⚠️ PERBAIKAN: Skip processing jika belum initialized
 	if not is_initialized:
 		return
+	
+	var parent_tree = get_parent_tree()
 	
 	# ⚠️ PERBAIKAN: Jika menggunakan tree culling, ikuti state tree
 	if use_tree_culling and parent_tree and parent_tree.is_tree_culled:
@@ -153,12 +163,13 @@ func check_immediate_culling_trigger():
 	var entered_near_zone = distance_to_player <= 20.0 and last_player_position.distance_to(global_position) > 20.0
 	
 	if camera_changed or position_changed or entered_near_zone:
-		if not use_tree_culling or not parent_tree:
+		if not use_tree_culling or not get_parent_tree():
 			update_culling()
 		update_culling_priority()
 		last_camera_forward = current_camera_forward
 		last_player_position = current_player_position
 
+# ⚠️ PERBAIKAN: Update semua fungsi yang menggunakan parent_tree
 func update_culling_priority():
 	if not player_node:
 		return
@@ -379,3 +390,10 @@ func fall_from_tree(target_position: Vector3 = Vector3.ZERO):
 		)
 	
 	apply_impulse(force_direction)
+
+# ✅ FUNGSI BARU: Cleanup untuk mencegah memory leak
+func _exit_tree():
+	# ⚠️ PERBAIKAN: Bersihkan reference saat fruit di-destroy
+	parent_tree_ref = null
+	player_node = null
+	camera_node = null
