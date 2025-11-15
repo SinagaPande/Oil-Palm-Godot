@@ -8,7 +8,6 @@ class_name UI_Inventory
 func _ready():
 	visible = true
 	update_display(0, 0)
-	
 	connect_to_inventory_system()
 
 func connect_to_inventory_system():
@@ -20,7 +19,6 @@ func connect_to_inventory_system():
 		if nodes.size() > 0:
 			inventory_system = nodes[0]
 	
-	# ✅ CARI PLAYER UNTUK REAL-TIME UPDATES
 	var player = get_node_or_null("/root/Node3D/Player")
 	if not player:
 		var player_nodes = get_tree().get_nodes_in_group("player")
@@ -29,19 +27,13 @@ func connect_to_inventory_system():
 	
 	if inventory_system:
 		inventory_system.permanent_inventory_updated.connect(update_permanent_display)
-		print("UI_Inventory terhubung ke InventorySystem")
 	
 	if player:
-		# ✅ HUBUNGKAN KE PLAYER UNTUK UPDATE BUAH YANG DIBAWA
 		if player.has_signal("carried_fruits_updated"):
 			player.carried_fruits_updated.connect(update_carried_fruits)
 		elif player.has_signal("player_fully_ready"):
 			player.player_fully_ready.connect(_on_player_ready)
-		print("UI_Inventory terhubung ke Player")
-	else:
-		print("Warning: Player tidak ditemukan untuk UI")
 	
-	# ✅ INITIAL UPDATE
 	update_ui_from_player()
 
 func _on_player_ready():
@@ -62,10 +54,8 @@ func update_ui_from_player():
 		if unripe_label:
 			unripe_label.text = "Poin buah mentah: %d" % collected_unripe
 
-# ✅ PERBAIKI: Tampilkan kedua jenis buah
 func update_permanent_display(delivered_ripe: int, collected_unripe: int):
 	if ripe_label:
-		# Ambil info buah yang sedang dibawa dari player
 		var player = get_node_or_null("/root/Node3D/Player")
 		var carried_ripe = 0
 		if player and player.has_method("get_carried_ripe_fruits"):
@@ -76,7 +66,6 @@ func update_permanent_display(delivered_ripe: int, collected_unripe: int):
 	if unripe_label:
 		unripe_label.text = "Poin buah mentah: %d" % collected_unripe
 
-# ✅ FUNGSI BARU: Update ketika buah yang dibawa berubah
 func update_carried_fruits(carried_ripe: int):
 	if ripe_label:
 		var inventory_system = get_node_or_null("/root/Node3D/InventorySystem")

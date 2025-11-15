@@ -1,5 +1,7 @@
 extends Node3D
 
+class_name InteractionSystem
+
 @export var camera: Camera3D
 @export var interaction_label: Label
 @export var player_controller: Node
@@ -40,23 +42,17 @@ func handle_target_interaction():
 	if current_target.is_in_group("buah"):
 		var player_position = get_parent().global_position
 		
-		# ✅ MODIFIKASI RADIKAL: +1 POIN LANGSUNG UNTUK BUAH MENTAH
 		var fruit_type = current_target.get("fruit_type")
 		if fruit_type == "Mentah":
-			# Beri poin langsung saat menjatuhkan buah mentah
 			var inventory_system = get_node("/root/Node3D/InventorySystem")
 			if inventory_system:
 				inventory_system.add_unripe_fruit_direct()
-				print("✅ Buah mentah dijatuhkan: +1 poin langsung")
 		
 		current_target.fall_from_tree(player_position)
 		
 	elif current_target.is_in_group("buah_jatuh") and current_target.has_touched_surface:
-		# ✅ MODIFIKASI: Cek apakah buah sudah bisa dikumpulkan (sudah menyentuh tanah)
 		if current_target.can_be_collected:
 			collect_fruit(current_target)
-		else:
-			print("Buah belum bisa dikumpulkan - belum menyentuh tanah")
 
 func raycast_system():
 	if !camera:
@@ -86,7 +82,6 @@ func handle_raycast_result(collider):
 		var fruit_type = collider.get("fruit_type")
 		var type_text = "masak" if fruit_type == "Masak" else "mentah"
 		
-		# ✅ UPDATE TEXT INTERAKSI
 		if fruit_type == "Mentah":
 			show_interaction_label("Klik untuk menjatuhkan buah mentah (+1 poin langsung)")
 		else:
@@ -97,7 +92,6 @@ func handle_raycast_result(collider):
 		var fruit_type = collider.get("fruit_type")
 		var type_text = "masak" if fruit_type == "Masak" else "mentah"
 		
-		# ✅ UPDATE TEXT: Tampilkan status apakah buah bisa dikumpulkan
 		if collider.can_be_collected:
 			show_interaction_label("Klik untuk mengumpulkan buah " + type_text)
 		else:
@@ -112,7 +106,6 @@ func is_collectable_fruit(collider) -> bool:
 	return (collider.is_in_group("buah_jatuh") and 
 			collider.get("has_touched_surface") and 
 			collider.has_touched_surface and
-			# ✅ MODIFIKASI: Tambahkan cek can_be_collected
 			collider.get("can_be_collected") and
 			collider.can_be_collected)
 
@@ -138,12 +131,8 @@ func collect_fruit(fruit):
 		var fruit_type = fruit.get("fruit_type")
 		
 		if fruit_type == "Masak":
-			# ✅ BUAH MATANG: tambah ke inventory sementara
 			if player_node and player_node.has_method("add_to_inventory"):
 				player_node.add_to_inventory("Masak")
-				print("Buah matang dikumpulkan ke inventory")
-		# ❌ BUAH MENTAH: Tidak bisa dikumpulkan setelah jatuh
-		# (hanya dapat poin saat dijatuhkan dari poon)
 		
 		fruit.queue_free()
 		clear_target()

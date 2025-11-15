@@ -1,28 +1,26 @@
 extends CharacterBody3D
 
+class_name Player
+
 @onready var player_controller = $PlayerController
 @onready var interaction_system = $InteractionSystem
 @onready var camera = $PlayerController/Camera3D
 @onready var egrek = $PlayerController/Camera3D/Egrek
 
 signal carried_fruits_updated(ripe_count)
-
-# INVENTORY SEMENTARA (HANYA BUAH MATANG)
-var carried_ripe_fruits: int = 0
-# ❌ HAPUS: carried_unripe_fruits: int = 0 (buah mentah tidak disimpan)
-
-# SISTEM PENGANTARAN
-var in_delivery_zone: bool = false
-var current_delivery_zone: DeliveryZone = null
-
-# KECEPATAN - HANYA SATU SUMBER KEBENARAN
-const BASE_SPEED = 7
-const SPEED_REDUCTION_PER_FRUIT = 0.5  # -1 km/jam per buah
-
-var is_fully_initialized: bool = false
 signal player_fully_ready
 
+# Inventory system
+var carried_ripe_fruits: int = 0
+var in_delivery_zone: bool = false
+var current_delivery_zone: DeliveryZone = null
 var inventory_system: Node
+
+# Movement system
+const BASE_SPEED = 7
+const SPEED_REDUCTION_PER_FRUIT = 0.5
+
+var is_fully_initialized: bool = false
 
 func _ready():
 	add_to_group("player")
@@ -36,7 +34,6 @@ func _ready():
 	await get_tree().process_frame
 	is_fully_initialized = true
 	player_fully_ready.emit()
-	print("Player: Fully initialized and ready")
 
 func get_base_speed() -> float:
 	return BASE_SPEED
@@ -67,15 +64,11 @@ func find_inventory_system():
 		var node = get_node_or_null(path)
 		if node and node.has_method("add_unripe_fruit_direct"):
 			inventory_system = node
-			print("InventorySystem ditemukan di: ", path)
 			return
 	
 	var nodes = get_tree().get_nodes_in_group("inventory_system")
 	if nodes.size() > 0:
 		inventory_system = nodes[0]
-		print("InventorySystem ditemukan via group")
-	else:
-		push_error("InventorySystem tidak ditemukan!")
 
 func set_in_delivery_zone(is_in_zone: bool, zone: DeliveryZone):
 	in_delivery_zone = is_in_zone
@@ -84,13 +77,9 @@ func set_in_delivery_zone(is_in_zone: bool, zone: DeliveryZone):
 func add_to_inventory(fruit_type: String):
 	if fruit_type == "Masak":
 		carried_ripe_fruits += 1
-		print("Buah matang ditambahkan ke inventory (Total: ", carried_ripe_fruits, ")")
 		carried_fruits_updated.emit(carried_ripe_fruits)
-	
-	# Update kecepatan
-	update_speed()
+		update_speed()
 
-# Di dalam function deliver_fruits():
 func deliver_fruits():
 	if not in_delivery_zone or not current_delivery_zone:
 		return false
@@ -98,29 +87,21 @@ func deliver_fruits():
 	if carried_ripe_fruits > 0:
 		if inventory_system:
 			inventory_system.add_delivered_ripe_fruits(carried_ripe_fruits)
-		else:
-			print("Warning: InventorySystem tidak tersedia untuk pengantaran")
 		
-		print("Mengantar ", carried_ripe_fruits, " buah matang")
 		carried_ripe_fruits = 0
 		carried_fruits_updated.emit(0)
-		
 		update_speed()
-		
 		return true
 	
 	return false
 
 func update_speed():
-	# ✅ MODIFIKASI: Hanya buah matang yang mempengaruhi kecepatan
-	var total_fruits = carried_ripe_fruits  # Hanya ripe fruits
+	var total_fruits = carried_ripe_fruits
 	var speed_reduction = total_fruits * SPEED_REDUCTION_PER_FRUIT
 	var new_speed = max(0, BASE_SPEED - speed_reduction)
 	
 	if player_controller:
 		player_controller.set_current_speed(new_speed)
-	
-	print("Kecepatan player: ", new_speed, " (Beban: ", total_fruits, " buah matang, Base: ", BASE_SPEED, ")")
 
 func get_initialization_status() -> bool:
 	return is_fully_initialized
@@ -130,5 +111,3 @@ func is_player_ready() -> bool:
 
 func get_carried_ripe_fruits() -> int:
 	return carried_ripe_fruits
-
-# ❌ HAPUS: get_carried_unripe_fruits() - tidak diperlukan lagi

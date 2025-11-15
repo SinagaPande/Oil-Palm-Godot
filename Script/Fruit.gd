@@ -1,63 +1,58 @@
 extends RigidBody3D
 
+class_name Fruit
+
+# State variables
 var has_touched_surface = false
 var is_falling = false
 var fruit_type: String = "Masak"
-
-# ✅ VARIABLE BARU: Untuk menentukan apakah buah bisa dikumpulkan
 var can_be_collected: bool = false
+var has_been_collected: bool = false
 
-# Hybrid system variables
+# LOD system variables
 var lod_self_update_timer: float = 0.0
 var culling_self_update_timer: float = 0.0
+var current_lod_level: String = "high"
+var player_node: Node3D = null
+var camera_node: Camera3D = null
 
+# Culling system variables
+var is_culled: bool = false
+var was_frozen: bool = true
+var last_culling_check_time: float = 0.0
+var current_update_interval: float = 0.3
+
+# Physics properties
 @export var linear_damping = 0.5
 @export var angular_damping = 2.0
 @export var fruit_mass = 1.0
 
-# Model LOD system
+# Model assets
 var ripe_model_high = preload("res://3D Asset/Buah_Sawit_Masak.gltf")
 var unripe_model_high = preload("res://3D Asset/Buah_Sawit_Mentah.gltf")
 var ripe_model_low = preload("res://3D Asset/Buah_Sawit_Masak_LowMesh.gltf")
 var unripe_model_low = preload("res://3D Asset/Buah_Sawit_Mentah_LowMesh.gltf")
 
-# LOD settings
+# LOD and culling constants
 const LOD_HIGH_DISTANCE = 20
 const LOD_LOW_DISTANCE = 25
-var current_lod_level: String = "high"
-var player_node: Node3D = null
-var camera_node: Camera3D = null
-
-# ⚠️ PERBAIKAN: Gunakan WeakRef untuk menghindari circular reference
-var parent_tree_ref: WeakRef = null
-
-# Hybrid culling system
 const CULLING_DISTANCE: float = 50.0
 const MIN_CULLING_DISTANCE: float = 10
 const BACKFACE_THRESHOLD: float = 0.3
-var is_culled: bool = false
-var was_frozen: bool = true
-
-# Adaptive update system
-var last_culling_check_time: float = 0.0
-var current_update_interval: float = 0.3
 const NEAR_UPDATE_INTERVAL: float = 0.05
 const FAR_UPDATE_INTERVAL: float = 0.3
 
-# Rotation detection variables
+# Rotation detection
 var last_camera_forward: Vector3 = Vector3.ZERO
 var last_player_position: Vector3 = Vector3.ZERO
 
+# Area detection
 const AREA_OFFSET = Vector3(0, -0.8, 0)
 const COLLISION_RADIUS = 0.8
 
 var is_initialized: bool = false
-
-# ⚠️ PERBAIKAN: Tambahkan variabel untuk sync dengan tree
 var use_tree_culling: bool = true
-
-# ✅ VARIABLE BARU: Untuk mencegah double collection
-var has_been_collected: bool = false
+var parent_tree_ref: WeakRef = null
 
 func _ready():
 	add_to_group("buah")
@@ -67,62 +62,42 @@ func _ready():
 	angular_damp = angular_damping
 	mass = fruit_mass
 	setup_area_detector()
-	
-	# ⚠️ PERBAIKAN: Tunggu parent tree selesai initialization
 	call_deferred("initialize_fruit")
 
-# ⚠️ PERBAIKAN: Fungsi untuk set parent tree dengan WeakRef
 func set_parent_tree(tree: Node3D):
-	parent_tree_ref = weakref(tree)  # ✅ GUNAKAN WEAKREF
-	# Jika tree sudah punya player reference, gunakan itu
+	parent_tree_ref = weakref(tree)
 	var parent_tree = get_parent_tree()
 	if parent_tree and parent_tree.player_node:
 		player_node = parent_tree.player_node
 		camera_node = parent_tree.camera_node
-		print("Fruit: Menggunakan player reference dari parent tree")
 
-# ✅ FUNGSI BARU: Ambil parent tree dari WeakRef
 func get_parent_tree():
 	if parent_tree_ref:
 		return parent_tree_ref.get_ref()
 	return null
 
 func initialize_fruit():
-	# ⚠️ PERBAIKAN: Prioritaskan player dari parent tree
 	var parent_tree = get_parent_tree()
 	if parent_tree and parent_tree.player_node:
 		player_node = parent_tree.player_node
 		camera_node = parent_tree.camera_node
-		print("Fruit: Menggunakan player reference dari parent tree")
 	else:
-		# Fallback: cari player sendiri
-		print("Fruit: Parent tree tidak memiliki player reference, mencari sendiri...")
 		find_player_and_camera()
 	
 	if player_node and camera_node:
 		last_camera_forward = -camera_node.global_transform.basis.z
 		last_player_position = player_node.global_position
 		update_culling_priority()
-		print("Fruit: Successfully initialized dengan player reference")
-	else:
-		print("Fruit: Menunggu player reference...")
-		# ⚠️ PERBAIKAN: Coba lagi next frame dengan timeout
-		await get_tree().process_frame
-		if not player_node:
-			find_player_and_camera()
 	
 	is_initialized = true
 	set_process(true)
-	print("Fruit: Initialization complete - Player: ", player_node != null, ", Camera: ", camera_node != null)
 
 func _process(delta):
-	# ⚠️ PERBAIKAN: Skip processing jika belum initialized
 	if not is_initialized:
 		return
 	
 	var parent_tree = get_parent_tree()
 	
-	# ⚠️ PERBAIKAN: Jika menggunakan tree culling, ikuti state tree
 	if use_tree_culling and parent_tree and parent_tree.is_tree_culled:
 		if not is_culled:
 			set_culled(true)
@@ -138,7 +113,6 @@ func _process(delta):
 	
 	if culling_self_update_timer >= current_update_interval:
 		culling_self_update_timer = 0.0
-		# ⚠️ PERBAIKAN: Hanya update culling jika tidak menggunakan tree culling
 		if not use_tree_culling or not parent_tree:
 			update_culling()
 		update_culling_priority()
@@ -172,7 +146,6 @@ func check_immediate_culling_trigger():
 		last_camera_forward = current_camera_forward
 		last_player_position = current_player_position
 
-# ⚠️ PERBAIKAN: Update semua fungsi yang menggunakan parent_tree
 func update_culling_priority():
 	if not player_node:
 		return
@@ -200,7 +173,7 @@ func find_player_and_camera():
 		if not is_initialized:
 			await get_tree().process_frame
 			find_player_and_camera()
-	
+
 func _find_camera_recursive(node: Node) -> Camera3D:
 	for child in node.get_children():
 		if child is Camera3D:
@@ -347,35 +320,25 @@ func setup_area_detector():
 	area_detector.collision_layer = 0
 	area_detector.body_entered.connect(_on_body_entered)
 
-# ✅ PERBAIKAN: Ganti "Terrain" dengan tipe yang valid
 func _on_body_entered(body):
 	if has_touched_surface or is_culled or has_been_collected:
 		return
 	
-	# ✅ PERBAIKAN: Gunakan tipe yang valid, bukan "Terrain"
 	if (body is StaticBody3D or body is RigidBody3D or 
 		body is CharacterBody3D or body is Node3D):
 		if not body.is_in_group("player") and not body.is_in_group("buah"):
 			has_touched_surface = true
-			# ✅ VARIABLE BARU: Buah bisa dikumpulkan setelah menyentuh tanah
 			can_be_collected = true
-			print("Buah menyentuh permukaan: ", fruit_type, " - is_falling: ", is_falling, " - can_be_collected: ", can_be_collected)
-			
-			# ❌ HAPUS: Sistem auto-hapus buah mentah
-			# Buah mentah tetap ada di dunia setelah jatuh
 
 func fall_from_tree(target_position: Vector3 = Vector3.ZERO):
 	if is_falling or is_culled or has_been_collected:
 		return
 	
-	# ⚠️ PERBAIKAN: Non-aktifkan tree culling saat fruit jatuh
 	use_tree_culling = false
-	
 	remove_from_group("buah")
 	add_to_group("buah_jatuh")
 	freeze = false
 	is_falling = true
-	
 	set_process(true)
 	
 	var force_direction = Vector3(
@@ -394,9 +357,7 @@ func fall_from_tree(target_position: Vector3 = Vector3.ZERO):
 	
 	apply_impulse(force_direction)
 
-# ✅ FUNGSI BARU: Cleanup untuk mencegah memory leak
 func _exit_tree():
-	# ⚠️ PERBAIKAN: Bersihkan reference saat fruit di-destroy
 	parent_tree_ref = null
 	player_node = null
 	camera_node = null

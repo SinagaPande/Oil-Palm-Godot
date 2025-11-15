@@ -1,19 +1,18 @@
 extends Node3D
 
+class_name PlayerController
+
 @export var player_body: CharacterBody3D
 @export var camera_node: Camera3D
 @export var egrek_node: Node3D
 
-# Movement constants - HAPUS BASE_SPEED DARI SINI
-var current_speed = 5.5  # ✅ GUNAKAN VARIABLE BIASA, BUKAN CONST
+var current_speed = 5.5
 const JUMP_VELOCITY = 7.0
 const GRAVITY = 20.0
 
-# Mouse control constants
 const MOUSE_SENSITIVITY = 0.075
 const VERTICAL_CLAMP = Vector2(-70.0, 80.0)
 
-# Egrek positioning constants
 const EGREK_UP_POSITION = Vector3(0.45, -0.25, -1.4)
 const EGREK_UP_ROTATION = Vector3(-45.5, -70, 80)
 const EGREK_DOWN_POSITION = Vector3(0.2, -0.4, 1.1)
@@ -27,13 +26,11 @@ func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	update_egrek_position()
 	
-	# ✅ INISIALISASI KECEPATAN AWAL
 	if player_body and player_body.has_method("get_base_speed"):
 		current_speed = player_body.get_base_speed()
 	else:
-		current_speed = 5.5  # Fallback
+		current_speed = 5.5
 
-# ✅ SET KECEPATAN BARU
 func set_current_speed(new_speed: float):
 	current_speed = new_speed
 
@@ -94,7 +91,6 @@ func _physics_process(delta):
 	var input_direction_2D = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 	var direction = player_body.transform.basis * Vector3(input_direction_2D.x, 0.0, input_direction_2D.y)
 	
-	# ✅ GUNAKAN current_speed BUKAN BASE_SPEED
 	player_body.velocity.x = direction.x * current_speed
 	player_body.velocity.z = direction.z * current_speed
 	player_body.velocity.y -= GRAVITY * delta
