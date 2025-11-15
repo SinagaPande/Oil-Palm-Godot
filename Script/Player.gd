@@ -5,6 +5,8 @@ extends CharacterBody3D
 @onready var camera = $PlayerController/Camera3D
 @onready var egrek = $PlayerController/Camera3D/Egrek
 
+signal carried_fruits_updated(ripe_count)
+
 # INVENTORY SEMENTARA (HANYA BUAH MATANG)
 var carried_ripe_fruits: int = 0
 # ❌ HAPUS: carried_unripe_fruits: int = 0 (buah mentah tidak disimpan)
@@ -80,10 +82,10 @@ func set_in_delivery_zone(is_in_zone: bool, zone: DeliveryZone):
 	current_delivery_zone = zone
 
 func add_to_inventory(fruit_type: String):
-	# ✅ MODIFIKASI: Hanya buah matang yang masuk inventory
 	if fruit_type == "Masak":
 		carried_ripe_fruits += 1
 		print("Buah matang ditambahkan ke inventory (Total: ", carried_ripe_fruits, ")")
+		carried_fruits_updated.emit(carried_ripe_fruits)
 	
 	# Update kecepatan
 	update_speed()
@@ -101,6 +103,7 @@ func deliver_fruits():
 		
 		print("Mengantar ", carried_ripe_fruits, " buah matang")
 		carried_ripe_fruits = 0
+		carried_fruits_updated.emit(0)
 		
 		update_speed()
 		

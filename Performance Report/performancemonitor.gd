@@ -5,7 +5,7 @@ func _ready():
 	print("✅ Performance Monitor Ready! Press SPACE to save performance data")
 
 func _input(event):
-	if event is InputEventKey and event.pressed and event.keycode == KEY_SPACE:
+	if event is InputEventKey and event.pressed and event.keycode == KEY_CAPSLOCK:
 		save_performance_data()
 
 func save_performance_data():

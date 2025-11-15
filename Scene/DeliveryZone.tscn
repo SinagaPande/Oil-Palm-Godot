@@ -1,18 +1,17 @@
 [gd_scene load_steps=4 format=3 uid="uid://db0s0h54nq8sx"]
 
 [ext_resource type="Script" uid="uid://cdopw8tuc7t5i" path="res://Script/DeliveryZone.gd" id="1_govq6"]
+[ext_resource type="PackedScene" uid="uid://b7t6uyhb6n7yw" path="res://3D Asset/L300.gltf" id="2_bt8su"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_bt8su"]
-
-[sub_resource type="BoxMesh" id="BoxMesh_nbq77"]
 
 [node name="Area3D" type="Area3D"]
 script = ExtResource("1_govq6")
 
+[node name="L300" parent="." instance=ExtResource("2_bt8su")]
+
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(5, 0, 0, 0, 1, 0, 0, 0, 5, 0, 0, 0)
 shape = SubResource("BoxShape3D_bt8su")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="."]
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-mesh = SubResource("BoxMesh_nbq77")
