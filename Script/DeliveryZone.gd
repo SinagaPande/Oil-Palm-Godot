@@ -11,13 +11,11 @@ func _ready():
 
 func _on_body_entered(body):
 	if body.is_in_group("player"):
-		# Player masuk area delivery
 		if body.has_method("set_in_delivery_zone"):
 			body.set_in_delivery_zone(true, self)
 
 func _on_body_exited(body):
 	if body.is_in_group("player"):
-		# Player keluar area delivery
 		if body.has_method("set_in_delivery_zone"):
 			body.set_in_delivery_zone(false, null)
 

@@ -10,13 +10,11 @@ class_name Player
 signal carried_fruits_updated(ripe_count)
 signal player_fully_ready
 
-# Inventory system
 var carried_ripe_fruits: int = 0
 var in_delivery_zone: bool = false
 var current_delivery_zone: DeliveryZone = null
 var inventory_system: Node
 
-# Movement system
 const BASE_SPEED = 7
 const SPEED_REDUCTION_PER_FRUIT = 0.5
 

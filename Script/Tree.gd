@@ -1,6 +1,6 @@
 extends Node3D
 
-class_name PalmTree  # ⚠️ PERBAIKAN: Ganti nama class untuk menghindari konflik
+class_name PalmTree
 
 @export var fruit_scene: PackedScene
 @export var auto_ripe_chance: bool = true
@@ -8,7 +8,6 @@ class_name PalmTree  # ⚠️ PERBAIKAN: Ganti nama class untuk menghindari konf
 @export var max_ripe_chance: float = 0.8
 @export var tree_model_low: PackedScene
 
-# Tree systems
 var current_tree_lod: String = "high"
 var player_node: Node3D = null
 var camera_node: Camera3D = null
@@ -16,29 +15,24 @@ var has_tree_lod: bool = false
 var original_mesh: MeshInstance3D = null
 var is_tree_culled: bool = false
 
-# Fruit management
 var ripe_chance: float = 0.5
 var all_fruits: Array = []
 var has_spawned_fruits: bool = false
 
-# Culling system
 var tree_culling_update_timer: float = 0.0
 var tree_current_update_interval: float = 0.3
 var tree_last_camera_forward: Vector3 = Vector3.ZERO
 var tree_last_player_position: Vector3 = Vector3.ZERO
 
-# LOD system
 var lod_update_timer: float = 0.0
 const LOD_UPDATE_INTERVAL: float = 0.2
 
-# Initialization
 var is_initializing: bool = true
 var spawn_retry_count: int = 0
 const MAX_SPAWN_RETRIES: int = 3
 var player_search_attempts: int = 0
 const MAX_PLAYER_SEARCH_ATTEMPTS: int = 30
 
-# Constants
 const TREE_LOD_HIGH_DISTANCE = 20
 const TREE_LOD_LOW_DISTANCE = 25.0
 const TREE_CULLING_DISTANCE: float = 300
@@ -449,3 +443,89 @@ func spawn_fruit_with_type(marker: Marker3D, fruit_type: String) -> RigidBody3D:
 	fruit_instance.process_mode = PROCESS_MODE_INHERIT
 	
 	return fruit_instance
+
+func get_ripe_count() -> int:
+	if not has_spawned_fruits or all_fruits.is_empty():
+		return 0
+	
+	var ripe_count = 0
+	for fruit in all_fruits:
+		if is_instance_valid(fruit) and fruit.has_method("get_fruit_type"):
+			var fruit_type = fruit.get_fruit_type()
+			if fruit_type == "Masak":
+				ripe_count += 1
+		elif is_instance_valid(fruit) and fruit.has_property("fruit_type"):
+			if fruit.fruit_type == "Masak":
+				ripe_count += 1
+	
+	return ripe_count
+
+func harvest_physical(harvester_position: Vector3 = Vector3.ZERO) -> int:
+	if not has_spawned_fruits or all_fruits.is_empty():
+		return 0
+	
+	var harvested_count = 0
+	var fruits_to_remove = []
+	
+	for fruit in all_fruits:
+		if not is_instance_valid(fruit):
+			continue
+		
+		var is_ripe = false
+		if fruit.has_method("get_fruit_type"):
+			is_ripe = fruit.get_fruit_type() == "Masak"
+		elif fruit.has_property("fruit_type"):
+			is_ripe = fruit.fruit_type == "Masak"
+		
+		if is_ripe:
+			if fruit.has_method("fall_from_tree"):
+				fruit.fall_from_tree(harvester_position)
+				harvested_count += 1
+				fruits_to_remove.append(fruit)
+	
+	for fruit in fruits_to_remove:
+		all_fruits.erase(fruit)
+	
+	return harvested_count
+
+func harvest_simulated() -> int:
+	if not has_spawned_fruits or all_fruits.is_empty():
+		return 0
+	
+	var harvested_count = 0
+	var fruits_to_remove = []
+	
+	for fruit in all_fruits:
+		if not is_instance_valid(fruit):
+			continue
+		
+		var is_ripe = false
+		if fruit.has_method("get_fruit_type"):
+			is_ripe = fruit.get_fruit_type() == "Masak"
+		elif fruit.has_property("fruit_type"):
+			is_ripe = fruit.fruit_type == "Masak"
+		
+		if is_ripe:
+			harvested_count += 1
+			fruits_to_remove.append(fruit)
+	
+	for fruit in fruits_to_remove:
+		if is_instance_valid(fruit):
+			all_fruits.erase(fruit)
+			fruit.queue_free()
+	
+	return harvested_count
+
+func has_ripe_fruits() -> bool:
+	return get_ripe_count() > 0
+
+func get_tree_position() -> Vector3:
+	return global_position
+
+func set_harvesting_mode_active(active: bool):
+	if active:
+		if is_tree_culled:
+			set_tree_culled(false)
+		tree_current_update_interval = 0.05
+	else:
+		update_tree_culling_priority()

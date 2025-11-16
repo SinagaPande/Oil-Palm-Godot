@@ -2,38 +2,32 @@ extends RigidBody3D
 
 class_name Fruit
 
-# State variables
 var has_touched_surface = false
 var is_falling = false
 var fruit_type: String = "Masak"
 var can_be_collected: bool = false
 var has_been_collected: bool = false
 
-# LOD system variables
 var lod_self_update_timer: float = 0.0
 var culling_self_update_timer: float = 0.0
 var current_lod_level: String = "high"
 var player_node: Node3D = null
 var camera_node: Camera3D = null
 
-# Culling system variables
 var is_culled: bool = false
 var was_frozen: bool = true
 var last_culling_check_time: float = 0.0
 var current_update_interval: float = 0.3
 
-# Physics properties
 @export var linear_damping = 0.5
 @export var angular_damping = 2.0
 @export var fruit_mass = 1.0
 
-# Model assets
 var ripe_model_high = preload("res://3D Asset/Buah_Sawit_Masak.gltf")
 var unripe_model_high = preload("res://3D Asset/Buah_Sawit_Mentah.gltf")
 var ripe_model_low = preload("res://3D Asset/Buah_Sawit_Masak_LowMesh.gltf")
 var unripe_model_low = preload("res://3D Asset/Buah_Sawit_Mentah_LowMesh.gltf")
 
-# LOD and culling constants
 const LOD_HIGH_DISTANCE = 20
 const LOD_LOW_DISTANCE = 25
 const CULLING_DISTANCE: float = 50.0
@@ -42,11 +36,9 @@ const BACKFACE_THRESHOLD: float = 0.3
 const NEAR_UPDATE_INTERVAL: float = 0.05
 const FAR_UPDATE_INTERVAL: float = 0.3
 
-# Rotation detection
 var last_camera_forward: Vector3 = Vector3.ZERO
 var last_player_position: Vector3 = Vector3.ZERO
 
-# Area detection
 const AREA_OFFSET = Vector3(0, -0.8, 0)
 const COLLISION_RADIUS = 0.8
 
@@ -361,3 +353,13 @@ func _exit_tree():
 	parent_tree_ref = null
 	player_node = null
 	camera_node = null
+
+func get_fruit_type() -> String:
+	return fruit_type
+
+func set_harvesting_mode_active(active: bool):
+	if active:
+		if is_culled:
+			set_culled(false)
+		process_mode = PROCESS_MODE_INHERIT
+		visible = true
