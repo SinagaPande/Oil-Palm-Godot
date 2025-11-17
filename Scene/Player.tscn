@@ -1,9 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://cro4dsaaw46m6"]
+[gd_scene load_steps=8 format=3 uid="uid://cro4dsaaw46m6"]
 
 [ext_resource type="Script" uid="uid://xrqu7ocbd6ce" path="res://Script/PlayerController.gd" id="1_kpjcp"]
 [ext_resource type="Script" uid="uid://bpfyr0a0ogs5x" path="res://Script/Player.gd" id="1_xhfnw"]
 [ext_resource type="PackedScene" uid="uid://cldfugbgjbpxy" path="res://3D Asset/Egrek.glb" id="3_e80uo"]
 [ext_resource type="Script" uid="uid://d2113ln4fmisb" path="res://Script/InteractionSystem.gd" id="4_cxr5p"]
+[ext_resource type="PackedScene" uid="uid://bu7l6p1cy8jms" path="res://3D Asset/Tojok.gltf" id="4_pmp2f"]
 [ext_resource type="PackedScene" uid="uid://s32mga8hhl4v" path="res://Scene/UI_Inventory.tscn" id="5_fvocf"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_0rwas"]
@@ -25,6 +26,10 @@ current = true
 
 [node name="Egrek" parent="PlayerController/Camera3D" instance=ExtResource("3_e80uo")]
 transform = Transform3D(0.702415, 0.123855, -0.700909, 0.690261, 0.121712, 0.71325, 0.173648, -0.984807, -3.06377e-08, 0.2, -0.4, 1.1)
+
+[node name="Tojok" parent="PlayerController/Camera3D" instance=ExtResource("4_pmp2f")]
+transform = Transform3D(0.699926, 0.0774928, -0.709999, -0.665362, 0.432091, -0.608761, 0.25961, 0.898494, 0.353992, 0.155, -0.35, -0.735)
+visible = false
 
 [node name="InteractionSystem" type="Node3D" parent="."]
 script = ExtResource("4_cxr5p")

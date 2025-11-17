@@ -6,6 +6,7 @@ class_name Player
 @onready var interaction_system = $InteractionSystem
 @onready var camera = $PlayerController/Camera3D
 @onready var egrek = $PlayerController/Camera3D/Egrek
+@onready var tojok = $PlayerController/Camera3D/Tojok  # ✅ Tambahkan referensi Tojok
 
 signal carried_fruits_updated(ripe_count)
 signal player_fully_ready
@@ -41,6 +42,7 @@ func setup_components():
 		player_controller.player_body = self
 		player_controller.camera_node = camera
 		player_controller.egrek_node = egrek
+		player_controller.tojok_node = tojok  # ✅ Setup Tojok
 	
 	if interaction_system:
 		interaction_system.camera = camera
@@ -99,7 +101,7 @@ func update_speed():
 	var new_speed = max(0, BASE_SPEED - speed_reduction)
 	
 	if player_controller:
-		player_controller.set_current_speed(new_speed)
+		player_controller.set_current_speed(new_speed)  # ✅ Sekarang fungsi ini ada
 
 func get_initialization_status() -> bool:
 	return is_fully_initialized

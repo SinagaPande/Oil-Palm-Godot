@@ -25,8 +25,9 @@ func _physics_process(_delta):
 	raycast_system()
 
 func handle_interaction():
-	if player_controller and player_controller.has_method("play_egrek_animation"):
-		player_controller.play_egrek_animation()
+	# ✅ Trigger animasi berdasarkan alat aktif
+	if player_controller and player_controller.has_method("play_tool_animation"):
+		player_controller.play_tool_animation()
 	
 	if current_target:
 		handle_target_interaction()
@@ -40,19 +41,29 @@ func handle_interaction():
 
 func handle_target_interaction():
 	if current_target.is_in_group("buah"):
-		var player_position = get_parent().global_position
-		
-		var fruit_type = current_target.get("fruit_type")
-		if fruit_type == "Mentah":
-			var inventory_system = get_node("/root/Node3D/InventorySystem")
-			if inventory_system:
-				inventory_system.add_unripe_fruit_direct()
-		
-		current_target.fall_from_tree(player_position)
-		
+		# ✅ Hanya Egrek yang bisa menjatuhkan buah dari pohon
+		if player_controller and player_controller.has_method("is_egrek_active") and player_controller.is_egrek_active():
+			handle_fruit_harvest()
+		else:
+			show_interaction_label("Gunakan Egrek (Tombol 1) untuk menjatuhkan buah")
+			
 	elif current_target.is_in_group("buah_jatuh") and current_target.has_touched_surface:
-		if current_target.can_be_collected:
+		# ✅ Hanya Tojok yang bisa mengumpulkan buah dari tanah
+		if player_controller and player_controller.has_method("is_tojok_active") and player_controller.is_tojok_active():
 			collect_fruit(current_target)
+		else:
+			show_interaction_label("Gunakan Tojok (Tombol 2) untuk mengumpulkan buah")
+
+func handle_fruit_harvest():
+	var player_position = get_parent().global_position
+	
+	var fruit_type = current_target.get("fruit_type")
+	if fruit_type == "Mentah":
+		var inventory_system = get_node("/root/Node3D/InventorySystem")
+		if inventory_system:
+			inventory_system.add_unripe_fruit_direct()
+	
+	current_target.fall_from_tree(player_position)
 
 func raycast_system():
 	if !camera:
@@ -80,22 +91,31 @@ func handle_raycast_result(collider):
 	if is_fruit(collider):
 		current_target = collider
 		var fruit_type = collider.get("fruit_type")
-		var type_text = "masak" if fruit_type == "Masak" else "mentah"
 		
-		if fruit_type == "Mentah":
-			show_interaction_label("Klik untuk menjatuhkan buah mentah (+1 poin langsung)")
-		else:
-			show_interaction_label("Klik untuk menjatuhkan buah " + type_text)
-			
+		# ✅ Tampilkan pesan berbeda berdasarkan alat aktif
+		if player_controller and player_controller.has_method("is_egrek_active"):
+			if player_controller.is_egrek_active():
+				if fruit_type == "Mentah":
+					show_interaction_label("Klik untuk menjatuhkan buah mentah (+1 poin langsung)")
+				else:
+					show_interaction_label("Klik untuk menjatuhkan buah masak")
+			else:
+				show_interaction_label("Gunakan Egrek (Tombol 1) untuk menjatuhkan buah")
+				
 	elif is_collectable_fruit(collider):
 		current_target = collider
 		var fruit_type = collider.get("fruit_type")
 		var type_text = "masak" if fruit_type == "Masak" else "mentah"
 		
-		if collider.can_be_collected:
-			show_interaction_label("Klik untuk mengumpulkan buah " + type_text)
-		else:
-			show_interaction_label("Buah " + type_text + " (belum menyentuh tanah)")
+		# ✅ Tampilkan pesan berbeda berdasarkan alat aktif
+		if player_controller and player_controller.has_method("is_tojok_active"):
+			if player_controller.is_tojok_active():
+				if collider.can_be_collected:
+					show_interaction_label("Klik untuk mengumpulkan buah " + type_text)
+				else:
+					show_interaction_label("Buah " + type_text + " (belum menyentuh tanah)")
+			else:
+				show_interaction_label("Gunakan Tojok (Tombol 2) untuk mengumpulkan buah")
 	else:
 		clear_target()
 
