@@ -28,7 +28,7 @@ current = true
 transform = Transform3D(0.702415, 0.123855, -0.700909, 0.690261, 0.121712, 0.71325, 0.173648, -0.984807, -3.06377e-08, 0.2, -0.4, 1.1)
 
 [node name="Tojok" parent="PlayerController/Camera3D" instance=ExtResource("4_pmp2f")]
-transform = Transform3D(0.699926, 0.0774928, -0.709999, -0.665362, 0.432091, -0.608761, 0.25961, 0.898494, 0.353992, 0.155, -0.35, -0.735)
+transform = Transform3D(0.774992, 0.108918, 0.622514, 0.616456, 0.0866373, -0.782608, -0.139173, 0.990268, -2.7211e-08, 0.18, -0.15, -0.735)
 visible = false
 
 [node name="InteractionSystem" type="Node3D" parent="."]
