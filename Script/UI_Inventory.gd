@@ -7,7 +7,7 @@ class_name UI_Inventory
 
 func _ready():
 	visible = true
-	update_display(0, 0)
+	update_display(0, 0.0)
 	connect_to_inventory_system()
 
 func connect_to_inventory_system():
@@ -46,37 +46,37 @@ func update_ui_from_player():
 	
 	if player and inventory_system:
 		var carried_ripe = player.get_carried_ripe_fruits()
-		var delivered_ripe = inventory_system.get_delivered_ripe_count()
-		var collected_unripe = inventory_system.get_collected_unripe_count()
+		var delivered_ripe_kg = inventory_system.get_delivered_ripe_kg()
+		var collected_unripe_kg = inventory_system.get_collected_unripe_kg()
 		
 		if ripe_label:
-			ripe_label.text = "Buah matang: %d dibawa, %d diantar" % [carried_ripe, delivered_ripe]
+			ripe_label.text = "Buah matang: %d dibawa, total %.1f kg" % [carried_ripe, delivered_ripe_kg]
 		if unripe_label:
-			unripe_label.text = "Poin buah mentah: %d" % collected_unripe
+			unripe_label.text = "Buah mentah: %.1f kg" % collected_unripe_kg
 
-func update_permanent_display(delivered_ripe: int, collected_unripe: int):
+func update_permanent_display(delivered_ripe_kg: float, collected_unripe_kg: float):
 	if ripe_label:
 		var player = get_node_or_null("/root/Node3D/Player")
 		var carried_ripe = 0
 		if player and player.has_method("get_carried_ripe_fruits"):
 			carried_ripe = player.get_carried_ripe_fruits()
 		
-		ripe_label.text = "Buah matang: %d dibawa, %d diantar" % [carried_ripe, delivered_ripe]
+		ripe_label.text = "Buah matang: %d dibawa, total %d kg" % [carried_ripe, delivered_ripe_kg]
 	
 	if unripe_label:
-		unripe_label.text = "Poin buah mentah: %d" % collected_unripe
+		unripe_label.text = "Buah mentah: %d kg" % collected_unripe_kg
 
-func update_carried_fruits(carried_ripe: int):
+func update_carried_fruits(carried_ripe: int, carried_kg: float):
 	if ripe_label:
 		var inventory_system = get_node_or_null("/root/Node3D/InventorySystem")
-		var delivered_ripe = 0
+		var delivered_ripe_kg = 0.0
 		if inventory_system:
-			delivered_ripe = inventory_system.get_delivered_ripe_count()
+			delivered_ripe_kg = inventory_system.get_delivered_ripe_kg()
 		
-		ripe_label.text = "Buah matang: %d dibawa, %d diantar" % [carried_ripe, delivered_ripe]
+		ripe_label.text = "Buah matang: %d dibawa, total %.1f kg" % [carried_ripe, delivered_ripe_kg]
 
-func update_temporary_display(carried_ripe: int, _carried_unripe: int):
-	update_carried_fruits(carried_ripe)
+func update_temporary_display(carried_ripe: int, carried_kg: float):
+	update_carried_fruits(carried_ripe, carried_kg)
 
-func update_display(ripe_count: int, unripe_count: int):
-	update_temporary_display(ripe_count, unripe_count)
+func update_display(ripe_count: int, ripe_kg: float):
+	update_temporary_display(ripe_count, ripe_kg)

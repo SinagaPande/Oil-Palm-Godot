@@ -1,5 +1,5 @@
 ea4bc82a6ad023ab7ee23ee620429895
-::res://::1763377298
+::res://::1763378278
 icon.png::CompressedTexture2D/CompressedTexture2D::557325075131260776::1763332390::1763332390::1::::<><><>0<>0<>bd13ae2097a421d598bdc4fdb46fb406<>res://.godot/imported/icon.png-487276ed1e3a0c39cad0279d744ee560.bptc.ctex::
 icon.svg::CompressedTexture2D/CompressedTexture2D::5881908033975481201::1763332390::1763332390::1::::<><><>0<>0<>f7708f2b01c2ad5016cc404305529ae0<>res://.godot/imported/icon.svg-218a8f2b3041327d8a5756f3a245f83b.ctex::
 README.md::TextFile/TextFile::-1::1763332390::0::1::::<><><>0<>0<><>::
@@ -41,7 +41,7 @@ LICENSE.txt::TextFile/TextFile::-1::1763332393::0::1::::<><><>0<>0<><>::
 plugin.cfg::TextFile/TextFile::-1::1763332393::0::1::::<><><>0<>0<><>::
 README.md::TextFile/TextFile::-1::1763332393::0::1::::<><><>0<>0<><>::
 terrain.gdextension::GDExtension/GDExtension::6265765667603777489::1763332393::0::1::::<><><>0<>0<><>::
-::res://addons/terrain_3d/bin/::1763377299
+::res://addons/terrain_3d/bin/::1763378269
 ::res://addons/terrain_3d/bin/libterrain.macos.debug.framework/::1763332393
 ::res://addons/terrain_3d/bin/libterrain.macos.release.framework/::1763332393
 ::res://addons/terrain_3d/extras/::1763332394
@@ -156,19 +156,19 @@ RuntimeNavigationBaker.gd::GDScript/GDScript::3599888765861783374::1763332394::0
 UI.gd::GDScript/GDScript::5046887877086516967::1763332394::0::1::::<>Control<><>0<>0<><>::
 ::res://Performance Report/::1763332392
 performancemonitor.gd::GDScript/GDScript::3613987215694202426::1763332392::0::1::::<>Node<><>0<>0<><>::
-::res://Scene/::1763376257
-DeliveryZone.tscn::PackedScene::7282198304629499503::1763376225::0::1::::<><><>0<>0<><>::uid://cdopw8tuc7t5i::::res://Script/DeliveryZone.gd<>uid://b7t6uyhb6n7yw::::res://3D Asset/L300.gltf
-fruit.tscn::PackedScene::367893611287629632::1763376225::0::1::::<><><>0<>0<><>::uid://d1eqpbdwh5vd::::res://Script/Fruit.gd
-HarvesterNPC.tscn::PackedScene::370486365102826763::1763376225::0::1::::<><><>0<>0<><>::uid://c5rots8intces::::res://Script/HarvesterNPC.gd
-Level.tscn::PackedScene::4336038157952053298::1763376225::0::1::::<><><>0<>0<><>::uid://cro4dsaaw46m6::::res://Scene/Player.tscn<>uid://yhgy8yiuvq0a::::res://Script/InventorySystem.gd<>uid://ce7kun3axgivb::::res://Scene/Tree.tscn<>uid://d1eqpbdwh5vd::::res://Script/Fruit.gd<>uid://brqv3uxwljvdi::::res://Performance Report/performancemonitor.gd<>uid://db0s0h54nq8sx::::res://Scene/DeliveryZone.tscn<>uid://cyybpit81epho::::res://Script/NPCManager.gd<>uid://fjp4d5gsnx0v::::res://Scene/HarvesterNPC.tscn
-Player.tscn::PackedScene::5996720093412409723::1763376257::0::1::::<><><>0<>0<><>::uid://xrqu7ocbd6ce::::res://Script/PlayerController.gd<>uid://bpfyr0a0ogs5x::::res://Script/Player.gd<>uid://cldfugbgjbpxy::::res://3D Asset/Egrek.glb<>uid://d2113ln4fmisb::::res://Script/InteractionSystem.gd<>uid://bu7l6p1cy8jms::::res://3D Asset/Tojok.gltf<>uid://s32mga8hhl4v::::res://Scene/UI_Inventory.tscn
-Tree.tscn::PackedScene::5120300441963064075::1763376225::0::1::::<><><>0<>0<><>::uid://cix5mto7iuouh::::res://Script/Tree.gd<>uid://fihfib6eqs53::::res://Scene/fruit.tscn<>uid://b2quauiv873h3::::res://3D Asset/Pohon_Sawit_LowMesh.gltf<>uid://8577xvcn1iun::::res://3D Asset/Pohon_Sawit.gltf
-UI_Inventory.tscn::PackedScene::1322862867578922979::1763376225::0::1::::<><><>0<>0<><>::uid://bfw2npq73q3oo::::res://Script/UI_Inventory.gd
-::res://Script/::1763376048
+::res://Scene/::1763378178
+DeliveryZone.tscn::PackedScene::7282198304629499503::1763378114::0::1::::<><><>0<>0<><>::uid://cdopw8tuc7t5i::::res://Script/DeliveryZone.gd<>uid://b7t6uyhb6n7yw::::res://3D Asset/L300.gltf
+fruit.tscn::PackedScene::367893611287629632::1763378114::0::1::::<><><>0<>0<><>::uid://d1eqpbdwh5vd::::res://Script/Fruit.gd
+HarvesterNPC.tscn::PackedScene::370486365102826763::1763378114::0::1::::<><><>0<>0<><>::uid://c5rots8intces::::res://Script/HarvesterNPC.gd
+Level.tscn::PackedScene::4336038157952053298::1763378114::0::1::::<><><>0<>0<><>::uid://cro4dsaaw46m6::::res://Scene/Player.tscn<>uid://yhgy8yiuvq0a::::res://Script/InventorySystem.gd<>uid://ce7kun3axgivb::::res://Scene/Tree.tscn<>uid://d1eqpbdwh5vd::::res://Script/Fruit.gd<>uid://brqv3uxwljvdi::::res://Performance Report/performancemonitor.gd<>uid://db0s0h54nq8sx::::res://Scene/DeliveryZone.tscn<>uid://cyybpit81epho::::res://Script/NPCManager.gd<>uid://fjp4d5gsnx0v::::res://Scene/HarvesterNPC.tscn
+Player.tscn::PackedScene::5996720093412409723::1763378178::0::1::::<><><>0<>0<><>::uid://xrqu7ocbd6ce::::res://Script/PlayerController.gd<>uid://bpfyr0a0ogs5x::::res://Script/Player.gd<>uid://cldfugbgjbpxy::::res://3D Asset/Egrek.glb<>uid://d2113ln4fmisb::::res://Script/InteractionSystem.gd<>uid://bu7l6p1cy8jms::::res://3D Asset/Tojok.gltf<>uid://s32mga8hhl4v::::res://Scene/UI_Inventory.tscn
+Tree.tscn::PackedScene::5120300441963064075::1763378114::0::1::::<><><>0<>0<><>::uid://cix5mto7iuouh::::res://Script/Tree.gd<>uid://fihfib6eqs53::::res://Scene/fruit.tscn<>uid://b2quauiv873h3::::res://3D Asset/Pohon_Sawit_LowMesh.gltf<>uid://8577xvcn1iun::::res://3D Asset/Pohon_Sawit.gltf
+UI_Inventory.tscn::PackedScene::1322862867578922979::1763378114::0::1::::<><><>0<>0<><>::uid://bfw2npq73q3oo::::res://Script/UI_Inventory.gd
+::res://Script/::1763378114
 DeliveryZone.gd::GDScript/GDScript::5013260992749041328::1763332392::0::1::::DeliveryZone<>Area3D<><>0<>0<><>::
 Fruit.gd::GDScript/GDScript::264512582754268285::1763332392::0::1::::Fruit<>RigidBody3D<><>0<>0<><>::
 HarvesterNPC.gd::GDScript/GDScript::6914486063109566666::1763356641::0::1::::HarvesterNPC<>CharacterBody3D<><>0<>0<><>::
-InteractionSystem.gd::GDScript/GDScript::9109663894117096341::1763363067::0::1::::InteractionSystem<>Node3D<><>0<>0<><>::
+InteractionSystem.gd::GDScript::9109663894117096341::1763378114::0::1::::InteractionSystem<>Node3D<><>0<>0<><>::
 InventorySystem.gd::GDScript/GDScript::1699391823338427514::1763356641::0::1::::InventorySystem<>Node<><>0<>0<><>::
 NPCManager.gd::GDScript/GDScript::6507006635770127448::1763356641::0::1::::NPCManager<>Node<><>0<>0<><>::
 Player.gd::GDScript/GDScript::3451064107595269643::1763363324::0::1::::Player<>CharacterBody3D<><>0<>0<><>::

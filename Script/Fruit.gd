@@ -7,6 +7,7 @@ var is_falling = false
 var fruit_type: String = "Masak"
 var can_be_collected: bool = false
 var has_been_collected: bool = false
+var has_given_points: bool = false  # Flag untuk mencegah duplikasi poin
 
 var lod_self_update_timer: float = 0.0
 var culling_self_update_timer: float = 0.0
@@ -45,6 +46,8 @@ const COLLISION_RADIUS = 0.8
 var is_initialized: bool = false
 var use_tree_culling: bool = true
 var parent_tree_ref: WeakRef = null
+
+
 
 func _ready():
 	add_to_group("buah")
@@ -333,6 +336,10 @@ func fall_from_tree(target_position: Vector3 = Vector3.ZERO):
 	is_falling = true
 	set_process(true)
 	
+	# ✅ PERBAIKAN: Berikan poin untuk buah mentah saat jatuh dari pohon
+	if fruit_type == "Mentah" and not has_given_points:
+		give_unripe_fruit_points()
+	
 	var force_direction = Vector3(
 		randf_range(-2.0, 2.0),
 		randf_range(1.0, 3.0),
@@ -348,6 +355,26 @@ func fall_from_tree(target_position: Vector3 = Vector3.ZERO):
 		)
 	
 	apply_impulse(force_direction)
+	
+func give_unripe_fruit_points():
+	if has_given_points:
+		return
+	
+	has_given_points = true
+	
+	# Cari inventory system dan berikan poin
+	var inventory_system = get_node_or_null("/root/Node3D/InventorySystem")
+	if not inventory_system:
+		var nodes = get_tree().get_nodes_in_group("inventory_system")
+		if nodes.size() > 0:
+			inventory_system = nodes[0]
+	
+	if inventory_system and inventory_system.has_method("add_unripe_fruit_kg"):
+		var weight_kg = randi_range(25, 30)  # Buah mentah: 25-30 kg
+		inventory_system.add_unripe_fruit_kg(weight_kg)
+		
+		print("Buah mentah jatuh: +%d kg" % weight_kg)
+
 
 func _exit_tree():
 	parent_tree_ref = null

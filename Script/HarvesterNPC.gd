@@ -27,6 +27,7 @@ var current_harvest_count: int = 0
 # Inventory NPC yang terpisah dari player
 var npc_carried_ripe_fruits: int = 0
 var total_harvested_by_npc: int = 0  # Total buah yang sudah dipanen NPC
+var npc_carried_ripe_kg: int = 0.0  # Tambah tracking kg untuk NPC
 
 var player_node: Node3D = null
 var camera_node: Camera3D = null
@@ -269,6 +270,7 @@ func harvest_next_fruit():
 		return
 	
 	var harvested_count = 0
+	var harvested_kg: float = 0.0
 	
 	match current_harvest_mode:
 		"physical":
@@ -277,15 +279,19 @@ func harvest_next_fruit():
 			harvested_count = harvest_simulated(target_tree)
 	
 	if harvested_count > 0:
+		# Hitung berat untuk buah yang dipanen (30-40 kg per buah) - integer
+		harvested_kg = harvested_count * randi_range(30, 40)  # Ubah ke randi_range
+		
 		current_harvest_count += harvested_count
 		npc_carried_ripe_fruits += harvested_count
-		total_harvested_by_npc += harvested_count
+		npc_carried_ripe_kg += harvested_kg
+		total_harvested_by_npc += harvested_kg
 		
-		# Kirim signal dengan data panen (TIDAK masuk ke inventory system)
+		# Kirim signal dengan data panen dalam kg
 		npc_harvested_fruits.emit(harvested_count, total_harvested_by_npc)
 		
-		# Tampilkan output di console
-		print("NPC memanen %d buah matang. Total dipanen: %d" % [harvested_count, total_harvested_by_npc])
+		# Tampilkan output di console dengan format kg
+		print("NPC memanen %d buah matang (%d kg). Total dipanen: %d kg" % [harvested_count, harvested_kg, total_harvested_by_npc])
 		
 	else:
 		if target_tree and is_instance_valid(target_tree):
@@ -399,9 +405,11 @@ func find_camera_recursive(node: Node) -> Camera3D:
 			return found
 	return null
 
-# Method untuk mendapatkan status inventory NPC
 func get_npc_carried_fruits() -> int:
 	return npc_carried_ripe_fruits
+
+func get_npc_carried_kg() -> float:
+	return npc_carried_ripe_kg
 
 func get_npc_capacity() -> int:
 	return max_carry_capacity
@@ -409,5 +417,5 @@ func get_npc_capacity() -> int:
 func is_npc_full() -> bool:
 	return npc_carried_ripe_fruits >= max_carry_capacity
 
-func get_total_harvested() -> int:
+func get_total_harvested() -> float:
 	return total_harvested_by_npc

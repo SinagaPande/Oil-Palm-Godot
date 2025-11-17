@@ -120,13 +120,17 @@ func add_npc_to_scene(npc_instance: HarvesterNPC, spawn_position: Vector3, spawn
 	
 	active_npcs.append(npc_instance)
 
-func _on_npc_harvested_fruits(harvested_count: int, total_harvested: int):
-	total_npc_harvest += harvested_count
+func _on_npc_harvested_fruits(harvested_count: int, total_harvested_kg: int):
+	# Ubah tracking dari jumlah buah menjadi kg (integer)
+	var harvested_kg = harvested_count * randi_range(30, 40)  # Estimasi kg
+	total_npc_harvest += harvested_kg  # Sekarang total_npc_harvest adalah integer
+	
 	print("=== NPC HARVEST REPORT ===")
-	print("Buah dipanen saat ini: %d" % harvested_count)
-	print("Total buah dipanen NPC: %d" % total_npc_harvest)
+	print("Buah dipanen saat ini: %d buah (%d kg)" % [harvested_count, harvested_kg])
+	print("Total buah dipanen NPC: %d kg" % total_npc_harvest)
 	print("Jumlah NPC aktif: %d" % active_npcs.size())
 	print("==========================")
+
 
 func get_active_npc_count() -> int:
 	return active_npcs.size()
@@ -158,20 +162,21 @@ func configure_manager(npc_scene: PackedScene, max_count: int = 1):
 	max_npcs = max_count
 
 # Method untuk mendapatkan total panen semua NPC
-func get_total_npc_harvest() -> int:
+func get_total_npc_harvest() -> float:
 	return total_npc_harvest
 
 # Method untuk menampilkan status semua NPC
 func show_npc_status():
 	print("=== NPC STATUS ===")
 	print("Total NPC aktif: %d" % active_npcs.size())
-	print("Total buah dipanen: %d" % total_npc_harvest)
+	print("Total buah dipanen: %.1f kg" % total_npc_harvest)
 	
 	for i in range(active_npcs.size()):
 		var npc = active_npcs[i]
 		if is_instance_valid(npc):
 			var carried = npc.get_npc_carried_fruits()
+			var carried_kg = npc.get_npc_carried_kg()
 			var total = npc.get_total_harvested()
-			print("NPC %d: Membawa %d buah, Total dipanen: %d" % [i, carried, total])
+			print("NPC %d: Membawa %d buah (%.1f kg), Total dipanen: %.1f kg" % [i, carried, carried_kg, total])
 	
 	print("==================")

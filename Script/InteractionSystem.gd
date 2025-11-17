@@ -35,7 +35,8 @@ func handle_interaction():
 		if player_node and player_node.has_method("deliver_fruits"):
 			var can_deliver = player_node.deliver_fruits()
 			if can_deliver:
-				show_interaction_label("Buah matang berhasil diantar!")
+				# Pesan sekarang ditangani di Player.gd dengan format kg
+				pass  # Kosongkan karena sudah ditangani di deliver_fruits()
 			elif player_node.in_delivery_zone and player_node.get_carried_ripe_fruits() == 0:
 				show_interaction_label("Tidak ada buah matang untuk diantar")
 
@@ -58,10 +59,13 @@ func handle_fruit_harvest():
 	var player_position = get_parent().global_position
 	
 	var fruit_type = current_target.get("fruit_type")
+	
+	# ✅ PERBAIKAN: Hanya buah matang yang diproses saat jatuh dari pohon
+	# Buah mentah sudah langsung memberikan poin saat jatuh, tidak perlu diproses lagi
 	if fruit_type == "Mentah":
-		var inventory_system = get_node("/root/Node3D/InventorySystem")
-		if inventory_system:
-			inventory_system.add_unripe_fruit_direct()
+		# Buah mentah sudah memberikan poin saat fall_from_tree() dipanggil
+		# Tidak perlu memanggil add_to_inventory lagi
+		pass
 	
 	current_target.fall_from_tree(player_position)
 
@@ -146,9 +150,14 @@ func collect_fruit(fruit):
 	if fruit.is_in_group("buah_jatuh") and fruit.has_touched_surface and fruit.can_be_collected:
 		var fruit_type = fruit.get("fruit_type")
 		
+		# ✅ PERBAIKAN: Hanya buah matang yang perlu dikumpulkan ke inventory
+		# Buah mentah sudah memberikan poin saat jatuh, tidak perlu diproses lagi
 		if fruit_type == "Masak":
 			if player_node and player_node.has_method("add_to_inventory"):
 				player_node.add_to_inventory("Masak")
+		elif fruit_type == "Mentah":
+			# Buah mentah tidak perlu diproses lagi, hanya dihapus dari scene
+			pass
 		
 		fruit.queue_free()
 		clear_target()
