@@ -1,16 +1,11 @@
 res://Scene/Level.tscn
 res://Script/PlayerController.gd
-res://Script/HarvesterNPC.gd
 res://Scene/Tree.tscn
 res://Scene/fruit.tscn
 res://Scene/Player.tscn
 res://Scene/DeliveryZone.tscn
 res://Scene/UI_Inventory.tscn
 res://Scene/HarvesterNPC.tscn
-res://Script/DeliveryZone.gd
-res://Script/Fruit.gd
-res://Script/InteractionSystem.gd
+res://Script/HarvesterNPC.gd
 res://Script/InventorySystem.gd
 res://Script/NPCManager.gd
-res://Script/Player.gd
-res://Script/Tree.gd

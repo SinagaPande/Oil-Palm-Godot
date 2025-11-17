@@ -16,6 +16,9 @@ var is_ready: bool = false
 @export var ground_collision_mask: int = 1
 @export var spawn_height_offset: float = 1.0
 
+# Variabel untuk tracking total panen semua NPC
+var total_npc_harvest: int = 0
+
 func _ready():
 	add_to_group("npc_manager")
 	is_ready = true
@@ -108,10 +111,22 @@ func add_npc_to_scene(npc_instance: HarvesterNPC, spawn_position: Vector3, spawn
 	npc_instance.global_position = spawn_position
 	npc_instance.global_rotation = spawn_rotation
 	
+	# Connect signal untuk menerima data panen dari NPC
+	if npc_instance.has_signal("npc_harvested_fruits"):
+		npc_instance.npc_harvested_fruits.connect(_on_npc_harvested_fruits)
+	
 	if npc_instance.has_method("initialize_npc"):
 		npc_instance.call_deferred("initialize_npc")
 	
 	active_npcs.append(npc_instance)
+
+func _on_npc_harvested_fruits(harvested_count: int, total_harvested: int):
+	total_npc_harvest += harvested_count
+	print("=== NPC HARVEST REPORT ===")
+	print("Buah dipanen saat ini: %d" % harvested_count)
+	print("Total buah dipanen NPC: %d" % total_npc_harvest)
+	print("Jumlah NPC aktif: %d" % active_npcs.size())
+	print("==========================")
 
 func get_active_npc_count() -> int:
 	return active_npcs.size()
@@ -141,3 +156,22 @@ func refresh_spawn_points():
 func configure_manager(npc_scene: PackedScene, max_count: int = 1):
 	harvester_npc_scene = npc_scene
 	max_npcs = max_count
+
+# Method untuk mendapatkan total panen semua NPC
+func get_total_npc_harvest() -> int:
+	return total_npc_harvest
+
+# Method untuk menampilkan status semua NPC
+func show_npc_status():
+	print("=== NPC STATUS ===")
+	print("Total NPC aktif: %d" % active_npcs.size())
+	print("Total buah dipanen: %d" % total_npc_harvest)
+	
+	for i in range(active_npcs.size()):
+		var npc = active_npcs[i]
+		if is_instance_valid(npc):
+			var carried = npc.get_npc_carried_fruits()
+			var total = npc.get_total_harvested()
+			print("NPC %d: Membawa %d buah, Total dipanen: %d" % [i, carried, total])
+	
+	print("==================")

@@ -6,8 +6,7 @@ enum NPCState {
 	SEARCH, 
 	MOVE,
 	HARVEST,
-	IDLE,
-	DELIVER
+	IDLE
 }
 
 @export var move_speed: float = 3.0
@@ -20,14 +19,14 @@ enum NPCState {
 
 var current_state: NPCState = NPCState.SPAWN
 var target_tree: Node3D = null
-var target_delivery_zone: Area3D = null
 var harvest_timer: float = 0.0
 var harvest_delay_per_fruit: float = 2.0
 var fruits_to_harvest: int = 0
 var current_harvest_count: int = 0
 
-var carried_ripe_fruits: int = 0
-var inventory_system: Node = null
+# Inventory NPC yang terpisah dari player
+var npc_carried_ripe_fruits: int = 0
+var total_harvested_by_npc: int = 0  # Total buah yang sudah dipanen NPC
 
 var player_node: Node3D = null
 var camera_node: Camera3D = null
@@ -45,9 +44,32 @@ const TREE_CHECK_INTERVAL: float = 5.0
 var tree_cooldowns: Dictionary = {}
 const TREE_COOLDOWN_TIME: float = 10.0
 
+# Signal untuk mengirim data panen NPC
+signal npc_harvested_fruits(harvested_count, total_harvested)
+
+# Collision configuration
+var collision_shape: CollisionShape3D = null
+
 func _ready():
 	add_to_group("harvester_npc")
+	setup_collision_config()
 	transition_to_state(NPCState.SPAWN)
+
+func setup_collision_config():
+	# Cari CollisionShape3D dan atur untuk bisa menembus object
+	collision_shape = find_child("CollisionShape3D")
+	if collision_shape:
+		# Set collision mask untuk menghindari tabrakan dengan object static
+		collision_mask = 0x00000001  # Hanya layer 1 (ground biasanya)
+		# Non-aktifkan collision dengan object lain
+		set_collision_layer_value(2, false)  # Player
+		set_collision_layer_value(3, false)  # NPC lain  
+		set_collision_layer_value(4, false)  # Object static
+		set_collision_layer_value(5, false)  # Buah
+		
+		# Atur collision shape menjadi trigger-only
+		if collision_shape.shape is CapsuleShape3D or collision_shape.shape is SphereShape3D:
+			collision_shape.shape.radius *= 0.8  # Sedikit perkecil untuk memudahkan navigasi
 
 func _physics_process(delta):
 	state_process(delta)
@@ -64,8 +86,9 @@ func state_process(delta):
 				target_tree = nearest_tree
 				transition_to_state(NPCState.MOVE)
 			else:
-				if carried_ripe_fruits > 0:
-					find_delivery_zone()
+				if npc_carried_ripe_fruits > 0:
+					# NPC tidak mengantar, tapi tetap reset setelah membawa buah
+					reset_after_carrying()
 				else:
 					if should_reset_visited_trees():
 						smart_reset_visited_trees()
@@ -77,14 +100,8 @@ func state_process(delta):
 				var distance_to_tree = global_position.distance_to(target_tree.global_position)
 				if distance_to_tree <= harvest_range:
 					transition_to_state(NPCState.HARVEST)
-			elif target_delivery_zone and is_instance_valid(target_delivery_zone):
-				move_towards_target(target_delivery_zone.global_position)
-				var distance_to_zone = global_position.distance_to(target_delivery_zone.global_position)
-				if distance_to_zone <= harvest_range:
-					transition_to_state(NPCState.DELIVER)
 			else:
 				target_tree = null
-				target_delivery_zone = null
 				transition_to_state(NPCState.SEARCH)
 			
 		NPCState.HARVEST:
@@ -99,14 +116,19 @@ func state_process(delta):
 				harvest_timer = 0.0
 				harvest_next_fruit()
 			
-		NPCState.DELIVER:
-			deliver_fruits()
-			
 		NPCState.IDLE:
 			harvest_timer += delta
 			if harvest_timer >= 3.0:
 				harvest_timer = 0.0
 				transition_to_state(NPCState.SEARCH)
+
+func reset_after_carrying():
+	# Reset state setelah NPC membawa buah (tidak mengantar ke zone)
+	npc_carried_ripe_fruits = 0
+	visited_trees.clear()
+	tree_cooldowns.clear()
+	search_attempts = 0
+	transition_to_state(NPCState.SEARCH)
 
 func transition_to_state(new_state: NPCState):
 	state_exit(current_state)
@@ -140,9 +162,6 @@ func state_enter(state: NPCState):
 				
 				update_harvest_mode()
 			
-		NPCState.DELIVER:
-			pass
-			
 		NPCState.IDLE:
 			pass
 
@@ -160,7 +179,7 @@ func calculate_fruits_to_harvest() -> int:
 	if target_tree.has_method("get_ripe_count"):
 		available_fruits = target_tree.get_ripe_count()
 	
-	var can_carry = max_carry_capacity - carried_ripe_fruits
+	var can_carry = max_carry_capacity - npc_carried_ripe_fruits
 	return min(available_fruits, can_carry)
 
 func update_tree_cooldowns(delta: float):
@@ -241,11 +260,12 @@ func harvest_next_fruit():
 		transition_to_state(NPCState.SEARCH)
 		return
 	
-	if current_harvest_count >= fruits_to_harvest or carried_ripe_fruits >= max_carry_capacity:
+	if current_harvest_count >= fruits_to_harvest or npc_carried_ripe_fruits >= max_carry_capacity:
 		if should_mark_tree_visited(target_tree):
 			mark_tree_visited(target_tree)
 		
-		transition_to_state(NPCState.SEARCH)
+		# Setelah panen selesai, reset state (tidak perlu ke delivery zone)
+		reset_after_carrying()
 		return
 	
 	var harvested_count = 0
@@ -258,10 +278,15 @@ func harvest_next_fruit():
 	
 	if harvested_count > 0:
 		current_harvest_count += harvested_count
-		carried_ripe_fruits += harvested_count
+		npc_carried_ripe_fruits += harvested_count
+		total_harvested_by_npc += harvested_count
 		
-		if inventory_system and inventory_system.has_method("add_delivered_ripe_fruits"):
-			inventory_system.add_delivered_ripe_fruits(harvested_count)
+		# Kirim signal dengan data panen (TIDAK masuk ke inventory system)
+		npc_harvested_fruits.emit(harvested_count, total_harvested_by_npc)
+		
+		# Tampilkan output di console
+		print("NPC memanen %d buah matang. Total dipanen: %d" % [harvested_count, total_harvested_by_npc])
+		
 	else:
 		if target_tree and is_instance_valid(target_tree):
 			tree_cooldowns[target_tree] = TREE_COOLDOWN_TIME
@@ -304,28 +329,6 @@ func harvest_simulated(tree: Node3D) -> int:
 		return tree.harvest_simulated()
 	return 0
 
-func deliver_fruits():
-	if not target_delivery_zone or not is_instance_valid(target_delivery_zone):
-		transition_to_state(NPCState.SEARCH)
-		return
-	
-	if carried_ripe_fruits > 0:
-		if inventory_system and inventory_system.has_method("add_delivered_ripe_fruits"):
-			inventory_system.add_delivered_ripe_fruits(carried_ripe_fruits)
-		
-		if target_delivery_zone.has_method("deliver_fruits"):
-			target_delivery_zone.deliver_fruits(carried_ripe_fruits, 0)
-		
-		carried_ripe_fruits = 0
-	
-	target_delivery_zone = null
-	
-	visited_trees.clear()
-	tree_cooldowns.clear()
-	search_attempts = 0
-	
-	transition_to_state(NPCState.SEARCH)
-
 func find_nearest_tree() -> Node3D:
 	var trees = get_tree().get_nodes_in_group("tree")
 	var nearest_tree: Node3D = null
@@ -354,26 +357,6 @@ func find_nearest_tree() -> Node3D:
 	
 	return nearest_tree
 
-func find_delivery_zone():
-	var delivery_zones = get_tree().get_nodes_in_group("delivery_zone")
-	if delivery_zones.size() > 0:
-		var nearest_zone: Area3D = null
-		var nearest_distance = 50.0
-		
-		for zone in delivery_zones:
-			if is_instance_valid(zone):
-				var distance = global_position.distance_to(zone.global_position)
-				if distance <= nearest_distance:
-					nearest_distance = distance
-					nearest_zone = zone
-		
-		if nearest_zone:
-			target_delivery_zone = nearest_zone
-			target_tree = null
-			return true
-	
-	return false
-
 func move_towards_target(target_position: Vector3):
 	var direction = (target_position - global_position).normalized()
 	direction.y = 0
@@ -381,70 +364,17 @@ func move_towards_target(target_position: Vector3):
 	velocity = direction * move_speed
 	velocity.y = -9.8
 	
-	if is_near_obstacle():
-		velocity += get_avoidance_vector() * 2.0
+	# Simplified movement tanpa obstacle avoidance yang kompleks
+	# karena collision sudah diatur untuk menembus object
 	
 	if direction.length() > 0.1:
 		look_at(global_position + direction, Vector3.UP)
 	
 	move_and_slide()
-	
-func is_near_obstacle() -> bool:
-	var viewport = get_tree().root
-	var space_state = viewport.get_world_3d().direct_space_state
-	
-	var check_distance = 2.0
-	var forward = -global_transform.basis.z
-	var check_position = global_position + forward * check_distance
-	
-	var query = PhysicsRayQueryParameters3D.create(global_position, check_position)
-	query.exclude = [self]
-	
-	var result = space_state.intersect_ray(query)
-	return not result.is_empty()
-	
-func get_avoidance_vector() -> Vector3:
-	var viewport = get_tree().root
-	var space_state = viewport.get_world_3d().direct_space_state
-	var avoidance = Vector3.ZERO
-	
-	var directions = [
-		-global_transform.basis.z,
-		global_transform.basis.x,
-		-global_transform.basis.x,
-		global_transform.basis.z,
-	]
-	
-	var check_distance = 3.0
-	
-	for i in range(directions.size()):
-		var direction = directions[i]
-		var check_position = global_position + direction * check_distance
-		
-		var query = PhysicsRayQueryParameters3D.create(global_position, check_position)
-		query.exclude = [self]
-		
-		var result = space_state.intersect_ray(query)
-		
-		if not result.is_empty():
-			var hit_position = result.get("position", Vector3.ZERO)
-			if hit_position != Vector3.ZERO:
-				var hit_distance = global_position.distance_to(hit_position)
-				var avoidance_strength = 1.0 - (hit_distance / check_distance)
-				
-				avoidance -= direction * avoidance_strength
-	
-	return avoidance.normalized()
 
 func initialize_npc():
 	find_player_and_camera()
-	find_inventory_system()
 	transition_to_state(NPCState.SEARCH)
-
-func find_inventory_system():
-	var inventory_systems = get_tree().get_nodes_in_group("inventory_system")
-	if inventory_systems.size() > 0:
-		inventory_system = inventory_systems[0]
 
 func find_player_and_camera():
 	if not is_inside_tree():
@@ -468,3 +398,16 @@ func find_camera_recursive(node: Node) -> Camera3D:
 		if found:
 			return found
 	return null
+
+# Method untuk mendapatkan status inventory NPC
+func get_npc_carried_fruits() -> int:
+	return npc_carried_ripe_fruits
+
+func get_npc_capacity() -> int:
+	return max_carry_capacity
+
+func is_npc_full() -> bool:
+	return npc_carried_ripe_fruits >= max_carry_capacity
+
+func get_total_harvested() -> int:
+	return total_harvested_by_npc
