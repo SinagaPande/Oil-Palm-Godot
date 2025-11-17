@@ -20,8 +20,8 @@ var inventory_system: Node
 const BASE_SPEED = 7
 const SPEED_REDUCTION_PER_FRUIT = 0.5
 
-const MAX_HP = 100
-const DAMAGE_PER_ATTACK = 10
+const MAX_HP = 100  # HP maksimal player
+const DAMAGE_PER_ATTACK = 10  # Damage yang diterima per serangan NPC
 
 var current_hp: int = MAX_HP
 var is_dead: bool = false
@@ -124,13 +124,19 @@ func take_damage(damage: int):
 	if is_dead:
 		return
 	
+	# Kurangi HP player
 	current_hp = max(0, current_hp - damage)
 	hp_updated.emit(current_hp, MAX_HP)
 	
+	print("Player menerima damage %d! HP: %d / %d" % [damage, current_hp, MAX_HP])
+	
+	# Cek jika player mati
 	if current_hp <= 0:
 		is_dead = true
+		current_hp = 0
+		hp_updated.emit(0, MAX_HP)
 		player_died.emit()
-		print("Player mati!")
+		print("Player mati! Game Over!")
 
 func get_hp() -> int:
 	return current_hp

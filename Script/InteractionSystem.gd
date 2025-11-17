@@ -3,19 +3,43 @@ extends Node3D
 class_name InteractionSystem
 
 @export var camera: Camera3D
-@export var interaction_label: Label
+@export var interaction_label: Label  # Fallback jika UI_Manager tidak ditemukan
 @export var player_controller: Node
 
 const RAY_LENGTH = 5.25
 
 var current_target = null
 var player_node: Node3D = null
+var ui_manager: UI_Manager = null
 
 func _ready():
 	if interaction_label:
 		interaction_label.visible = false
 	
 	player_node = get_parent()
+	
+	# Cari UI_Manager
+	await get_tree().process_frame
+	find_ui_manager()
+
+func find_ui_manager():
+	# Cari UI_Manager di scene - coba berbagai path
+	var paths_to_try = [
+		"/root/Node3D/UI_Manager",
+		"/root/Level/UI_Manager",
+		"../UI_Manager",
+		"../../UI_Manager"
+	]
+	
+	for path in paths_to_try:
+		ui_manager = get_node_or_null(path)
+		if ui_manager:
+			break
+	
+	if not ui_manager:
+		var ui_nodes = get_tree().get_nodes_in_group("ui_manager")
+		if ui_nodes.size() > 0:
+			ui_manager = ui_nodes[0] as UI_Manager
 
 func _input(event):
 	if event.is_action_pressed("shoot"):
@@ -110,12 +134,18 @@ func is_collectable_fruit(collider) -> bool:
 			collider.can_be_collected)
 
 func show_interaction_label(text):
-	if interaction_label:
+	# Gunakan UI_Manager jika tersedia, jika tidak gunakan interaction_label langsung
+	if ui_manager:
+		ui_manager.show_interaction_label(text)
+	elif interaction_label:
 		interaction_label.text = text
 		interaction_label.visible = true
 
 func hide_interaction_label():
-	if interaction_label:
+	# Gunakan UI_Manager jika tersedia, jika tidak gunakan interaction_label langsung
+	if ui_manager:
+		ui_manager.hide_interaction_label()
+	elif interaction_label:
 		interaction_label.visible = false
 
 func clear_target():

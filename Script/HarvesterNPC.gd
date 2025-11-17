@@ -10,8 +10,8 @@ enum NPCState {
 
 @export var move_speed: float = 4.0
 @export var attack_range: float = 2.5
-@export var detection_range: float = 50.0
-@export var attack_damage: int = 10
+@export var detection_range: float = 100.0  # Jarak deteksi lebih jauh agar selalu mengejar
+@export var attack_damage: int = 10  # Damage per serangan = 10 HP
 @export var attack_cooldown: float = 1.5
 
 var current_state: NPCState = NPCState.SPAWN
@@ -60,7 +60,11 @@ func state_process(delta):
 			return
 	
 	# Check if player is dead
-	if player_node.has_method("is_player_dead") and player_node.is_player_dead():
+	var player_is_dead = false
+	if player_node.has_method("is_player_dead"):
+		player_is_dead = player_node.is_player_dead()
+	
+	if player_is_dead:
 		transition_to_state(NPCState.IDLE)
 		return
 	
@@ -73,9 +77,8 @@ func state_process(delta):
 		NPCState.CHASE:
 			if distance_to_player <= attack_range:
 				transition_to_state(NPCState.ATTACK)
-			elif distance_to_player > detection_range:
-				transition_to_state(NPCState.IDLE)
 			else:
+				# Selalu mengejar player selama player masih hidup
 				move_towards_target(player_node.global_position)
 			
 		NPCState.ATTACK:
@@ -91,7 +94,8 @@ func state_process(delta):
 					look_at(global_position + direction, Vector3.UP)
 			
 		NPCState.IDLE:
-			if distance_to_player <= detection_range:
+			# Jika player masih hidup, langsung kejar
+			if not player_is_dead:
 				transition_to_state(NPCState.CHASE)
 
 func perform_attack():
@@ -101,9 +105,18 @@ func perform_attack():
 	if not can_attack:
 		return
 	
+	# Cek apakah player masih hidup
+	if player_node.has_method("is_player_dead") and player_node.is_player_dead():
+		transition_to_state(NPCState.IDLE)
+		return
+	
+	# Serang player dengan damage 10 HP
 	if player_node.has_method("take_damage"):
 		player_node.take_damage(attack_damage)
-		print("NPC menyerang player! HP player: %d" % player_node.get_hp())
+		var current_hp = 0
+		if player_node.has_method("get_hp"):
+			current_hp = player_node.get_hp()
+		print("NPC menyerang player! HP player sekarang: %d / %d" % [current_hp, player_node.get_max_hp() if player_node.has_method("get_max_hp") else 100])
 	
 	can_attack = false
 	attack_timer = attack_cooldown
@@ -150,9 +163,16 @@ func move_towards_target(target_position: Vector3):
 func initialize_npc():
 	find_player_and_camera()
 	if player_node:
+		# Langsung mulai mengejar player
 		transition_to_state(NPCState.CHASE)
 	else:
-		transition_to_state(NPCState.IDLE)
+		# Jika player belum ditemukan, tunggu sebentar lalu coba lagi
+		await get_tree().create_timer(0.5).timeout
+		find_player_and_camera()
+		if player_node:
+			transition_to_state(NPCState.CHASE)
+		else:
+			transition_to_state(NPCState.IDLE)
 
 func find_player_and_camera():
 	if not is_inside_tree():
@@ -176,4 +196,3 @@ func find_camera_recursive(node: Node) -> Camera3D:
 		if found:
 			return found
 	return null
-

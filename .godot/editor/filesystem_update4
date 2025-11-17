@@ -6,6 +6,3 @@ res://Scene/Player.tscn
 res://Scene/DeliveryZone.tscn
 res://Scene/UI_Inventory.tscn
 res://Scene/HarvesterNPC.tscn
-res://Script/HarvesterNPC.gd
-res://Script/InventorySystem.gd
-res://Script/NPCManager.gd

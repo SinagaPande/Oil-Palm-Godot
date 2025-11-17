@@ -1,0 +1,71 @@
+[gd_scene load_steps=2 format=3 uid="uid://b8x7lam2n4p5q"]
+
+[ext_resource type="Script" path="res://Script/UI_Manager.gd" id="1_uimgr"]
+
+[node name="UI_Manager" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_uimgr")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="UI_Container" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="InventoryPanel" type="Control" parent="CanvasLayer/UI_Container"]
+layout_mode = 0
+offset_left = 15.0
+offset_top = 15.0
+offset_right = 400.0
+offset_bottom = 120.0
+
+[node name="RipeLabel" type="Label" parent="CanvasLayer/UI_Container/InventoryPanel"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 375.0
+offset_bottom = 35.0
+theme_override_font_sizes/font_size = 24
+text = "Buah matang: 0 dibawa, 0 diantar"
+vertical_alignment = 1
+
+[node name="UnripeLabel" type="Label" parent="CanvasLayer/UI_Container/InventoryPanel"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 40.0
+offset_right = 375.0
+offset_bottom = 65.0
+theme_override_font_sizes/font_size = 24
+text = "Poin buah mentah: 0"
+vertical_alignment = 1
+
+[node name="HPLabel" type="Label" parent="CanvasLayer/UI_Container/InventoryPanel"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 70.0
+offset_right = 375.0
+offset_bottom = 95.0
+theme_override_font_sizes/font_size = 24
+text = "HP: 100 / 100"
+vertical_alignment = 1
+
+[node name="InteractionLabel" type="Label" parent="CanvasLayer/UI_Container"]
+layout_mode = 0
+offset_left = 585.0
+offset_top = 701.0
+offset_right = 1330.0
+offset_bottom = 927.0
+theme_override_font_sizes/font_size = 50
+text = ""
+horizontal_alignment = 1
+vertical_alignment = 1
+
