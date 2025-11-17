@@ -90,32 +90,28 @@ func raycast_system():
 func handle_raycast_result(collider):
 	if is_fruit(collider):
 		current_target = collider
-		var fruit_type = collider.get("fruit_type")
 		
-		# ✅ Tampilkan pesan berbeda berdasarkan alat aktif
+		# ✅ Sederhana: Tidak perlu bedakan matang/mentah untuk buah di pohon
 		if player_controller and player_controller.has_method("is_egrek_active"):
 			if player_controller.is_egrek_active():
-				if fruit_type == "Mentah":
-					show_interaction_label("Klik untuk menjatuhkan buah mentah (+1 poin langsung)")
-				else:
-					show_interaction_label("Klik untuk menjatuhkan buah masak")
+				show_interaction_label("Klik untuk menjatuhkan buah")  # ✅ Disederhanakan
 			else:
-				show_interaction_label("Gunakan Egrek (Tombol 1) untuk menjatuhkan buah")
+				show_interaction_label("Pakai Egrek (1) jatuhkan buah")  # ✅ Konsisten
 				
 	elif is_collectable_fruit(collider):
 		current_target = collider
 		var fruit_type = collider.get("fruit_type")
-		var type_text = "masak" if fruit_type == "Masak" else "mentah"
+		var type_text = "masak" if fruit_type == "Masak" else "mentah"  # ✅ Tetap ada keterangan jenis buah
 		
-		# ✅ Tampilkan pesan berbeda berdasarkan alat aktif
+		# ✅ Sederhana tapi tetap ada info jenis buah
 		if player_controller and player_controller.has_method("is_tojok_active"):
 			if player_controller.is_tojok_active():
 				if collider.can_be_collected:
-					show_interaction_label("Klik untuk mengumpulkan buah " + type_text)
+					show_interaction_label("Klik untuk mengambil buah " + type_text)  # ✅ Tambah jenis buah
 				else:
-					show_interaction_label("Buah " + type_text + " (belum menyentuh tanah)")
+					show_interaction_label("Buah " + type_text + " belum sampai tanah")  # ✅ Tambah jenis buah
 			else:
-				show_interaction_label("Gunakan Tojok (Tombol 2) untuk mengumpulkan buah")
+				show_interaction_label("Pakai Tojok (2) ambil buah")  # ✅ Lebih pendek
 	else:
 		clear_target()
 
