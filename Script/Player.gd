@@ -9,6 +9,8 @@ class_name Player
 
 signal carried_fruits_updated(ripe_count)
 signal player_fully_ready
+signal hp_updated(current_hp, max_hp)
+signal player_died
 
 var carried_ripe_fruits: int = 0
 var in_delivery_zone: bool = false
@@ -17,6 +19,12 @@ var inventory_system: Node
 
 const BASE_SPEED = 7
 const SPEED_REDUCTION_PER_FRUIT = 0.5
+
+const MAX_HP = 100
+const DAMAGE_PER_ATTACK = 10
+
+var current_hp: int = MAX_HP
+var is_dead: bool = false
 
 var is_fully_initialized: bool = false
 
@@ -31,6 +39,8 @@ func _ready():
 	
 	await get_tree().process_frame
 	is_fully_initialized = true
+	current_hp = MAX_HP
+	hp_updated.emit(current_hp, MAX_HP)
 	player_fully_ready.emit()
 
 func get_base_speed() -> float:
@@ -109,3 +119,24 @@ func is_player_ready() -> bool:
 
 func get_carried_ripe_fruits() -> int:
 	return carried_ripe_fruits
+
+func take_damage(damage: int):
+	if is_dead:
+		return
+	
+	current_hp = max(0, current_hp - damage)
+	hp_updated.emit(current_hp, MAX_HP)
+	
+	if current_hp <= 0:
+		is_dead = true
+		player_died.emit()
+		print("Player mati!")
+
+func get_hp() -> int:
+	return current_hp
+
+func get_max_hp() -> int:
+	return MAX_HP
+
+func is_player_dead() -> bool:
+	return is_dead

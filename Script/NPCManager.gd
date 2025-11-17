@@ -111,22 +111,10 @@ func add_npc_to_scene(npc_instance: HarvesterNPC, spawn_position: Vector3, spawn
 	npc_instance.global_position = spawn_position
 	npc_instance.global_rotation = spawn_rotation
 	
-	# Connect signal untuk menerima data panen dari NPC
-	if npc_instance.has_signal("npc_harvested_fruits"):
-		npc_instance.npc_harvested_fruits.connect(_on_npc_harvested_fruits)
-	
 	if npc_instance.has_method("initialize_npc"):
 		npc_instance.call_deferred("initialize_npc")
 	
 	active_npcs.append(npc_instance)
-
-func _on_npc_harvested_fruits(harvested_count: int, total_harvested: int):
-	total_npc_harvest += harvested_count
-	print("=== NPC HARVEST REPORT ===")
-	print("Buah dipanen saat ini: %d" % harvested_count)
-	print("Total buah dipanen NPC: %d" % total_npc_harvest)
-	print("Jumlah NPC aktif: %d" % active_npcs.size())
-	print("==========================")
 
 func get_active_npc_count() -> int:
 	return active_npcs.size()

@@ -4,6 +4,7 @@ class_name UI_Inventory
 
 @onready var ripe_label: Label = $RipeLabel
 @onready var unripe_label: Label = $UnripeLabel
+@onready var hp_label: Label = $HPLabel
 
 func _ready():
 	visible = true
@@ -31,10 +32,13 @@ func connect_to_inventory_system():
 	if player:
 		if player.has_signal("carried_fruits_updated"):
 			player.carried_fruits_updated.connect(update_carried_fruits)
-		elif player.has_signal("player_fully_ready"):
+		if player.has_signal("hp_updated"):
+			player.hp_updated.connect(update_hp_display)
+		if player.has_signal("player_fully_ready"):
 			player.player_fully_ready.connect(_on_player_ready)
 	
 	update_ui_from_player()
+	update_hp_from_player()
 
 func _on_player_ready():
 	await get_tree().process_frame
@@ -80,3 +84,19 @@ func update_temporary_display(carried_ripe: int, _carried_unripe: int):
 
 func update_display(ripe_count: int, unripe_count: int):
 	update_temporary_display(ripe_count, unripe_count)
+
+func update_hp_display(current_hp: int, max_hp: int):
+	if hp_label:
+		hp_label.text = "HP: %d / %d" % [current_hp, max_hp]
+
+func update_hp_from_player():
+	var player = get_node_or_null("/root/Node3D/Player")
+	if not player:
+		var player_nodes = get_tree().get_nodes_in_group("player")
+		if player_nodes.size() > 0:
+			player = player_nodes[0]
+	
+	if player and player.has_method("get_hp") and player.has_method("get_max_hp"):
+		var current_hp = player.get_hp()
+		var max_hp = player.get_max_hp()
+		update_hp_display(current_hp, max_hp)
