@@ -1,10 +1,9 @@
 extends Node3D
-
 class_name InteractionSystem
 
 @export var camera: Camera3D
-@export var interaction_label: Label
 @export var player_controller: Node
+@export var ui_manager: UIManager  # Referensi ke UIManager
 
 const RAY_LENGTH = 5.25
 
@@ -12,10 +11,31 @@ var current_target = null
 var player_node: Node3D = null
 
 func _ready():
-	if interaction_label:
-		interaction_label.visible = false
-	
+	find_ui_manager()
 	player_node = get_parent()
+
+func find_ui_manager():
+	# Coba beberapa lokasi
+	var paths_to_try = [
+		"/root/Node3D/UIManager",
+		"../../UIManager",
+		"../UIManager"
+	]
+	
+	for path in paths_to_try:
+		ui_manager = get_node_or_null(path)
+		if ui_manager:
+			break
+	
+	# Jika tidak ditemukan, cari by group
+	if ui_manager == null:
+		var ui_managers = get_tree().get_nodes_in_group("ui_manager")
+		if ui_managers.size() > 0:
+			ui_manager = ui_managers[0]
+	
+	# Jika masih null, cari di scene tree
+	if ui_manager == null:
+		ui_manager = get_tree().root.find_child("UIManager", true, false)
 
 func _input(event):
 	if event.is_action_pressed("shoot"):
@@ -35,10 +55,11 @@ func handle_interaction():
 		if player_node and player_node.has_method("deliver_fruits"):
 			var can_deliver = player_node.deliver_fruits()
 			if can_deliver:
-				# Pesan sekarang ditangani di Player.gd dengan format kg
+				# Pesan sekarang ditangani di UIManager
 				pass  # Kosongkan karena sudah ditangani di deliver_fruits()
 			elif player_node.in_delivery_zone and player_node.get_carried_ripe_fruits() == 0:
-				show_interaction_label("Tidak ada buah matang untuk diantar")
+				if ui_manager:
+					ui_manager.show_interaction_label("Tidak ada buah matang untuk diantar")
 
 func handle_target_interaction():
 	if current_target.is_in_group("buah"):
@@ -46,14 +67,16 @@ func handle_target_interaction():
 		if player_controller and player_controller.has_method("is_egrek_active") and player_controller.is_egrek_active():
 			handle_fruit_harvest()
 		else:
-			show_interaction_label("Gunakan Egrek (Tombol 1) untuk menjatuhkan buah")
+			if ui_manager:
+				ui_manager.show_interaction_label("Gunakan Egrek (Tombol 1) untuk menjatuhkan buah")
 			
 	elif current_target.is_in_group("buah_jatuh") and current_target.has_touched_surface:
 		# ✅ Hanya Tojok yang bisa mengumpulkan buah dari tanah
 		if player_controller and player_controller.has_method("is_tojok_active") and player_controller.is_tojok_active():
 			collect_fruit(current_target)
 		else:
-			show_interaction_label("Gunakan Tojok (Tombol 2) untuk mengumpulkan buah")
+			if ui_manager:
+				ui_manager.show_interaction_label("Gunakan Tojok (Tombol 2) untuk mengumpulkan buah")
 
 func handle_fruit_harvest():
 	var player_position = get_parent().global_position
@@ -74,7 +97,8 @@ func raycast_system():
 		return
 	
 	if player_node and player_node.in_delivery_zone and player_node.get_carried_ripe_fruits() > 0:
-		show_interaction_label("Tekan untuk menyerahkan buah")
+		if ui_manager:
+			ui_manager.show_interaction_label("Tekan untuk menyerahkan buah")
 		return
 		
 	var space_state = get_world_3d().direct_space_state
@@ -98,9 +122,11 @@ func handle_raycast_result(collider):
 		# ✅ Sederhana: Tidak perlu bedakan matang/mentah untuk buah di pohon
 		if player_controller and player_controller.has_method("is_egrek_active"):
 			if player_controller.is_egrek_active():
-				show_interaction_label("Klik untuk menjatuhkan buah")  # ✅ Disederhanakan
+				if ui_manager:
+					ui_manager.show_interaction_label("Klik untuk menjatuhkan buah")  # ✅ Disederhanakan
 			else:
-				show_interaction_label("Pakai Egrek (1) jatuhkan buah")  # ✅ Konsisten
+				if ui_manager:
+					ui_manager.show_interaction_label("Pakai Egrek (1) jatuhkan buah")  # ✅ Konsisten
 				
 	elif is_collectable_fruit(collider):
 		current_target = collider
@@ -111,11 +137,14 @@ func handle_raycast_result(collider):
 		if player_controller and player_controller.has_method("is_tojok_active"):
 			if player_controller.is_tojok_active():
 				if collider.can_be_collected:
-					show_interaction_label("Klik untuk mengambil buah " + type_text)  # ✅ Tambah jenis buah
+					if ui_manager:
+						ui_manager.show_interaction_label("Klik untuk mengambil buah " + type_text)  # ✅ Tambah jenis buah
 				else:
-					show_interaction_label("Buah " + type_text + " belum sampai tanah")  # ✅ Tambah jenis buah
+					if ui_manager:
+						ui_manager.show_interaction_label("Buah " + type_text + " belum sampai tanah")  # ✅ Tambah jenis buah
 			else:
-				show_interaction_label("Pakai Tojok (2) ambil buah")  # ✅ Lebih pendek
+				if ui_manager:
+					ui_manager.show_interaction_label("Pakai Tojok (2) ambil buah")  # ✅ Lebih pendek
 	else:
 		clear_target()
 
@@ -129,18 +158,10 @@ func is_collectable_fruit(collider) -> bool:
 			collider.get("can_be_collected") and
 			collider.can_be_collected)
 
-func show_interaction_label(text):
-	if interaction_label:
-		interaction_label.text = text
-		interaction_label.visible = true
-
-func hide_interaction_label():
-	if interaction_label:
-		interaction_label.visible = false
-
 func clear_target():
 	current_target = null
-	hide_interaction_label()
+	if ui_manager:
+		ui_manager.clear_target()
 
 func collect_fruit(fruit):
 	if not is_instance_valid(fruit):

@@ -1,0 +1,62 @@
+[gd_scene load_steps=2 format=3 uid="uid://s32mga8hhl4v"]
+
+[ext_resource type="Script" uid="uid://bfw2npq73q3oo" path="res://Script/UIManager.gd" id="1_jmley"]
+
+[node name="UIManager" type="Control"]
+layout_direction = 2
+layout_mode = 3
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_jmley")
+
+[node name="RipeLabel" type="Label" parent="."]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+offset_left = 5.0
+offset_right = 1925.0
+offset_bottom = 49.0
+theme_override_colors/font_color = Color(0.186871, 1, 0.298332, 1)
+theme_override_colors/font_shadow_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 35
+text = "RipeLabel"
+
+[node name="UnripeLabel" type="Label" parent="."]
+layout_mode = 2
+offset_left = 5.0
+offset_top = 50.0
+offset_right = 1925.0
+offset_bottom = 119.0
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 30
+text = "UnripeLabel"
+
+[node name="NpcHarvestLabel" type="Label" parent="."]
+offset_left = 5.0
+offset_top = 85.0
+offset_right = 1925.0
+offset_bottom = 154.0
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 30
+text = "NpcHarvestLabel "
+
+[node name="InteractionLabel" type="Label" parent="."]
+layout_mode = 2
+offset_top = 850.0
+offset_right = 1920.0
+offset_bottom = 919.0
+theme_override_font_sizes/font_size = 50
+text = "InteractionLabel"
+horizontal_alignment = 1
+
+[node name="NotificationLabel" type="Label" parent="."]
+layout_mode = 2
+offset_top = 850.0
+offset_right = 1920.0
+offset_bottom = 919.0
+theme_override_font_sizes/font_size = 50
+text = "NotificationLabel"
+horizontal_alignment = 1

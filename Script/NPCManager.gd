@@ -18,6 +18,7 @@ var is_ready: bool = false
 
 # Variabel untuk tracking total panen semua NPC
 var total_npc_harvest: int = 0
+signal npc_total_harvest_updated(total_kg)
 
 func _ready():
 	add_to_group("npc_manager")
@@ -125,6 +126,9 @@ func _on_npc_harvested_fruits(harvested_count: int, total_harvested_kg: int):
 	var harvested_kg = harvested_count * randi_range(30, 40)  # Estimasi kg
 	total_npc_harvest += harvested_kg  # Sekarang total_npc_harvest adalah integer
 	
+	# ⬅️ PANCAHKAN SIGNAL BARU SETELAH UPDATE TOTAL
+	npc_total_harvest_updated.emit(total_npc_harvest)
+	
 	print("=== NPC HARVEST REPORT ===")
 	print("Buah dipanen saat ini: %d buah (%d kg)" % [harvested_count, harvested_kg])
 	print("Total buah dipanen NPC: %d kg" % total_npc_harvest)
@@ -162,7 +166,7 @@ func configure_manager(npc_scene: PackedScene, max_count: int = 1):
 	max_npcs = max_count
 
 # Method untuk mendapatkan total panen semua NPC
-func get_total_npc_harvest() -> float:
+func get_total_npc_harvest() -> int:
 	return total_npc_harvest
 
 # Method untuk menampilkan status semua NPC

@@ -1,5 +1,4 @@
 extends CharacterBody3D
-
 class_name Player
 
 @onready var player_controller = $PlayerController
@@ -17,6 +16,7 @@ var carried_ripe_kg: int = 0  # Total kg buah yang dibawa (integer)
 var in_delivery_zone: bool = false
 var current_delivery_zone: DeliveryZone = null
 var inventory_system: Node
+var ui_manager: UIManager  # Referensi ke UIManager
 
 const BASE_SPEED = 7
 const SPEED_REDUCTION_PER_KG = 0.02
@@ -31,6 +31,7 @@ func _ready():
 		player_controller.set_current_speed(BASE_SPEED)
 	
 	find_inventory_system()
+	find_ui_manager()
 	
 	await get_tree().process_frame
 	is_fully_initialized = true
@@ -49,10 +50,6 @@ func setup_components():
 	if interaction_system:
 		interaction_system.camera = camera
 		interaction_system.player_controller = player_controller
-		
-		var interaction_label = interaction_system.get_node_or_null("CanvasLayer/UI_Container/InteractionLabel")
-		if interaction_label:
-			interaction_system.interaction_label = interaction_label
 
 func find_inventory_system():
 	var paths_to_try = [
@@ -71,6 +68,25 @@ func find_inventory_system():
 	var nodes = get_tree().get_nodes_in_group("inventory_system")
 	if nodes.size() > 0:
 		inventory_system = nodes[0]
+
+func find_ui_manager():
+	# Cari di berbagai lokasi possible
+	var paths_to_try = [
+		"/root/Node3D/UIManager",
+		"../UIManager",
+		"../../UIManager"
+	]
+	
+	for path in paths_to_try:
+		ui_manager = get_node_or_null(path)
+		if ui_manager:
+			break
+	
+	# Fallback: cari by group
+	if ui_manager == null:
+		var ui_managers = get_tree().get_nodes_in_group("ui_manager")
+		if ui_managers.size() > 0:
+			ui_manager = ui_managers[0]
 
 func set_in_delivery_zone(is_in_zone: bool, zone: DeliveryZone):
 	in_delivery_zone = is_in_zone
@@ -101,27 +117,17 @@ func deliver_fruits():
 		if inventory_system:
 			inventory_system.add_delivered_ripe_kg(carried_ripe_kg)
 		
-		# Tampilkan notifikasi dengan total kg
-		show_delivery_notification(carried_ripe_kg)
+		# Tampilkan notifikasi dengan total kg melalui UIManager
+		if ui_manager:
+			ui_manager.show_delivery_notification(carried_ripe_kg)
 		
 		carried_ripe_fruits = 0
 		carried_ripe_kg = 0
-		carried_fruits_updated.emit(0, 0.0)
+		carried_fruits_updated.emit(0, 0)
 		update_speed()
 		return true
 	
 	return false
-
-func show_delivery_notification(total_kg: int):
-	if interaction_system and interaction_system.interaction_label:
-		var notification_text = "%d kg buah matang berhasil diantar!" % total_kg
-		interaction_system.show_interaction_label(notification_text)
-		# Auto hide setelah 3 detik
-		await get_tree().create_timer(3.0).timeout
-		if in_delivery_zone:
-			interaction_system.show_interaction_label("Tekan untuk menyerahkan buah")
-		else:
-			interaction_system.hide_interaction_label()
 
 func update_speed():
 	var total_kg = carried_ripe_kg
