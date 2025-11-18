@@ -183,7 +183,7 @@ func update_permanent_display(delivered_ripe_kg: int, collected_unripe_kg: int):
 		unripe_label.text = "Buah mentah: %d kg" % collected_unripe_kg
 
 # Update buah yang dibawa (dari UI_Inventory.gd)
-func update_carried_fruits(carried_ripe: int, carried_kg: int):
+func update_carried_fruits(carried_ripe: int, _carried_kg: int):
 	if ripe_label:
 		var inventory_system = get_node_or_null("/root/Node3D/InventorySystem")
 		var delivered_ripe_kg = 0

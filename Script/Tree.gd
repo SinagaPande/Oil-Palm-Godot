@@ -50,16 +50,48 @@ func _ready():
 	call_deferred("initialize_tree")
 
 func initialize_tree():
-	var player_found = await wait_for_player()
+	# ⬅️ KURANGI WAKTU TUNGGU UNTUK MEMPERCEPAT
+	var player_found = await wait_for_player_quick()
 	if not player_found:
+		print("Tree: Player tidak ditemukan, tree tetap beroperasi")
 		is_initializing = false
+		# Tetap spawn buah meski player tidak ditemukan
+		spawn_initial_fruits()
 		return
 	
 	setup_all_systems()
 	visible = true
-	
 	await get_tree().process_frame
 	spawn_initial_fruits()
+	
+func wait_for_player_quick():
+	var max_attempts = 15  # ⬅️ KURANGI DARI 30
+	var attempt = 0
+	
+	while attempt < max_attempts:
+		var players = get_tree().get_nodes_in_group("player")
+		if players.size() > 0:
+			var player = players[0]
+			if is_player_ready_quick(player):
+				player_node = player
+				if setup_camera_from_player(player):
+					return true
+		attempt += 1
+		await get_tree().create_timer(0.1).timeout  # ⬅️ INTERVAL LEBIH CEPAT
+	
+	return false
+	
+func is_player_ready_quick(player: Node) -> bool:
+	if player == null:
+		return false
+	
+	# Kriteria sangat longgar untuk tree
+	if player.is_inside_tree():
+		return true
+	if player.has_method("get_carried_ripe_fruits"):
+		return true
+	
+	return true
 
 func _exit_tree():
 	all_fruits.clear()
@@ -443,6 +475,15 @@ func spawn_fruit_with_type(marker: Marker3D, fruit_type: String) -> RigidBody3D:
 	fruit_instance.process_mode = PROCESS_MODE_INHERIT
 	
 	return fruit_instance
+	
+func remove_fruit(fruit: RigidBody3D):
+	if fruit in all_fruits:
+		all_fruits.erase(fruit)
+		if is_instance_valid(fruit):
+			fruit.queue_free()
+	
+func get_all_fruits() -> Array:
+	return all_fruits.duplicate()
 
 func get_ripe_count() -> int:
 	if not has_spawned_fruits or all_fruits.is_empty():

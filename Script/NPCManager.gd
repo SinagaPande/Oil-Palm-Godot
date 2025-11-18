@@ -121,7 +121,7 @@ func add_npc_to_scene(npc_instance: HarvesterNPC, spawn_position: Vector3, spawn
 	
 	active_npcs.append(npc_instance)
 
-func _on_npc_harvested_fruits(harvested_count: int, total_harvested_kg: int):
+func _on_npc_harvested_fruits(harvested_count: int, _total_harvested_kg: int):
 	# Ubah tracking dari jumlah buah menjadi kg (integer)
 	var harvested_kg = harvested_count * randi_range(30, 40)  # Estimasi kg
 	total_npc_harvest += harvested_kg  # Sekarang total_npc_harvest adalah integer

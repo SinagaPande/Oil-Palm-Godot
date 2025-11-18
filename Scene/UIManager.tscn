@@ -5,6 +5,7 @@
 [node name="UIManager" type="Control"]
 layout_direction = 2
 layout_mode = 3
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
@@ -34,6 +35,7 @@ theme_override_font_sizes/font_size = 30
 text = "UnripeLabel"
 
 [node name="NpcHarvestLabel" type="Label" parent="."]
+layout_mode = 0
 offset_left = 5.0
 offset_top = 85.0
 offset_right = 1925.0

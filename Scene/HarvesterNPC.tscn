@@ -8,7 +8,7 @@
 
 [node name="HarvesterNPC" type="CharacterBody3D"]
 script = ExtResource("1_g7xgt")
-max_carry_capacity = 50
+max_carry_capacity = 30
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(0.5, 0, 0, 0, 1, 0, 0, 0, 0.5, 0, 0, 0)
