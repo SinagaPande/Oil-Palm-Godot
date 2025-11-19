@@ -105,7 +105,7 @@ func clear_all_models():
 func setup_model_position(model_instance: Node3D, index: int):
 	# Atur posisi model berdasarkan index
 	# Contoh: susunan linear sepanjang sumbu X
-	model_instance.position.x = index * 2.0  # Jarak 2 unit antar model
+	model_instance.position.x = index * 0  # Jarak 2 unit antar model
 	# Atau sesuaikan dengan layout scene yang diinginkan
 
 func update_model_progression():

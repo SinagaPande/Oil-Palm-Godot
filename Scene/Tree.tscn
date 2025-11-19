@@ -11,7 +11,7 @@ height = 3.79779
 [node name="Pohon_Sawit" type="Node3D"]
 script = ExtResource("1_72j6q")
 fruit_scene = ExtResource("2_72j6q")
-min_ripe_chance = 0.4
+min_ripe_chance = 0.1
 max_ripe_chance = 1.0
 tree_model_low = ExtResource("3_1l8h6")
 
