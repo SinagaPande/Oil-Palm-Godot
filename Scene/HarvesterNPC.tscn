@@ -8,6 +8,7 @@
 
 [node name="HarvesterNPC" type="CharacterBody3D"]
 script = ExtResource("1_g7xgt")
+move_speed = 5.0
 max_carry_capacity = 30
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]

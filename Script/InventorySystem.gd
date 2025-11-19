@@ -18,8 +18,19 @@ func add_unripe_fruit_kg(weight_kg: float):
 
 # Fungsi untuk menambah buah matang yang sudah diantar (dalam kg)
 func add_delivered_ripe_kg(weight_kg: float):
-	delivered_ripe_kg += int(weight_kg)  # Konversi ke integer
+	var weight_int = int(weight_kg)  # Konversi ke integer
+	delivered_ripe_kg += weight_int
 	permanent_inventory_updated.emit(delivered_ripe_kg, collected_unripe_kg)
+	
+	# Notify delivery zones about the new delivery
+	notify_delivery_zones(weight_int)
+
+func notify_delivery_zones(weight_kg: int):
+	# Cari semua delivery zone dan update progres mereka
+	var delivery_zones = get_tree().get_nodes_in_group("delivery_zone")
+	for zone in delivery_zones:
+		if zone.has_method("add_delivered_weight"):
+			zone.add_delivered_weight(weight_kg)
 
 func get_delivered_ripe_kg() -> int:
 	return delivered_ripe_kg
