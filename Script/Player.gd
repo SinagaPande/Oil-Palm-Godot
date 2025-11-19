@@ -18,8 +18,8 @@ var current_delivery_zone: DeliveryZone = null
 var inventory_system: Node
 var ui_manager: UIManager  # Referensi ke UIManager
 
-const BASE_SPEED = 7
-const SPEED_REDUCTION_PER_KG = 0.02
+const BASE_SPEED = 8
+const SPEED_REDUCTION_PER_KG = 0.01
 
 var is_fully_initialized: bool = false
 

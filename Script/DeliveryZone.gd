@@ -2,11 +2,23 @@ extends Area3D
 
 class_name DeliveryZone
 
-signal fruits_delivered(ripe_count, unripe_count)
+# Konfigurasi LOD - ARRAY untuk multiple models
+@export var lod_models_high: Array[PackedScene] = []  # [MuatSawit_1_High, MuatSawit_2_High, ...]
+@export var lod_models_low: Array[PackedScene] = []   # [MuatSawit_1_Low, MuatSawit_2_Low, ...]
 
-# Konfigurasi progresi model
-@export var weight_threshold_per_model: int = 150  # 120 kg per model
-var muat_sawit_models: Array[Node3D] = []
+var current_lod_level: String = "high"
+var lod_update_timer: float = 0.0
+const LOD_UPDATE_INTERVAL: float = 0.3
+const LOD_HIGH_DISTANCE = 10
+const LOD_LOW_DISTANCE = 15
+
+# Referensi ke model containers
+var model_containers: Array[Node3D] = []
+var player_node: Node3D = null
+var camera_node: Camera3D = null
+
+# Variabel existing...
+@export var weight_threshold_per_model: int = 250
 var current_weight: int = 0
 
 func _ready():
@@ -14,31 +26,100 @@ func _ready():
 	body_entered.connect(_on_body_entered)
 	body_exited.connect(_on_body_exited)
 	
-	# Inisialisasi sistem model progresif
+	# Inisialisasi sistem LOD
+	initialize_lod_system()
 	initialize_progressive_models()
 
+func initialize_lod_system():
+	# Cari player dan camera
+	find_player_and_camera()
+	
+	# Setup model high-poly pertama kali
+	setup_lod_model("high")
+
+func find_player_and_camera():
+	var players = get_tree().get_nodes_in_group("player")
+	if players.size() > 0:
+		player_node = players[0]
+		if player_node.has_node("PlayerController/Camera3D"):
+			camera_node = player_node.get_node("PlayerController/Camera3D")
+		else:
+			camera_node = find_camera_recursive(player_node)
+
+func find_camera_recursive(node: Node) -> Camera3D:
+	for child in node.get_children():
+		if child is Camera3D:
+			return child
+		var found = find_camera_recursive(child)
+		if found:
+			return found
+	return null
+
+func _process(delta):
+	if not player_node or not camera_node:
+		return
+	
+	# Update LOD dengan interval
+	lod_update_timer += delta
+	if lod_update_timer >= LOD_UPDATE_INTERVAL:
+		lod_update_timer = 0.0
+		update_lod()
+
+func update_lod():
+	if not player_node:
+		return
+	
+	var distance_to_player = global_position.distance_to(player_node.global_position)
+	var new_lod_level = "high" if distance_to_player <= LOD_HIGH_DISTANCE else "low"
+	
+	if new_lod_level != current_lod_level:
+		current_lod_level = new_lod_level
+		setup_lod_model(new_lod_level)
+
+func setup_lod_model(lod_level: String):
+	# Hapus semua model existing
+	clear_all_models()
+	
+	# Pilih array model berdasarkan LOD level
+	var selected_models = lod_models_high if lod_level == "high" else lod_models_low
+	
+	# Instantiate semua model
+	for i in range(selected_models.size()):
+		if selected_models[i]:
+			var model_instance = selected_models[i].instantiate()
+			add_child(model_instance)
+			model_containers.append(model_instance)
+			
+			# Position model sesuai dengan layout yang diinginkan
+			setup_model_position(model_instance, i)
+	
+	# Terapkan progres visibility
+	update_model_progression()
+
+func clear_all_models():
+	for container in model_containers:
+		if is_instance_valid(container):
+			container.queue_free()
+	model_containers.clear()
+
+func setup_model_position(model_instance: Node3D, index: int):
+	# Atur posisi model berdasarkan index
+	# Contoh: susunan linear sepanjang sumbu X
+	model_instance.position.x = index * 2.0  # Jarak 2 unit antar model
+	# Atau sesuaikan dengan layout scene yang diinginkan
+
+func update_model_progression():
+	var models_to_show = calculate_models_to_show()
+	
+	# Terapkan visibility berdasarkan progres berat
+	for i in range(model_containers.size()):
+		if i < models_to_show:
+			model_containers[i].visible = true
+		else:
+			model_containers[i].visible = false
+
+# FUNGSI YANG DIPINDAH DARI KODE ASLI (PERBAIKAN)
 func initialize_progressive_models():
-	# Cari semua model Muat Sawit
-	muat_sawit_models.clear()
-	
-	# Cari node StaticBody3D yang berisi model L300
-	var static_body = find_child("StaticBody3D")
-	if static_body:
-		# Cari node L300
-		var l300_node = static_body.find_child("L300")
-		if l300_node:
-			# Kumpulkan semua model Muat Sawit
-			for i in range(1, 6):  # dari Muat Sawit_1 sampai Muat Sawit_5
-				var model_name = "Muat Sawit_%d" % i
-				var model_node = l300_node.find_child(model_name, true, false)
-				if model_node:
-					muat_sawit_models.append(model_node)
-					# Sembunyikan semua model awalnya
-					model_node.visible = false
-					print("Found model: ", model_name)
-	
-	print("Total Muat Sawit models found: ", muat_sawit_models.size())
-	
 	# Load data progres dari save system (jika ada)
 	load_progress_data()
 
@@ -56,7 +137,8 @@ func load_progress_data():
 			current_weight = save_system.get_delivered_weight()
 			update_model_progression()
 
-func update_model_progression():
+# FUNGSI YANG DIPINDAH DARI KODE ASLI
+func calculate_models_to_show() -> int:
 	var models_to_show = 0
 	
 	# LOGIKA BARU: Minimal 1 model terlihat jika ada berat > 0 kg
@@ -66,23 +148,8 @@ func update_model_progression():
 		if current_weight >= weight_threshold_per_model:
 			models_to_show = (current_weight / weight_threshold_per_model) + 1
 	
-	models_to_show = min(models_to_show, muat_sawit_models.size())
-	
-	print("Updating model progression: ", current_weight, " kg -> ", models_to_show, " models")
-	
-	# Tampilkan/sembunyikan model berdasarkan progres
-	for i in range(muat_sawit_models.size()):
-		if i < models_to_show:
-			muat_sawit_models[i].visible = true
-		else:
-			muat_sawit_models[i].visible = false
-
-func add_delivered_weight(weight_kg: int):
-	current_weight += weight_kg
-	update_model_progression()
-	
-	# Simpan progres (jika ada save system)
-	save_progress_data()
+	models_to_show = min(models_to_show, lod_models_high.size())  # Maksimal sesuai jumlah model
+	return models_to_show
 
 func save_progress_data():
 	# Simpan ke save system jika ada
@@ -91,6 +158,7 @@ func save_progress_data():
 		if save_system.has_method("set_delivered_weight"):
 			save_system.set_delivered_weight(current_weight)
 
+# FUNGSI SIGNAL HANDLER YANG DIPINDAH DARI KODE ASLI
 func _on_body_entered(body):
 	if body.is_in_group("player"):
 		if body.has_method("set_in_delivery_zone"):
@@ -101,6 +169,7 @@ func _on_body_exited(body):
 		if body.has_method("set_in_delivery_zone"):
 			body.set_in_delivery_zone(false, null)
 
+# FUNGSI DELIVERY YANG DIPINDAH DARI KODE ASLI
 func deliver_fruits(ripe_count: int, unripe_count: int) -> bool:
 	if ripe_count > 0 or unripe_count > 0:
 		fruits_delivered.emit(ripe_count, unripe_count)
@@ -121,6 +190,12 @@ func deliver_fruits(ripe_count: int, unripe_count: int) -> bool:
 		return true
 	return false
 
+# FUNGSI TAMBAHAN YANG DIPINDAH DARI KODE ASLI
+func add_delivered_weight(weight_kg: int):
+	current_weight += weight_kg
+	update_model_progression()  # Ini akan update model LOD yang aktif
+	save_progress_data()
+
 # Fungsi untuk debugging dan testing
 func debug_set_weight(weight_kg: int):
 	current_weight = weight_kg
@@ -132,7 +207,10 @@ func get_current_weight() -> int:
 
 func get_models_visible_count() -> int:
 	var count = 0
-	for model in muat_sawit_models:
-		if model.visible:
+	for container in model_containers:
+		if is_instance_valid(container) and container.visible:
 			count += 1
 	return count
+
+# SIGNAL YANG DIPINDAH DARI KODE ASLI
+signal fruits_delivered(ripe_count, unripe_count)

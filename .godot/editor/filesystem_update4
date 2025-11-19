@@ -1,6 +1,8 @@
-res://Scene/DeliveryZone.tscn
-res://Script/PlayerController.gd
 res://Scene/Level.tscn
+res://Script/PlayerController.gd
+res://Scene/DeliveryZone.tscn
 res://Scene/HarvesterNPC.tscn
 res://Script/DeliveryZone.gd
-res://Script/InventorySystem.gd
+res://Script/Player.gd
+res://Scene/Tree.tscn
+res://Scene/fruit.tscn

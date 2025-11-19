@@ -1,5 +1,5 @@
 ea4bc82a6ad023ab7ee23ee620429895
-::res://::1763529866
+::res://::1763532114
 icon.png::CompressedTexture2D/CompressedTexture2D::557325075131260776::1763332390::1763332390::1::::<><><>0<>0<>bd13ae2097a421d598bdc4fdb46fb406<>res://.godot/imported/icon.png-487276ed1e3a0c39cad0279d744ee560.bptc.ctex::
 icon.svg::CompressedTexture2D/CompressedTexture2D::5881908033975481201::1763332390::1763332390::1::::<><><>0<>0<>f7708f2b01c2ad5016cc404305529ae0<>res://.godot/imported/icon.svg-218a8f2b3041327d8a5756f3a245f83b.ctex::
 README.md::TextFile/TextFile::-1::1763332390::0::1::::<><><>0<>0<><>::
@@ -13,17 +13,17 @@ L300.gltf::PackedScene/PackedScene::4673606071552576382::1763332392::1763332392:
 Pohon_Sawit.gltf::PackedScene/PackedScene::2380164502437566581::1763332392::1763332392::1::::<><><>0<>0<>6a0a3b0becb447de653dacfc4b0085df<>res://.godot/imported/Pohon_Sawit.gltf-e12e00fcf3008751819b0c3bae97b5a1.scn::
 Pohon_Sawit_LowMesh.gltf::PackedScene/PackedScene::4315764909665232682::1763332392::1763332392::1::::<><><>0<>0<>dac832385d279c2a36ff0a0789f07dc6<>res://.godot/imported/Pohon_Sawit_LowMesh.gltf-4fcceebfeddbdd13fa9e191616aa7783.scn::
 Tojok.gltf::PackedScene/PackedScene::3856981719254562198::1763332392::1763332392::1::::<><><>0<>0<>d50d0f7cdebd4edf427f3f8218d4a395<>res://.godot/imported/Tojok.gltf-2bef521f1788984d4301678cf30f4abb.scn::
-::res://3D Asset/Muatan/::1763530214
-Muat Sawit_1.gltf::PackedScene::2335481207847994019::1763529951::1763529972::1::::<><><>0<>0<>709d27a4e813304e4f51a37c7e741f29<>res://.godot/imported/Muat Sawit_1.gltf-2ba75d5001b05648f786cc0f7b74bf45.scn::
-Muat Sawit_1_Low Mesh.gltf::PackedScene::7069737294169921698::1763529968::1763529972::1::::<><><>0<>0<>1e2096796329422e5816505057810a8a<>res://.godot/imported/Muat Sawit_1_Low Mesh.gltf-f73f4e2b8b12d2668ecbe32b42e5209d.scn::
-Muat Sawit_2.gltf::PackedScene::2155899968875740152::1763530015::1763530018::1::::<><><>0<>0<>4c6ba519daa108d66228a6535744d011<>res://.godot/imported/Muat Sawit_2.gltf-bea1daa78b6608c81f23d30b23aa4dd8.scn::
-Muat Sawit_2_Low Mesh.gltf::PackedScene::8051143426486143720::1763530048::1763530066::1::::<><><>0<>0<>5ca32dd2af919ba429daa9c0bbfe1135<>res://.godot/imported/Muat Sawit_2_Low Mesh.gltf-d8912f85ebecda87c1993fd13ba54318.scn::
-Muat Sawit_3.gltf::PackedScene::8713338329126213752::1763530064::1763530067::1::::<><><>0<>0<>3e8e466a804a5fcdff8439500a496e74<>res://.godot/imported/Muat Sawit_3.gltf-353d9176cc146f5b1ff645205410b03f.scn::
-Muat Sawit_3_Low Mesh.gltf::PackedScene::1340313808523328125::1763530115::1763530117::1::::<><><>0<>0<>01568b77b34ea357f39309369c31abaf<>res://.godot/imported/Muat Sawit_3_Low Mesh.gltf-45d4960981ea786a18e4edf79a8fb502.scn::
-Muat Sawit_4.gltf::PackedScene::4859900947373450486::1763530155::1763530174::1::::<><><>0<>0<>7c9cd29b93d5a9b4e498e46b6dec39af<>res://.godot/imported/Muat Sawit_4.gltf-39dc4ad5386938b5fff1933c1e086b23.scn::
-Muat Sawit_4_Low Mesh.gltf::PackedScene::502847455066560015::1763530171::1763530175::1::::<><><>0<>0<>de04b6c3049da5cb2b10484f9ad6a37c<>res://.godot/imported/Muat Sawit_4_Low Mesh.gltf-3f639e12217ac49b3155ec71a5ef84dc.scn::
-Muat Sawit_5.gltf::PackedScene::7527478294787572887::1763530202::1763530218::1::::<><><>0<>0<>3041ed37b571d5ae12a4f9673807dcb6<>res://.godot/imported/Muat Sawit_5.gltf-56dbefd9538c4c46a0ff0e0eeaab6133.scn::
-Muat Sawit_5_Low Mesh.gltf::PackedScene::1533187407720889232::1763530214::1763530218::1::::<><><>0<>0<>a73f500ef2ca5d2cc11a3b92411d5316<>res://.godot/imported/Muat Sawit_5_Low Mesh.gltf-b7fac2f0405e1419dec23e4fdbb80241.scn::
+::res://3D Asset/Muatan/::1763530218
+Muat Sawit_1.gltf::PackedScene/PackedScene::2335481207847994019::1763529951::1763529972::1::::<><><>0<>0<>709d27a4e813304e4f51a37c7e741f29<>res://.godot/imported/Muat Sawit_1.gltf-2ba75d5001b05648f786cc0f7b74bf45.scn::
+Muat Sawit_1_Low Mesh.gltf::PackedScene/PackedScene::7069737294169921698::1763529968::1763529972::1::::<><><>0<>0<>1e2096796329422e5816505057810a8a<>res://.godot/imported/Muat Sawit_1_Low Mesh.gltf-f73f4e2b8b12d2668ecbe32b42e5209d.scn::
+Muat Sawit_2.gltf::PackedScene/PackedScene::2155899968875740152::1763530015::1763530018::1::::<><><>0<>0<>4c6ba519daa108d66228a6535744d011<>res://.godot/imported/Muat Sawit_2.gltf-bea1daa78b6608c81f23d30b23aa4dd8.scn::
+Muat Sawit_2_Low Mesh.gltf::PackedScene/PackedScene::8051143426486143720::1763530048::1763530066::1::::<><><>0<>0<>5ca32dd2af919ba429daa9c0bbfe1135<>res://.godot/imported/Muat Sawit_2_Low Mesh.gltf-d8912f85ebecda87c1993fd13ba54318.scn::
+Muat Sawit_3.gltf::PackedScene/PackedScene::8713338329126213752::1763530064::1763530067::1::::<><><>0<>0<>3e8e466a804a5fcdff8439500a496e74<>res://.godot/imported/Muat Sawit_3.gltf-353d9176cc146f5b1ff645205410b03f.scn::
+Muat Sawit_3_Low Mesh.gltf::PackedScene/PackedScene::1340313808523328125::1763530115::1763530117::1::::<><><>0<>0<>01568b77b34ea357f39309369c31abaf<>res://.godot/imported/Muat Sawit_3_Low Mesh.gltf-45d4960981ea786a18e4edf79a8fb502.scn::
+Muat Sawit_4.gltf::PackedScene/PackedScene::4859900947373450486::1763530155::1763530174::1::::<><><>0<>0<>7c9cd29b93d5a9b4e498e46b6dec39af<>res://.godot/imported/Muat Sawit_4.gltf-39dc4ad5386938b5fff1933c1e086b23.scn::
+Muat Sawit_4_Low Mesh.gltf::PackedScene/PackedScene::502847455066560015::1763530171::1763530175::1::::<><><>0<>0<>de04b6c3049da5cb2b10484f9ad6a37c<>res://.godot/imported/Muat Sawit_4_Low Mesh.gltf-3f639e12217ac49b3155ec71a5ef84dc.scn::
+Muat Sawit_5.gltf::PackedScene/PackedScene::7527478294787572887::1763530202::1763530218::1::::<><><>0<>0<>3041ed37b571d5ae12a4f9673807dcb6<>res://.godot/imported/Muat Sawit_5.gltf-56dbefd9538c4c46a0ff0e0eeaab6133.scn::
+Muat Sawit_5_Low Mesh.gltf::PackedScene/PackedScene::1533187407720889232::1763530214::1763530218::1::::<><><>0<>0<>a73f500ef2ca5d2cc11a3b92411d5316<>res://.godot/imported/Muat Sawit_5_Low Mesh.gltf-b7fac2f0405e1419dec23e4fdbb80241.scn::
 ::res://addons/::1763332393
 ::res://addons/gltf2meshlib/::1763332393
 flagsdetect.gd::GDScript/GDScript::2037491071470957300::1763332393::0::1::::<>Resource<><>0<>0<><>::
@@ -52,7 +52,7 @@ LICENSE.txt::TextFile/TextFile::-1::1763332393::0::1::::<><><>0<>0<><>::
 plugin.cfg::TextFile/TextFile::-1::1763332393::0::1::::<><><>0<>0<><>::
 README.md::TextFile/TextFile::-1::1763332393::0::1::::<><><>0<>0<><>::
 terrain.gdextension::GDExtension/GDExtension::6265765667603777489::1763332393::0::1::::<><><>0<>0<><>::
-::res://addons/terrain_3d/bin/::1763529857
+::res://addons/terrain_3d/bin/::1763532106
 ::res://addons/terrain_3d/bin/libterrain.macos.debug.framework/::1763332393
 ::res://addons/terrain_3d/bin/libterrain.macos.release.framework/::1763332393
 ::res://addons/terrain_3d/extras/::1763332394
@@ -167,22 +167,22 @@ RuntimeNavigationBaker.gd::GDScript/GDScript::3599888765861783374::1763332394::0
 UI.gd::GDScript/GDScript::5046887877086516967::1763332394::0::1::::<>Control<><>0<>0<><>::
 ::res://Performance Report/::1763332392
 performancemonitor.gd::GDScript/GDScript::3613987215694202426::1763332392::0::1::::<>Node<><>0<>0<><>::
-::res://Scene/::1763529457
-DeliveryZone.tscn::PackedScene::7282198304629499503::1763529457::0::1::::<><><>0<>0<><>::uid://cdopw8tuc7t5i::::res://Script/DeliveryZone.gd<>uid://b7t6uyhb6n7yw::::res://3D Asset/L300.gltf
+::res://Scene/::1763531670
+DeliveryZone.tscn::PackedScene::7282198304629499503::1763531670::0::1::::<><><>0<>0<><>::uid://cdopw8tuc7t5i::::res://Script/DeliveryZone.gd<>uid://b7t6uyhb6n7yw::::res://3D Asset/L300.gltf<>uid://8jlbfvffn8ah::::res://3D Asset/Muatan/Muat Sawit_1.gltf<>uid://5ylmfjo0n8ho::::res://3D Asset/Muatan/Muat Sawit_2.gltf<>uid://dwe2n6dahwmg3::::res://3D Asset/Muatan/Muat Sawit_3.gltf<>uid://cbif4gq7obi8m::::res://3D Asset/Muatan/Muat Sawit_4.gltf<>uid://dfimp5x6shv7l::::res://3D Asset/Muatan/Muat Sawit_5.gltf
 fruit.tscn::PackedScene/PackedScene::367893611287629632::1763528510::0::1::::<><><>0<>0<><>::uid://d1eqpbdwh5vd::::res://Script/Fruit.gd
-HarvesterNPC.tscn::PackedScene/PackedScene::370486365102826763::1763488830::0::1::::<><><>0<>0<><>::uid://c5rots8intces::::res://Script/HarvesterNPC.gd
-Level.tscn::PackedScene::4336038157952053298::1763529380::0::1::::<><><>0<>0<><>::uid://cro4dsaaw46m6::::res://Scene/Player.tscn<>uid://yhgy8yiuvq0a::::res://Script/InventorySystem.gd<>uid://ce7kun3axgivb::::res://Scene/Tree.tscn<>uid://d1eqpbdwh5vd::::res://Script/Fruit.gd<>uid://brqv3uxwljvdi::::res://Performance Report/performancemonitor.gd<>uid://db0s0h54nq8sx::::res://Scene/DeliveryZone.tscn<>uid://cyybpit81epho::::res://Script/NPCManager.gd<>uid://fjp4d5gsnx0v::::res://Scene/HarvesterNPC.tscn<>uid://s32mga8hhl4v::::res://Scene/UIManager.tscn
+HarvesterNPC.tscn::PackedScene::370486365102826763::1763531647::0::1::::<><><>0<>0<><>::uid://c5rots8intces::::res://Script/HarvesterNPC.gd
+Level.tscn::PackedScene::4336038157952053298::1763531647::0::1::::<><><>0<>0<><>::uid://cro4dsaaw46m6::::res://Scene/Player.tscn<>uid://yhgy8yiuvq0a::::res://Script/InventorySystem.gd<>uid://ce7kun3axgivb::::res://Scene/Tree.tscn<>uid://d1eqpbdwh5vd::::res://Script/Fruit.gd<>uid://brqv3uxwljvdi::::res://Performance Report/performancemonitor.gd<>uid://db0s0h54nq8sx::::res://Scene/DeliveryZone.tscn<>uid://cyybpit81epho::::res://Script/NPCManager.gd<>uid://fjp4d5gsnx0v::::res://Scene/HarvesterNPC.tscn<>uid://s32mga8hhl4v::::res://Scene/UIManager.tscn
 Player.tscn::PackedScene/PackedScene::5996720093412409723::1763488797::0::1::::<><><>0<>0<><>::uid://xrqu7ocbd6ce::::res://Script/PlayerController.gd<>uid://bpfyr0a0ogs5x::::res://Script/Player.gd<>uid://cldfugbgjbpxy::::res://3D Asset/Egrek.glb<>uid://d2113ln4fmisb::::res://Script/InteractionSystem.gd<>uid://bu7l6p1cy8jms::::res://3D Asset/Tojok.gltf
 Tree.tscn::PackedScene/PackedScene::5120300441963064075::1763488797::0::1::::<><><>0<>0<><>::uid://cix5mto7iuouh::::res://Script/Tree.gd<>uid://fihfib6eqs53::::res://Scene/fruit.tscn<>uid://b2quauiv873h3::::res://3D Asset/Pohon_Sawit_LowMesh.gltf<>uid://8577xvcn1iun::::res://3D Asset/Pohon_Sawit.gltf
 UIManager.tscn::PackedScene/PackedScene::1322862867578922979::1763488797::0::1::::<><><>0<>0<><>::uid://bfw2npq73q3oo::::res://Script/UIManager.gd
-::res://Script/::1763529380
-DeliveryZone.gd::GDScript/GDScript::5013260992749041328::1763332392::0::1::::DeliveryZone<>Area3D<><>0<>0<><>::
+::res://Script/::1763531637
+DeliveryZone.gd::GDScript::5013260992749041328::1763531637::0::1::::DeliveryZone<>Area3D<><>0<>0<><>::
 Fruit.gd::GDScript/GDScript::264512582754268285::1763381814::0::1::::Fruit<>RigidBody3D<><>0<>0<><>::
 HarvesterNPC.gd::GDScript/GDScript::6914486063109566666::1763488537::0::1::::HarvesterNPC<>CharacterBody3D<><>0<>0<><>::
 InteractionSystem.gd::GDScript/GDScript::9109663894117096341::1763476261::0::1::::InteractionSystem<>Node3D<><>0<>0<><>::
-InventorySystem.gd::GDScript/GDScript::1699391823338427514::1763381814::0::1::::InventorySystem<>Node<><>0<>0<><>::
+InventorySystem.gd::GDScript::1699391823338427514::1763531402::0::1::::InventorySystem<>Node<><>0<>0<><>::
 NPCManager.gd::GDScript/GDScript::6507006635770127448::1763488587::0::1::::NPCManager<>Node<><>0<>0<><>::
 Player.gd::GDScript/GDScript::3451064107595269643::1763476261::0::1::::Player<>CharacterBody3D<><>0<>0<><>::
-PlayerController.gd::GDScript::1650446715722949804::1763529380::0::1::::PlayerController<>Node3D<><>0<>0<><>::
+PlayerController.gd::GDScript::1650446715722949804::1763530240::0::1::::PlayerController<>Node3D<><>0<>0<><>::
 Tree.gd::GDScript/GDScript::5383676765180030471::1763487804::0::1::::PalmTree<>Node3D<><>0<>0<><>::
 UIManager.gd::GDScript/GDScript::2784444600657171738::1763488587::0::1::::UIManager<>Control<><>0<>0<><>::
