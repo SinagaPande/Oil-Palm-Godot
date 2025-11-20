@@ -182,3 +182,5 @@ func collect_fruit(fruit):
 		
 		fruit.queue_free()
 		clear_target()
+		
+	

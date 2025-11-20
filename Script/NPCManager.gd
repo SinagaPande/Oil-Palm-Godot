@@ -135,6 +135,20 @@ func _on_npc_harvested_fruits(harvested_count: int, _total_harvested_kg: int):
 	print("Jumlah NPC aktif: %d" % active_npcs.size())
 	print("==========================")
 
+func reset_npc_harvest():
+	"""Reset total panen NPC untuk ronde baru"""
+	total_npc_harvest = 0
+	
+	# Reset inventaris setiap NPC aktif
+	for npc in active_npcs:
+		if is_instance_valid(npc):
+			# Panggil method reset jika ada di NPC
+			if npc.has_method("reset_after_carrying"):
+				npc.reset_after_carrying()
+	
+	# Kirim sinyal update
+	npc_total_harvest_updated.emit(0)
+	print("NPC Manager: Semua data panen NPC di-reset")
 
 func get_active_npc_count() -> int:
 	return active_npcs.size()

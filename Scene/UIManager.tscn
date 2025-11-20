@@ -63,7 +63,16 @@ theme_override_font_sizes/font_size = 50
 text = "NotificationLabel"
 horizontal_alignment = 1
 
+[node name="TimerLabel" type="Label" parent="."]
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 69.0
+theme_override_font_sizes/font_size = 50
+text = "Timer"
+horizontal_alignment = 1
+
 [node name="PauseMenu" type="Control" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -100,4 +109,48 @@ offset_left = 710.0
 offset_top = 690.0
 offset_right = 1210.0
 offset_bottom = 790.0
+text = "Quit"
+
+[node name="RoundEndPanel" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="FinalScoreLabel" type="Label" parent="RoundEndPanel"]
+layout_mode = 2
+offset_top = 300.0
+offset_right = 1920.0
+offset_bottom = 555.0
+theme_override_font_sizes/font_size = 50
+text = "FinalScoreLabel"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DetailsLabel" type="Label" parent="RoundEndPanel"]
+layout_mode = 0
+offset_top = 55.0
+offset_right = 1920.0
+offset_bottom = 441.0
+theme_override_font_sizes/font_size = 50
+text = "DetailsLabel"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RestartButton" type="Button" parent="RoundEndPanel"]
+layout_mode = 2
+offset_left = 710.0
+offset_top = 640.0
+offset_right = 1210.0
+offset_bottom = 740.0
+text = "Restart"
+
+[node name="QuitButton" type="Button" parent="RoundEndPanel"]
+layout_mode = 0
+offset_left = 710.0
+offset_top = 860.0
+offset_right = 1210.0
+offset_bottom = 960.0
 text = "Quit"

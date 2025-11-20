@@ -81,10 +81,18 @@ func setup_collision_config():
 			collision_shape.shape.radius *= 0.8  # Sedikit perkecil untuk memudahkan navigasi
 
 func _physics_process(delta):
+	# ⬅️ PERBAIKAN KRITIS: Hentikan semua proses jika game paused
+	if get_tree().paused:
+		return
+	
 	state_process(delta)
 	update_tree_cooldowns(delta)
 
 func state_process(delta):
+	# ⬅️ PERBAIKAN KEAMANAN: Double check untuk paused state
+	if get_tree().paused:
+		return
+	
 	match current_state:
 		NPCState.SPAWN:
 			pass  # ⬅️ SUDAH DIPINDAH KE initialize_npc()
@@ -175,11 +183,19 @@ func reset_after_carrying():
 	transition_to_state(NPCState.SEARCH)
 
 func transition_to_state(new_state: NPCState):
+	# ⬅️ PERBAIKAN: Jangan proses state transition jika game paused
+	if get_tree().paused:
+		return
+	
 	state_exit(current_state)
 	current_state = new_state
 	state_enter(new_state)
 
 func state_enter(state: NPCState):
+	# ⬅️ PERBAIKAN: Jangan proses state enter jika game paused
+	if get_tree().paused:
+		return
+	
 	match state:
 		NPCState.SPAWN:
 			pass
@@ -224,6 +240,10 @@ func state_enter(state: NPCState):
 			pass
 
 func state_exit(state: NPCState):
+	# ⬅️ PERBAIKAN: Jangan proses state exit jika game paused
+	if get_tree().paused:
+		return
+	
 	match state:
 		NPCState.HARVEST:
 			if target_tree and is_instance_valid(target_tree) and target_tree.has_method("set_harvesting_mode_active"):
@@ -264,6 +284,10 @@ func calculate_fruits_to_harvest() -> int:
 	return min(available_fruits, can_carry)
 
 func update_tree_cooldowns(delta: float):
+	# ⬅️ PERBAIKAN: Jangan update cooldowns jika game paused
+	if get_tree().paused:
+		return
+	
 	var trees_to_remove = []
 	for tree in tree_cooldowns:
 		if not is_instance_valid(tree):
@@ -333,6 +357,10 @@ func mark_tree_visited(tree: Node3D):
 	tree_cooldowns[tree] = TREE_COOLDOWN_TIME
 
 func find_nearest_tree() -> Node3D:
+	# ⬅️ PERBAIKAN: Jangan cari tree jika game paused
+	if get_tree().paused:
+		return null
+	
 	var trees = get_tree().get_nodes_in_group("tree")
 	var nearest_tree: Node3D = null
 	var nearest_distance = INF
@@ -361,6 +389,10 @@ func find_nearest_tree() -> Node3D:
 	return nearest_tree
 
 func move_towards_target(target_position: Vector3):
+	# ⬅️ PERBAIKAN: Jangan bergerak jika game paused
+	if get_tree().paused:
+		return
+	
 	var direction = (target_position - global_position).normalized()
 	direction.y = 0
 	
