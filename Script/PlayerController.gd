@@ -128,6 +128,10 @@ func set_tool_animation_enabled(enabled: bool):
 				tojok_node.set_meta("animation_enabled", true)
 
 func _input(event):
+	# ⬅️ TAMBAHKAN: Jangan proses input jika game paused
+	if get_tree().paused:
+		return
+		
 	if event is InputEventMouseMotion:
 		handle_mouse_motion(event)
 	elif event.is_action_pressed("ui_cancel"):
@@ -154,6 +158,10 @@ func toggle_mouse_mode():
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE if current_mode == Input.MOUSE_MODE_CAPTURED else Input.MOUSE_MODE_CAPTURED)
 
 func _physics_process(delta):
+	# ⬅️ TAMBAHKAN: Jangan proses physics jika game paused
+	if get_tree().paused:
+		return
+		
 	if !player_body:
 		return
 	

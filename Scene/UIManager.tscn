@@ -62,3 +62,42 @@ offset_bottom = 919.0
 theme_override_font_sizes/font_size = 50
 text = "NotificationLabel"
 horizontal_alignment = 1
+
+[node name="PauseMenu" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GAME PAUSED" type="Label" parent="PauseMenu"]
+layout_mode = 2
+offset_right = 1920.0
+offset_bottom = 23.0
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ResumeButton" type="Button" parent="PauseMenu"]
+layout_mode = 0
+offset_left = 710.0
+offset_top = 290.0
+offset_right = 1210.0
+offset_bottom = 390.0
+text = "Resume"
+
+[node name="RestartButton" type="Button" parent="PauseMenu"]
+layout_mode = 2
+offset_left = 710.0
+offset_top = 490.0
+offset_right = 1210.0
+offset_bottom = 590.0
+text = "Restart"
+
+[node name="QuitButton" type="Button" parent="PauseMenu"]
+layout_mode = 2
+offset_left = 710.0
+offset_top = 690.0
+offset_right = 1210.0
+offset_bottom = 790.0
+text = "Quit"

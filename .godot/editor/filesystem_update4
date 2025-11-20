@@ -4,4 +4,5 @@ res://Scene/DeliveryZone.tscn
 res://Scene/HarvesterNPC.tscn
 res://Scene/Tree.tscn
 res://Scene/fruit.tscn
-res://Script/DeliveryZone.gd
+res://Script/UIManager.gd
+res://Scene/UIManager.tscn
