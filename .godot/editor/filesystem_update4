@@ -5,5 +5,3 @@ res://Scene/HarvesterNPC.tscn
 res://Scene/Tree.tscn
 res://Scene/fruit.tscn
 res://Scene/UIManager.tscn
-res://Script/GameModeManager.gd
-res://Script/UIManager.gd

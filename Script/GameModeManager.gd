@@ -2,7 +2,7 @@ extends Node
 class_name GameModeManager
 
 # Konfigurasi waktu
-const ROUND_DURATION: float = 20  # 3 menit
+const ROUND_DURATION: float = 60  # 3 menit
 var remaining_time: float = ROUND_DURATION
 var is_round_active: bool = false
 var was_paused_before_round_end: bool = false
