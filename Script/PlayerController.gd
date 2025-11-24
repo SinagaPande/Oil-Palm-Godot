@@ -13,7 +13,7 @@ var current_tool: Tool = Tool.EGREK
 
 var current_speed = 5.5
 const JUMP_VELOCITY = 7.0
-const GRAVITY = 20.0
+const GRAVITY = 25.0
 
 const MOUSE_SENSITIVITY = 0.075
 const VERTICAL_CLAMP = Vector2(-70.0, 80.0)
