@@ -32,6 +32,10 @@ const TOJOK_SHOOT_ROTATION = Vector3(51.5, 90.0, 82.0)
 const TRANSITION_THRESHOLD = 35.0
 const ANIMATION_DISABLE_THRESHOLD = 10.0
 
+# ⬅️ TAMBAHKAN: Parameter untuk smooth deceleration
+const DECELERATION = 75  # Nilai percepatan pengereman (higher = faster stop)
+const MIN_VELOCITY_THRESHOLD = 0.01  # Kecepatan minimum sebelum dianggap berhenti
+
 var egrek_tween: Tween
 var tojok_tween: Tween
 var tojok_shoot_tween: Tween  # ✅ Tween khusus untuk animasi shoot Tojok
@@ -168,8 +172,26 @@ func _physics_process(delta):
 	var input_direction_2D = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 	var direction = player_body.transform.basis * Vector3(input_direction_2D.x, 0.0, input_direction_2D.y)
 	
-	player_body.velocity.x = direction.x * current_speed
-	player_body.velocity.z = direction.z * current_speed
+	# ⬅️ MODIFIKASI: Terapkan smooth deceleration
+	if input_direction_2D.length() > 0:
+		# Ada input - terapkan gerakan normal
+		player_body.velocity.x = direction.x * current_speed
+		player_body.velocity.z = direction.z * current_speed
+	else:
+		# Tidak ada input - terapkan deceleration
+		var horizontal_velocity = Vector2(player_body.velocity.x, player_body.velocity.z)
+		if horizontal_velocity.length() > MIN_VELOCITY_THRESHOLD:
+			# Kurangi kecepatan secara bertahap menggunakan move_toward
+			var deceleration_amount = DECELERATION * delta
+			horizontal_velocity = horizontal_velocity.move_toward(Vector2.ZERO, deceleration_amount)
+			player_body.velocity.x = horizontal_velocity.x
+			player_body.velocity.z = horizontal_velocity.y
+		else:
+			# Kecepatan sudah sangat kecil, set ke nol
+			player_body.velocity.x = 0.0
+			player_body.velocity.z = 0.0
+	
+	# Tetap terapkan gravity dan jump seperti semula
 	player_body.velocity.y -= GRAVITY * delta
 	
 	if Input.is_action_just_pressed("jump") and player_body.is_on_floor():
