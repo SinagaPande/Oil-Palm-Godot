@@ -6,12 +6,11 @@ class_name NPCManager
 @export var spawn_interval: float = 10.0
 
 @export var manual_spawn_points: Array[Marker3D] = []
-@export var use_manual_spawn_points: bool = false
+@export var use_manual_spawn_points: bool = true  # ⬅️ UBAH KE TRUE
 
 var spawn_points: Array[Marker3D] = []
 var active_npcs: Array[HarvesterNPC] = []
 var spawn_timer: float = 0.0
-var is_ready: bool = false
 
 @export var ground_collision_mask: int = 1
 @export var spawn_height_offset: float = 1.0
@@ -22,20 +21,21 @@ signal npc_total_harvest_updated(total_kg)
 
 func _ready():
 	add_to_group("npc_manager")
-	is_ready = true
 	call_deferred("initialize_spawn_system")
 
 func initialize_spawn_system():
 	find_spawn_points()
+	
+	# ⬅️ DEBUG: Tampilkan spawn points yang ditemukan
+	print("NPC Manager: Found %d spawn points" % spawn_points.size())
+	for i in range(spawn_points.size()):
+		print("  Spawn Point %d: %s at %s" % [i, spawn_points[i].name, spawn_points[i].global_position])
 	
 	for i in range(max_npcs):
 		if spawn_points.size() > 0:
 			spawn_harvester_npc()
 
 func _process(delta):
-	if not is_ready:
-		return
-	
 	if active_npcs.size() < max_npcs:
 		spawn_timer += delta
 		if spawn_timer >= spawn_interval:
@@ -46,11 +46,18 @@ func _process(delta):
 func find_spawn_points():
 	spawn_points.clear()
 	
-	if use_manual_spawn_points and manual_spawn_points.size() > 0:
+	# ⬅️ PERBAIKAN: Prioritaskan manual spawn points jika diaktifkan
+	if use_manual_spawn_points:
+		print("NPC Manager: Using manual spawn points")
 		for marker in manual_spawn_points:
 			if is_instance_valid(marker) and marker is Marker3D:
 				spawn_points.append(marker)
+				# Pastikan ditambahkan ke group untuk NPC
+				if not marker.is_in_group("npc_spawn"):
+					marker.add_to_group("npc_spawn")
+					print("NPC Manager: Added manual spawn point to group: %s" % marker.name)
 	else:
+		print("NPC Manager: Using automatic spawn point detection")
 		var root = get_tree().root
 		find_markers_recursive(root)
 
@@ -59,6 +66,10 @@ func find_markers_recursive(node: Node):
 		if child is Marker3D:
 			if should_use_as_spawn_point(child):
 				spawn_points.append(child)
+				# ⬅️ TAMBAHKAN KE GROUP UNTUK MEMUDAHKAN PENCARIAN
+				if not child.is_in_group("npc_spawn"):
+					child.add_to_group("npc_spawn")
+					print("NPC Manager: Found automatic spawn point: %s" % child.name)
 		find_markers_recursive(child)
 
 func should_use_as_spawn_point(marker: Marker3D) -> bool:
@@ -70,13 +81,15 @@ func should_use_as_spawn_point(marker: Marker3D) -> bool:
 	if marker.is_in_group("npc_spawn"):
 		return true
 	
-	return true
+	return false  # ⬅️ UBAH KE FALSE agar hanya marker dengan kriteria tertentu yang digunakan
 
 func spawn_harvester_npc():
 	if not harvester_npc_scene:
+		print("NPC Manager: No NPC scene assigned!")
 		return
 	
 	if spawn_points.size() == 0:
+		print("NPC Manager: No spawn points available!")
 		return
 	
 	var spawn_point = spawn_points[randi() % spawn_points.size()]
@@ -84,9 +97,10 @@ func spawn_harvester_npc():
 	
 	var npc_instance = harvester_npc_scene.instantiate()
 	if not npc_instance:
+		print("NPC Manager: Failed to instantiate NPC!")
 		return
 	
-	call_deferred("add_npc_to_scene", npc_instance, safe_spawn_position, spawn_point.global_rotation)
+	call_deferred("add_npc_to_scene", npc_instance, safe_spawn_position)
 
 func get_safe_spawn_position(original_position: Vector3) -> Vector3:
 	var viewport = get_tree().root
@@ -107,30 +121,45 @@ func get_safe_spawn_position(original_position: Vector3) -> Vector3:
 	else:
 		return Vector3(original_position.x, spawn_height_offset, original_position.z)
 
-func add_npc_to_scene(npc_instance: HarvesterNPC, spawn_position: Vector3, spawn_rotation: Vector3):
+func add_npc_to_scene(npc_instance: HarvesterNPC, spawn_position: Vector3):
 	get_parent().add_child(npc_instance)
 	npc_instance.global_position = spawn_position
-	npc_instance.global_rotation = spawn_rotation
 	
-	# Connect signal untuk menerima data panen dari NPC
+	# Connect signals
 	if npc_instance.has_signal("npc_harvested_fruits"):
 		npc_instance.npc_harvested_fruits.connect(_on_npc_harvested_fruits)
+	
+	if npc_instance.has_signal("npc_returned_to_spawn"):
+		npc_instance.npc_returned_to_spawn.connect(_on_npc_returned_to_spawn)
 	
 	if npc_instance.has_method("initialize_npc"):
 		npc_instance.call_deferred("initialize_npc")
 	
 	active_npcs.append(npc_instance)
+	print("NPC Manager: Spawn NPC baru di %s. Total aktif: %d" % [spawn_position, active_npcs.size()])
 
-func _on_npc_harvested_fruits(harvested_count: int, _total_harvested_kg: int):
-	# Ubah tracking dari jumlah buah menjadi kg (integer)
-	var harvested_kg = harvested_count * randi_range(30, 40)  # Estimasi kg
-	total_npc_harvest += harvested_kg  # Sekarang total_npc_harvest adalah integer
+func _on_npc_returned_to_spawn(npc_instance: HarvesterNPC):
+	print("NPC Manager: NPC kembali ke spawn point, menghapus dari daftar")
+	
+	if npc_instance in active_npcs:
+		active_npcs.erase(npc_instance)
+	
+	# ⬅️ TAMBAHKAN: Update total harvest dari NPC yang kembali
+	var npc_harvest = npc_instance.get_total_harvested()
+	if npc_harvest > 0:
+		print("NPC Manager: NPC membawa %d kg buah sebelum menghilang" % npc_harvest)
+	
+	print("NPC Manager: Sisa NPC aktif: %d" % active_npcs.size())
+
+func _on_npc_harvested_fruits(harvested_count: int, total_harvested_kg: int):
+	# Gunakan data total_harvested_kg yang sudah dihitung oleh NPC
+	total_npc_harvest += total_harvested_kg
 	
 	# ⬅️ PANCAHKAN SIGNAL BARU SETELAH UPDATE TOTAL
 	npc_total_harvest_updated.emit(total_npc_harvest)
 	
 	print("=== NPC HARVEST REPORT ===")
-	print("Buah dipanen saat ini: %d buah (%d kg)" % [harvested_count, harvested_kg])
+	print("Buah dipanen saat ini: %d buah (%d kg)" % [harvested_count, total_harvested_kg])
 	print("Total buah dipanen NPC: %d kg" % total_npc_harvest)
 	print("Jumlah NPC aktif: %d" % active_npcs.size())
 	print("==========================")
@@ -187,7 +216,7 @@ func get_total_npc_harvest() -> int:
 func show_npc_status():
 	print("=== NPC STATUS ===")
 	print("Total NPC aktif: %d" % active_npcs.size())
-	print("Total buah dipanen: %.1f kg" % total_npc_harvest)
+	print("Total buah dipanen: %d kg" % total_npc_harvest)
 	
 	for i in range(active_npcs.size()):
 		var npc = active_npcs[i]
@@ -195,6 +224,6 @@ func show_npc_status():
 			var carried = npc.get_npc_carried_fruits()
 			var carried_kg = npc.get_npc_carried_kg()
 			var total = npc.get_total_harvested()
-			print("NPC %d: Membawa %d buah (%.1f kg), Total dipanen: %.1f kg" % [i, carried, carried_kg, total])
+			print("NPC %d: Membawa %d buah (%d kg), Total dipanen: %d kg" % [i, carried, carried_kg, total])
 	
 	print("==================")
