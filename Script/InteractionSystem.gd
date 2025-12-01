@@ -3,7 +3,7 @@ class_name InteractionSystem
 
 @export var camera: Camera3D
 @export var player_controller: Node
-@export var ui_manager: UIManager  # Referensi ke UIManager
+@export var ui_manager: UIManager
 
 const RAY_LENGTH = 5.25
 
@@ -15,7 +15,6 @@ func _ready():
 	player_node = get_parent()
 
 func find_ui_manager():
-	# Coba beberapa lokasi
 	var paths_to_try = [
 		"/root/Node3D/UIManager",
 		"../../UIManager",
@@ -25,15 +24,12 @@ func find_ui_manager():
 	for path in paths_to_try:
 		ui_manager = get_node_or_null(path)
 		if ui_manager:
-			break
+			return
 	
-	# Jika tidak ditemukan, cari by group
-	if ui_manager == null:
-		var ui_managers = get_tree().get_nodes_in_group("ui_manager")
-		if ui_managers.size() > 0:
-			ui_manager = ui_managers[0]
+	var ui_managers = get_tree().get_nodes_in_group("ui_manager")
+	if ui_managers.size() > 0:
+		ui_manager = ui_managers[0]
 	
-	# Jika masih null, cari di scene tree
 	if ui_manager == null:
 		ui_manager = get_tree().root.find_child("UIManager", true, false)
 
@@ -45,7 +41,6 @@ func _physics_process(_delta):
 	raycast_system()
 
 func handle_interaction():
-	# ✅ Trigger animasi berdasarkan alat aktif
 	if player_controller and player_controller.has_method("play_tool_animation"):
 		player_controller.play_tool_animation()
 	
@@ -54,16 +49,12 @@ func handle_interaction():
 	else:
 		if player_node and player_node.has_method("deliver_fruits"):
 			var can_deliver = player_node.deliver_fruits()
-			if can_deliver:
-				# Pesan sekarang ditangani di UIManager
-				pass  # Kosongkan karena sudah ditangani di deliver_fruits()
-			elif player_node.in_delivery_zone and player_node.get_carried_ripe_fruits() == 0:
+			if not can_deliver and player_node.in_delivery_zone and player_node.get_carried_ripe_fruits() == 0:
 				if ui_manager:
 					ui_manager.show_interaction_label("Tidak ada buah matang untuk diantar")
 
 func handle_target_interaction():
 	if current_target.is_in_group("buah"):
-		# ✅ Hanya Egrek yang bisa menjatuhkan buah dari pohon
 		if player_controller and player_controller.has_method("is_egrek_active") and player_controller.is_egrek_active():
 			handle_fruit_harvest()
 		else:
@@ -71,7 +62,6 @@ func handle_target_interaction():
 				ui_manager.show_interaction_label("Gunakan Egrek (Tombol 1) untuk menjatuhkan buah")
 			
 	elif current_target.is_in_group("buah_jatuh") and current_target.has_touched_surface:
-		# ✅ Hanya Tojok yang bisa mengumpulkan buah dari tanah
 		if player_controller and player_controller.has_method("is_tojok_active") and player_controller.is_tojok_active():
 			collect_fruit(current_target)
 		else:
@@ -80,15 +70,7 @@ func handle_target_interaction():
 
 func handle_fruit_harvest():
 	var player_position = get_parent().global_position
-	
 	var fruit_type = current_target.get("fruit_type")
-	
-	# ✅ PERBAIKAN: Hanya buah matang yang diproses saat jatuh dari pohon
-	# Buah mentah sudah langsung memberikan poin saat jatuh, tidak perlu diproses lagi
-	if fruit_type == "Mentah":
-		# Buah mentah sudah memberikan poin saat fall_from_tree() dipanggil
-		# Tidak perlu memanggil add_to_inventory lagi
-		pass
 	
 	current_target.fall_from_tree(player_position)
 
@@ -119,32 +101,30 @@ func handle_raycast_result(collider):
 	if is_fruit(collider):
 		current_target = collider
 		
-		# ✅ Sederhana: Tidak perlu bedakan matang/mentah untuk buah di pohon
 		if player_controller and player_controller.has_method("is_egrek_active"):
 			if player_controller.is_egrek_active():
 				if ui_manager:
-					ui_manager.show_interaction_label("Klik untuk menjatuhkan buah")  # ✅ Disederhanakan
+					ui_manager.show_interaction_label("Klik untuk menjatuhkan buah")
 			else:
 				if ui_manager:
-					ui_manager.show_interaction_label("Pakai Egrek (1) jatuhkan buah")  # ✅ Konsisten
+					ui_manager.show_interaction_label("Pakai Egrek (1) jatuhkan buah")
 				
 	elif is_collectable_fruit(collider):
 		current_target = collider
 		var fruit_type = collider.get("fruit_type")
-		var type_text = "masak" if fruit_type == "Masak" else "mentah"  # ✅ Tetap ada keterangan jenis buah
+		var type_text = "masak" if fruit_type == "Masak" else "mentah"
 		
-		# ✅ Sederhana tapi tetap ada info jenis buah
 		if player_controller and player_controller.has_method("is_tojok_active"):
 			if player_controller.is_tojok_active():
 				if collider.can_be_collected:
 					if ui_manager:
-						ui_manager.show_interaction_label("Klik untuk mengambil buah " + type_text)  # ✅ Tambah jenis buah
+						ui_manager.show_interaction_label("Klik untuk mengambil buah " + type_text)
 				else:
 					if ui_manager:
-						ui_manager.show_interaction_label("Buah " + type_text + " belum sampai tanah")  # ✅ Tambah jenis buah
+						ui_manager.show_interaction_label("Buah " + type_text + " belum sampai tanah")
 			else:
 				if ui_manager:
-					ui_manager.show_interaction_label("Pakai Tojok (2) ambil buah")  # ✅ Lebih pendek
+					ui_manager.show_interaction_label("Pakai Tojok (2) ambil buah")
 	else:
 		clear_target()
 
@@ -171,16 +151,9 @@ func collect_fruit(fruit):
 	if fruit.is_in_group("buah_jatuh") and fruit.has_touched_surface and fruit.can_be_collected:
 		var fruit_type = fruit.get("fruit_type")
 		
-		# ✅ PERBAIKAN: Hanya buah matang yang perlu dikumpulkan ke inventory
-		# Buah mentah sudah memberikan poin saat jatuh, tidak perlu diproses lagi
 		if fruit_type == "Masak":
 			if player_node and player_node.has_method("add_to_inventory"):
 				player_node.add_to_inventory("Masak")
-		elif fruit_type == "Mentah":
-			# Buah mentah tidak perlu diproses lagi, hanya dihapus dari scene
-			pass
 		
 		fruit.queue_free()
 		clear_target()
-		
-	

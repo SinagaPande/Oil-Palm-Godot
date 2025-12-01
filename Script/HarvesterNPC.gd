@@ -11,19 +11,6 @@ enum NPCState {
 }
 
 @export var animation_player: AnimationPlayer
-var egrek_model: Node3D = null
-var is_harvesting: bool = false
-
-# ⬅️ VARIABLE BARU: Untuk anti-stuck mechanism
-var nearest_spawn_point: Marker3D = null
-var stuck_timer: float = 0.0
-var stuck_check_position: Vector3 = Vector3.ZERO
-const STUCK_THRESHOLD: float = 3.0  # Detik
-const MIN_MOVEMENT_DISTANCE: float = 0.5  # Meter
-
-# ⬅️ VARIABLE BARU: Untuk mencegah double destroy
-var is_destroyed: bool = false
-
 @export var move_speed: float = 3.0
 @export var harvest_range: float = 2.0
 @export var search_radius: float = 15.0
@@ -36,112 +23,69 @@ var harvest_delay_per_fruit: float = 2.0
 var fruits_to_harvest: int = 0
 var current_harvest_count: int = 0
 
-# Inventory NPC
 var npc_carried_ripe_fruits: int = 0
 var total_harvested_by_npc: int = 0
 var npc_carried_ripe_kg: int = 0
 
 var visited_trees: Array = []
 var search_attempts: int = 0
-const MAX_SEARCH_ATTEMPTS: int = 15
-
 var tree_cooldowns: Dictionary = {}
-const TREE_COOLDOWN_TIME: float = 10.0
 
-# Tracking buah yang sedang diproses
 var current_harvesting_fruits: Array = []
 var harvest_progress_timer: float = 0.0
 
-# Signals
+var egrek_model: Node3D = null
+var is_harvesting: bool = false
+var nearest_spawn_point: Marker3D = null
+var stuck_timer: float = 0.0
+var stuck_check_position: Vector3 = Vector3.ZERO
+var is_destroyed: bool = false
+
+const STUCK_THRESHOLD: float = 3.0
+const MIN_MOVEMENT_DISTANCE: float = 0.5
+const MAX_SEARCH_ATTEMPTS: int = 15
+const TREE_COOLDOWN_TIME: float = 10.0
+
 signal npc_harvested_fruits(harvested_count, total_harvested)
 signal npc_returned_to_spawn(npc_instance)
-
-# Collision configuration
-var collision_shape: CollisionShape3D = null
 
 func _ready():
 	add_to_group("harvester_npc")
 	setup_collision_config()
 	
-	# Auto-find AnimationPlayer jika belum terhubung
 	if not animation_player:
 		find_animation_player_auto()
 	
-	# ⬅️ CARI MODEL EGREK SECARA OTOMATIS
 	find_egrek_model_auto()
-	
 	call_deferred("delayed_initialize")
 
 func delayed_initialize():
 	await get_tree().process_frame
-	
-	# ⬅️ PERBAIKAN: Pastikan posisi Y konsisten
-	var current_pos = global_position
-	global_position = Vector3(current_pos.x, 0, current_pos.z)
-	
+	global_position = Vector3(global_position.x, 0, global_position.z)
 	initialize_npc()
-	
-# ⬅️ FUNGSI BARU: Cari model egrek secara otomatis
-func find_egrek_model_auto():
-	# Method 1: Cari node dengan nama mengandung "egrek"
-	egrek_model = find_child("*Egrek*", true, false)
-	
-	# Method 2: Jika tidak ketemu, cari di dalam node Maling
-	if not egrek_model:
-		var maling_node = find_child("Maling", true, false)
-		if maling_node:
-			# Cari semua MeshInstance3D di dalam Maling
-			var mesh_instances = find_all_mesh_instances_recursive(maling_node)
-			for mesh in mesh_instances:
-				# Cek nama mesh untuk identifikasi egrek
-				var mesh_name = mesh.name.to_lower()
-				if "Egrek" in mesh_name or "tool" in mesh_name or "weapon" in mesh_name:
-					egrek_model = mesh
-					break
-	
-	if egrek_model:
-		print("NPC: Auto-found egrek model: ", egrek_model.name)
-		# ⬅️ PASTIKAN EGREK AWALNYA TIDAK TERLIHAT
-		egrek_model.visible = false
-	else:
-		print("NPC: WARNING - Cannot find egrek model automatically")
-
-# ⬅️ FUNGSI BARU: Cari semua MeshInstance3D secara recursive
-func find_all_mesh_instances_recursive(node: Node) -> Array:
-	var meshes = []
-	
-	for child in node.get_children():
-		if child is MeshInstance3D:
-			meshes.append(child)
-		# Cari juga di child lebih dalam
-		meshes.append_array(find_all_mesh_instances_recursive(child))
-	
-	return meshes
 
 func setup_collision_config():
-	collision_shape = find_child("CollisionShape3D")
+	var collision_shape = find_child("CollisionShape3D")
 	if collision_shape:
 		collision_mask = 0x00000001
 		set_collision_layer_value(2, false)
 		set_collision_layer_value(3, false)
 		set_collision_layer_value(4, false)
 		set_collision_layer_value(5, false)
-		
-		if collision_shape.shape is CapsuleShape3D or collision_shape.shape is SphereShape3D:
-			collision_shape.shape.radius *= 0.8
-			
+
 func play_animation(anim_name: String):
 	if animation_player and animation_player.has_animation(anim_name):
+		if anim_name == "Jalan":
+			var anim = animation_player.get_animation(anim_name)
+			if anim:
+				anim.loop_mode = Animation.LOOP_LINEAR
 		animation_player.play(anim_name)
-	
-	# ⬅️ KONTROL VISIBILITY EGREK BERDASARKAN ANIMASI
 	update_egrek_visibility(anim_name)
 
 func update_egrek_visibility(anim_name: String):
 	if not egrek_model:
 		return
 	
-	# Tampilkan egrek hanya saat animasi "Panen"
 	if anim_name == "Panen":
 		egrek_model.visible = true
 		is_harvesting = true
@@ -165,9 +109,7 @@ func state_process(delta):
 			pass
 			
 		NPCState.SEARCH:
-			# Cek kapasitas sebelum mencari pohon
 			if npc_carried_ripe_fruits >= max_carry_capacity:
-				print("NPC: Kapasitas penuh (%d/%d), mencari spawn point" % [npc_carried_ripe_fruits, max_carry_capacity])
 				transition_to_state(NPCState.RETURN_TO_SPAWN)
 				return
 				
@@ -197,19 +139,15 @@ func state_process(delta):
 			harvest_timer += delta
 			harvest_progress_timer += delta
 			
-			# PROSES HARVEST SATU PER SATU
 			if harvest_progress_timer >= harvest_delay_per_fruit and current_harvesting_fruits.size() > 0:
 				harvest_progress_timer = 0.0
 				harvest_single_fruit()
 			
-			# Cek apakah harvest sudah selesai atau kapasitas penuh
 			if current_harvest_count >= fruits_to_harvest or npc_carried_ripe_fruits >= max_carry_capacity:
 				if target_tree and should_mark_tree_visited(target_tree):
 					mark_tree_visited(target_tree)
 				
-				# ⬅️ MODIFIKASI: Langsung kembali ke spawn point setelah kapasitas penuh
 				if npc_carried_ripe_fruits >= max_carry_capacity:
-					print("NPC: Kapasitas tercapai (%d/%d), langsung kembali ke spawn point" % [npc_carried_ripe_fruits, max_carry_capacity])
 					transition_to_state(NPCState.RETURN_TO_SPAWN)
 				else:
 					transition_to_state(NPCState.SEARCH)
@@ -227,93 +165,58 @@ func state_process(delta):
 				
 				var distance_to_spawn = global_position.distance_to(nearest_spawn_point.global_position)
 				
-				# ⬅️ PERBAIKAN: Debug info yang lebih informatif
-				if Engine.get_frames_drawn() % 60 == 0:
-					print("NPC: Menuju spawn point '%s'" % nearest_spawn_point.name)
-					print("  Posisi NPC: %s" % global_position)
-					print("  Posisi Spawn: %s" % nearest_spawn_point.global_position)
-					print("  Jarak: %.1f unit, Kecepatan: %.1f" % [distance_to_spawn, velocity.length()])
-				
-				# ⬅️ PERBAIKAN: Threshold yang lebih realistis
-				if distance_to_spawn <= 1.5:  # Kurangi dari 2.0 ke 1.5
-					print("NPC: Sampai di spawn point '%s', menghilang dengan %d buah" % [nearest_spawn_point.name, npc_carried_ripe_fruits])
+				if distance_to_spawn <= 1.5:
 					destroy_npc()
 				elif stuck_timer >= STUCK_THRESHOLD:
-					print("NPC: Terjebak selama %.1f detik, teleport ke spawn point" % stuck_timer)
-					# ⬅️ PERBAIKAN: Pastikan posisi Y konsisten saat teleport
-					var spawn_pos = nearest_spawn_point.global_position
-					global_position = Vector3(spawn_pos.x, global_position.y, spawn_pos.z)
+					global_position = Vector3(nearest_spawn_point.global_position.x, global_position.y, nearest_spawn_point.global_position.z)
 					destroy_npc()
 			else:
-				# Jika tidak ada spawn point, cari lagi atau langsung destroy
-				print("NPC: Spawn point tidak valid, mencari yang baru...")
 				nearest_spawn_point = find_nearest_spawn_point()
 				if not nearest_spawn_point:
-					print("NPC: Tidak ada spawn point yang ditemukan, menghilang")
 					destroy_npc()
 
-# ⬅️ FUNGSI BARU: Anti-stuck mechanism - DIPERBAIKI
 func check_if_stuck(delta: float):
 	var current_pos = global_position
 	var distance_moved = current_pos.distance_to(stuck_check_position)
 	
-	# ⬅️ MODIFIKASI: Hanya anggap stuck jika benar-benar tidak bergerak
-	if distance_moved < MIN_MOVEMENT_DISTANCE and velocity.length() < 0.1:  # ⬅️ TAMBAH cek velocity
+	if distance_moved < MIN_MOVEMENT_DISTANCE and velocity.length() < 0.1:
 		stuck_timer += delta
 	else:
 		stuck_timer = 0.0
 		stuck_check_position = current_pos
 	
-	# Jika terjebak lebih dari threshold, coba atasi
 	if stuck_timer >= STUCK_THRESHOLD:
 		handle_stuck_situation()
 
-# ⬅️ FUNGSI BARU: Handle stuck situation - DIPERBAIKI
 func handle_stuck_situation():
-	print("NPC: Terdeteksi terjebak selama %.1f detik, kecepatan: %.1f" % [stuck_timer, velocity.length()])  # ⬅️ TAMBAH info velocity
-	
 	match current_state:
 		NPCState.RETURN_TO_SPAWN:
 			if nearest_spawn_point and is_instance_valid(nearest_spawn_point):
-				print("NPC: Teleport ke spawn point karena terjebak")
 				global_position = nearest_spawn_point.global_position
 				destroy_npc()
 			else:
-				print("NPC: Tidak ada spawn point, langsung menghilang")
 				destroy_npc()
 		
 		NPCState.MOVE:
 			if target_tree and is_instance_valid(target_tree):
-				print("NPC: Coba reset movement ke pohon")
 				stuck_timer = 0.0
 				stuck_check_position = global_position
-				# ⬅️ TAMBAHAN: Coba path alternatif dengan random offset
 				var random_offset = Vector3(randf_range(-2, 2), 0, randf_range(-2, 2))
 				global_position += random_offset
 			else:
-				print("NPC: Target tree hilang, kembali search")
 				target_tree = null
 				transition_to_state(NPCState.SEARCH)
 
-# ⬅️ MODIFIKASI: Fungsi destroy_npc dengan protection double destroy
 func destroy_npc():
 	if is_destroyed:
 		return
 	
 	is_destroyed = true
-	
-	# Kirim signal ke NPCManager bahwa NPC sudah kembali
 	npc_returned_to_spawn.emit(self)
-	
-	print("NPC: Menghilang dengan membawa %d buah (total dipanen: %d kg)" % [npc_carried_ripe_fruits, total_harvested_by_npc])
-	
-	# Hapus NPC dari scene
 	queue_free()
 
 func harvest_single_fruit():
-	# Cek kapasitas sebelum memanen
 	if npc_carried_ripe_fruits >= max_carry_capacity:
-		print("NPC: Kapasitas penuh, berhenti memanen")
 		return
 	
 	if current_harvesting_fruits.size() == 0:
@@ -324,31 +227,22 @@ func harvest_single_fruit():
 		
 	play_animation("Panen")
 	
-	# Ambil buah pertama dari array
 	var fruit = current_harvesting_fruits[0]
 	current_harvesting_fruits.remove_at(0)
 	
 	if is_instance_valid(fruit):
-		# Hapus buah dari scene
 		fruit.queue_free()
 		
-		# Update inventory NPC
 		current_harvest_count += 1
 		npc_carried_ripe_fruits += 1
 		
-		# Hitung berat (30-40 kg per buah)
 		var harvested_kg = randi_range(30, 40)
 		npc_carried_ripe_kg += harvested_kg
 		total_harvested_by_npc += harvested_kg
 		
-		# ⬅️ PERBAIKAN: Signal hanya kirim INCREMENT, bukan total
-		npc_harvested_fruits.emit(harvested_kg)  # Hanya kirim berat buah ini saja
+		npc_harvested_fruits.emit(harvested_kg)
 		
-		print("NPC memanen 1 buah matang (%d kg). Total dipanen: %d kg, Kapasitas: %d/%d" % [harvested_kg, total_harvested_by_npc, npc_carried_ripe_fruits, max_carry_capacity])
-		
-		# ⬅️ MODIFIKASI: Langsung kembali ke spawn jika kapasitas penuh setelah panen
 		if npc_carried_ripe_fruits >= max_carry_capacity:
-			print("NPC: Kapasitas maksimum tercapai! Langsung kembali ke spawn point")
 			transition_to_state(NPCState.RETURN_TO_SPAWN)
 
 func transition_to_state(new_state: NPCState):
@@ -359,30 +253,27 @@ func transition_to_state(new_state: NPCState):
 	current_state = new_state
 	state_enter(new_state)
 	
-	# ⬅️ RESET STUCK TIMER SETIAP STATE BERUBAH
 	stuck_timer = 0.0
 	stuck_check_position = global_position
 
 func state_enter(state: NPCState):
 	match state:
 		NPCState.SPAWN:
-			play_animation("Jalan")  # ⬅️ TAMBAH INI
+			play_animation("Jalan")
 			
 		NPCState.SEARCH:
-			play_animation("Jalan")  # ⬅️ TAMBAH INI
+			play_animation("Jalan")
 			search_attempts += 1
 			if search_attempts >= MAX_SEARCH_ATTEMPTS:
 				visited_trees.clear()
 				search_attempts = 0
 			
 		NPCState.MOVE:
-			play_animation("Jalan")  # ⬅️ TAMBAH INI
+			play_animation("Jalan")
 			
 		NPCState.HARVEST:
 			play_animation("Panen")
-			# Cek kapasitas sebelum mulai harvest
 			if npc_carried_ripe_fruits >= max_carry_capacity:
-				print("NPC: Kapasitas penuh, langsung kembali ke spawn point")
 				transition_to_state(NPCState.RETURN_TO_SPAWN)
 				return
 				
@@ -392,9 +283,7 @@ func state_enter(state: NPCState):
 				
 				fruits_to_harvest = calculate_fruits_to_harvest()
 				
-				# Cek apakah ada buah yang bisa dipanen
 				if fruits_to_harvest <= 0:
-					print("NPC: Tidak ada buah yang bisa dipanen")
 					transition_to_state(NPCState.SEARCH)
 					return
 				
@@ -408,27 +297,18 @@ func state_enter(state: NPCState):
 					var max_fruits_to_take = min(fruits_to_harvest, current_harvesting_fruits.size())
 					if max_fruits_to_take < current_harvesting_fruits.size():
 						current_harvesting_fruits = current_harvesting_fruits.slice(0, max_fruits_to_take)
-					
-					print("NPC mulai memanen %d buah matang" % current_harvesting_fruits.size())
 				else:
 					transition_to_state(NPCState.SEARCH)
 			else:
 				transition_to_state(NPCState.SEARCH)
 			
 		NPCState.IDLE:
-			play_animation("Jalan")  # ⬅️ TAMBAH INI
+			play_animation("Jalan")
 			
 		NPCState.RETURN_TO_SPAWN:
-			play_animation("Jalan")  # ⬅️ TAMBAH INI
-			print("NPC: Mencari spawn point terdekat...")
+			play_animation("Jalan")
 			nearest_spawn_point = find_nearest_spawn_point()
-			if nearest_spawn_point:
-				print("NPC: Menemukan spawn point '%s' di posisi %s" % [nearest_spawn_point.name, nearest_spawn_point.global_position])
-				print("NPC: Posisi saat ini: %s" % global_position)
-				var initial_distance = global_position.distance_to(nearest_spawn_point.global_position)
-				print("NPC: Jarak awal: %.1f unit" % initial_distance)
-			else:
-				print("NPC: Tidak ada spawn point yang ditemukan, menghilang")
+			if not nearest_spawn_point:
 				destroy_npc()
 
 func state_exit(state: NPCState):
@@ -437,46 +317,49 @@ func state_exit(state: NPCState):
 	
 	match state:
 		NPCState.HARVEST:
-			# Kembali ke animasi jalan setelah selesai panen
 			play_animation("Jalan")
 			if target_tree and is_instance_valid(target_tree) and target_tree.has_method("set_harvesting_mode_active"):
 				target_tree.set_harvesting_mode_active(false)
 			current_harvesting_fruits.clear()
 			
-			# ⬅️ PASTIKAN EGREK TIDAK TERLIHAT SETELAH PANEN SELESAI
 			if egrek_model:
 				egrek_model.visible = false
 				is_harvesting = false
-			
+
 func find_animation_player_auto():
-	# Method 1: Cari langsung
 	animation_player = find_child("AnimationPlayer", true, false)
 	
-	# Method 2: Jika tidak ketemu, cari di dalam Maling
 	if not animation_player:
 		var maling_node = find_child("Maling", true, false)
 		if maling_node:
 			animation_player = maling_node.find_child("AnimationPlayer", true, false)
-	
-	if animation_player:
-		print("NPC: Auto-found AnimationPlayer: ", animation_player.name)
-		print("NPC: Animations: ", animation_player.get_animation_list())
-		
-		# AUTO-CONFIGURE LOOP FOR WALK ANIMATION
-		if animation_player.has_animation("Jalan"):
-			var walk_anim = animation_player.get_animation("Jalan")
-			walk_anim.loop_mode = Animation.LOOP_LINEAR
-			print("NPC: Set Jalan animation to LOOP")
-		
-		# ⬅️ MODIFIKASI: Animasi Panen TIDAK looping karena diputar sekali per buah
-		if animation_player.has_animation("Panen"):
-			var harvest_anim = animation_player.get_animation("Panen")
-			harvest_anim.loop_mode = Animation.LOOP_NONE  # ⬅️ TIDAK LOOPING
-			print("NPC: Set Panen animation to NO LOOP (play once per fruit)")
-	else:
-		print("NPC: ERROR - Cannot find AnimationPlayer automatically")
 
-# ⬅️ FUNGSI: Cari spawn point terdekat
+func find_egrek_model_auto():
+	egrek_model = find_child("*Egrek*", true, false)
+	
+	if not egrek_model:
+		var maling_node = find_child("Maling", true, false)
+		if maling_node:
+			var mesh_instances = find_all_mesh_instances_recursive(maling_node)
+			for mesh in mesh_instances:
+				var mesh_name = mesh.name.to_lower()
+				if "Egrek" in mesh_name or "tool" in mesh_name or "weapon" in mesh_name:
+					egrek_model = mesh
+					break
+	
+	if egrek_model:
+		egrek_model.visible = false
+
+func find_all_mesh_instances_recursive(node: Node) -> Array:
+	var meshes = []
+	
+	for child in node.get_children():
+		if child is MeshInstance3D:
+			meshes.append(child)
+		meshes.append_array(find_all_mesh_instances_recursive(child))
+	
+	return meshes
+
 func find_nearest_spawn_point() -> Marker3D:
 	var spawn_points = get_tree().get_nodes_in_group("npc_spawn")
 	var nearest_spawn: Marker3D = null
@@ -486,7 +369,6 @@ func find_nearest_spawn_point() -> Marker3D:
 		if not is_instance_valid(spawn_point):
 			continue
 		
-		# ⬅️ PERBAIKAN: Pastikan spawn point punya posisi valid
 		if spawn_point.global_position == Vector3.ZERO:
 			continue
 			
@@ -495,40 +377,22 @@ func find_nearest_spawn_point() -> Marker3D:
 			nearest_distance = distance
 			nearest_spawn = spawn_point
 	
-	if nearest_spawn:
-		print("NPC: Spawn point terdekat: '%s' (%.1f unit)" % [nearest_spawn.name, nearest_distance])
-	else:
-		print("NPC: WARNING - Tidak ada spawn point yang valid!")
-	
 	return nearest_spawn
 
 func move_towards_target(target_position: Vector3):
 	if get_tree().paused:
 		return
 	
-	# ⬅️ PERBAIKAN: Debug lebih detail
 	var current_pos = global_position
 	var target_pos_flat = Vector3(target_position.x, current_pos.y, target_position.z)
 	
-	# Hitung arah dan jarak sebenarnya
 	var direction = (target_pos_flat - current_pos).normalized()
 	var actual_distance = current_pos.distance_to(target_pos_flat)
 	
-	# ⬅️ DEBUG: Tampilkan info movement detail
-	if Engine.get_frames_drawn() % 30 == 0 and current_state == NPCState.RETURN_TO_SPAWN:
-		print("NPC Movement Debug:")
-		print("  Posisi NPC: %s" % current_pos)
-		print("  Target: %s" % target_pos_flat)
-		print("  Arah: %s" % direction)
-		print("  Jarak: %.1f" % actual_distance)
-		print("  Kecepatan: %.1f" % move_speed)
-	
-	# ⬅️ PERBAIKAN: Pastikan arah valid sebelum bergerak
 	if direction.length() > 0.1 and actual_distance > 0.5:
 		velocity = direction * move_speed
 		velocity.y = 0
 		
-		# Rotasi hanya jika bergerak cukup cepat
 		if velocity.length() > 0.5:
 			look_at(global_position + direction, Vector3.UP)
 	else:
@@ -536,14 +400,11 @@ func move_towards_target(target_position: Vector3):
 	
 	move_and_slide()
 
-# ⬅️ PERBAIKAN: Fungsi calculate_fruits_to_harvest yang benar
 func calculate_fruits_to_harvest() -> int:
 	if not target_tree or not is_instance_valid(target_tree):
 		return 0
 	
-	# ⬅️ PERBAIKAN KRITIS: Jangan panen jika kapasitas sudah penuh
 	if npc_carried_ripe_fruits >= max_carry_capacity:
-		print("NPC: Kapasitas sudah penuh (%d/%d), tidak bisa panen lagi" % [npc_carried_ripe_fruits, max_carry_capacity])
 		return 0
 	
 	var available_fruits = 0
@@ -552,30 +413,21 @@ func calculate_fruits_to_harvest() -> int:
 	
 	var can_carry = max_carry_capacity - npc_carried_ripe_fruits
 	
-	# ⬅️ PERBAIKAN: Pastikan tidak memanen jika kapasitas 0
 	if can_carry <= 0:
 		return 0
 	
-	var fruits_to_take = min(available_fruits, can_carry)
-	print("NPC: Bisa memanen %d buah (tersedia: %d, kapasitas: %d/%d)" % [fruits_to_take, available_fruits, npc_carried_ripe_fruits, max_carry_capacity])
-	
-	return fruits_to_take
+	return min(available_fruits, can_carry)
 
-# ⬅️ TAMBAHKAN FUNGSI YANG HILANG: initialize_npc
 func initialize_npc():
-	# Simplifikasi total
-	await get_tree().create_timer(0.5).timeout  # Delay kecil
+	await get_tree().create_timer(0.5).timeout
 	transition_to_state(NPCState.SEARCH)
-	
 
-# ⬅️ TAMBAHKAN FUNGSI YANG HILANG: get_ripe_fruits_from_tree
 func get_ripe_fruits_from_tree(tree: Node3D) -> Array:
 	var ripe_fruits = []
 	
 	if not tree or not is_instance_valid(tree):
 		return ripe_fruits
 	
-	# Akses array all_fruits dari pohon
 	if tree.has_method("get_all_fruits"):
 		var all_fruits = tree.get_all_fruits()
 		for fruit in all_fruits:
@@ -585,95 +437,6 @@ func get_ripe_fruits_from_tree(tree: Node3D) -> Array:
 	
 	return ripe_fruits
 
-# ⬅️ TAMBAHKAN FUNGSI YANG HILANG: wait_for_player_ready
-func wait_for_player_ready():
-	var max_attempts = 30
-	var attempt = 0
-	
-	while attempt < max_attempts:
-		var players = get_tree().get_nodes_in_group("player")
-		if players.size() > 0:
-			var player = players[0]
-			if is_player_ready(player):
-				# Player ditemukan dan siap, tapi tidak perlu simpan reference
-				print("NPC: Player siap, mulai bekerja")
-				return true
-			else:
-				print("NPC: Player belum siap, attempt ", attempt)
-		else:
-			print("NPC: Player belum ditemukan, attempt ", attempt)
-		
-		attempt += 1
-		await get_tree().create_timer(0.2).timeout
-	
-	print("NPC: Timeout menunggu player, menggunakan fallback")
-	return false
-
-# ⬅️ TAMBAHKAN FUNGSI YANG HILANG: find_player_fallback
-func find_player_fallback():
-	# Coba temukan player dengan metode lebih agresif
-	var root = get_tree().root
-	var player_node = find_player_recursive_fallback(root)
-	
-	if player_node:
-		print("NPC: Player ditemukan via fallback")
-	else:
-		print("NPC: Player tidak ditemukan sama sekali, NPC akan tetap beroperasi")
-
-# ⬅️ TAMBAHKAN FUNGSI YANG HILANG: find_player_recursive_fallback
-func find_player_recursive_fallback(node: Node) -> Node:
-	if node == null:
-		return null
-	
-	# Kriteria lebih longgar untuk menemukan player
-	if node.is_in_group("player"):
-		return node
-	if node.has_method("get_carried_ripe_fruits"):  # Method khas player
-		return node
-	if node is CharacterBody3D and node.name.to_lower().contains("player"):
-		return node
-	
-	for child in node.get_children():
-		var found = find_player_recursive_fallback(child)
-		if found:
-			return found
-	
-	return null
-
-# ⬅️ TAMBAHKAN FUNGSI YANG HILANG: is_player_ready
-func is_player_ready(player: Node) -> bool:
-	if player == null:
-		return false
-	
-	# Kriteria lebih longgar
-	if player.has_method("is_player_ready"):
-		return player.is_player_ready()
-	if player.has_method("get_initialization_status"):
-		return player.get_initialization_status()
-	if player.has_method("get_carried_ripe_fruits"):  # Jika player sudah punya method ini, artinya siap
-		return true
-	if player.is_inside_tree() and player.process_mode != PROCESS_MODE_DISABLED:
-		return true
-	
-	return true
-
-# ⬅️ TAMBAHKAN FUNGSI YANG HILANG: Inventory getters
-func get_npc_carried_fruits() -> int:
-	return npc_carried_ripe_fruits
-
-func get_npc_carried_kg() -> int:
-	return npc_carried_ripe_kg
-
-func get_npc_capacity() -> int:
-	return max_carry_capacity
-
-func is_npc_full() -> bool:
-	return npc_carried_ripe_fruits >= max_carry_capacity
-
-func get_total_harvested() -> int:
-	return total_harvested_by_npc
-
-# ... (FUNGSI LAINNYA YANG SUDAH ADA)
 func update_tree_cooldowns(delta: float):
 	if get_tree().paused:
 		return
@@ -693,49 +456,15 @@ func update_tree_cooldowns(delta: float):
 		if tree in visited_trees:
 			visited_trees.erase(tree)
 
-func smart_reset_visited_trees():
-	var trees_to_keep: Array = []
-	
-	for tree in visited_trees:
-		if not is_instance_valid(tree):
-			continue
-		
-		if tree.has_method("has_ripe_fruits") and not tree.has_ripe_fruits():
-			trees_to_keep.append(tree)
-	
-	visited_trees = trees_to_keep
-
-func should_reset_visited_trees() -> bool:
-	var all_trees = get_tree().get_nodes_in_group("tree")
-	var available_trees = 0
-	
-	for tree in all_trees:
-		if not is_instance_valid(tree):
-			continue
-		if tree in visited_trees:
-			continue
-		if tree.has_method("has_ripe_fruits") and tree.has_ripe_fruits():
-			available_trees += 1
-	
-	return available_trees == 0 and visited_trees.size() > 0
-
 func should_mark_tree_visited(tree: Node3D) -> bool:
 	if not tree or not is_instance_valid(tree):
 		return false
 	
 	if tree.has_method("has_ripe_fruits"):
-		var has_ripe = tree.has_ripe_fruits()
-		if not has_ripe:
-			return true
-		else:
-			return false
+		return not tree.has_ripe_fruits()
 	
 	if tree.has_method("get_ripe_count"):
-		var ripe_count = tree.get_ripe_count()
-		if ripe_count == 0:
-			return true
-		else:
-			return false
+		return tree.get_ripe_count() == 0
 	
 	return false
 
@@ -776,3 +505,18 @@ func find_nearest_tree() -> Node3D:
 			nearest_tree = tree
 	
 	return nearest_tree
+
+func get_npc_carried_fruits() -> int:
+	return npc_carried_ripe_fruits
+
+func get_npc_carried_kg() -> int:
+	return npc_carried_ripe_kg
+
+func get_npc_capacity() -> int:
+	return max_carry_capacity
+
+func is_npc_full() -> bool:
+	return npc_carried_ripe_fruits >= max_carry_capacity
+
+func get_total_harvested() -> int:
+	return total_harvested_by_npc

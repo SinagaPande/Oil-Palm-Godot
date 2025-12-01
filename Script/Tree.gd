@@ -1,5 +1,4 @@
 extends Node3D
-
 class_name PalmTree
 
 @export var fruit_scene: PackedScene
@@ -21,18 +20,12 @@ var has_spawned_fruits: bool = false
 
 var tree_culling_update_timer: float = 0.0
 var tree_current_update_interval: float = 0.3
-var tree_last_camera_forward: Vector3 = Vector3.ZERO
-var tree_last_player_position: Vector3 = Vector3.ZERO
-
 var lod_update_timer: float = 0.0
-const LOD_UPDATE_INTERVAL: float = 0.2
 
 var is_initializing: bool = true
 var spawn_retry_count: int = 0
-const MAX_SPAWN_RETRIES: int = 3
-var player_search_attempts: int = 0
-const MAX_PLAYER_SEARCH_ATTEMPTS: int = 30
 
+const LOD_UPDATE_INTERVAL: float = 0.2
 const TREE_LOD_HIGH_DISTANCE = 20
 const TREE_LOD_LOW_DISTANCE = 25.0
 const TREE_CULLING_DISTANCE: float = 300
@@ -40,6 +33,7 @@ const TREE_MIN_CULLING_DISTANCE: float = 25
 const TREE_BACKFACE_THRESHOLD: float = 0.2
 const TREE_NEAR_UPDATE_INTERVAL: float = 0.05
 const TREE_FAR_UPDATE_INTERVAL: float = 0.3
+const MAX_SPAWN_RETRIES: int = 3
 
 func _ready():
 	add_to_group("tree")
@@ -50,12 +44,9 @@ func _ready():
 	call_deferred("initialize_tree")
 
 func initialize_tree():
-	# ⬅️ KURANGI WAKTU TUNGGU UNTUK MEMPERCEPAT
 	var player_found = await wait_for_player_quick()
 	if not player_found:
-		print("Tree: Player tidak ditemukan, tree tetap beroperasi")
 		is_initializing = false
-		# Tetap spawn buah meski player tidak ditemukan
 		spawn_initial_fruits()
 		return
 	
@@ -65,7 +56,7 @@ func initialize_tree():
 	spawn_initial_fruits()
 	
 func wait_for_player_quick():
-	var max_attempts = 15  # ⬅️ KURANGI DARI 30
+	var max_attempts = 15
 	var attempt = 0
 	
 	while attempt < max_attempts:
@@ -77,7 +68,7 @@ func wait_for_player_quick():
 				if setup_camera_from_player(player):
 					return true
 		attempt += 1
-		await get_tree().create_timer(0.1).timeout  # ⬅️ INTERVAL LEBIH CEPAT
+		await get_tree().create_timer(0.1).timeout
 	
 	return false
 	
@@ -85,7 +76,6 @@ func is_player_ready_quick(player: Node) -> bool:
 	if player == null:
 		return false
 	
-	# Kriteria sangat longgar untuk tree
 	if player.is_inside_tree():
 		return true
 	if player.has_method("get_carried_ripe_fruits"):
@@ -99,43 +89,6 @@ func _exit_tree():
 	camera_node = null
 	original_mesh = null
 
-func wait_for_player():
-	player_search_attempts = 0
-	var max_wait_time = 6.0
-	var wait_start = Time.get_unix_time_from_system()
-	
-	while Time.get_unix_time_from_system() - wait_start < max_wait_time:
-		var players = get_tree().get_nodes_in_group("player")
-		if players.size() > 0:
-			var player = players[0]
-			if is_player_ready(player) and setup_camera_from_player(player):
-				player_node = player
-				return true
-		
-		player_search_attempts += 1
-		await get_tree().create_timer(0.2).timeout
-	
-	player_node = find_player_in_scene()
-	if player_node and is_player_ready(player_node) and setup_camera_from_player(player_node):
-		return true
-	
-	return false
-
-func is_player_ready(player: Node) -> bool:
-	if player == null:
-		return false
-	
-	if player.has_method("is_player_ready"):
-		return player.is_player_ready()
-	if player.has_method("get_initialization_status"):
-		return player.get_initialization_status()
-	if player.has_method("get") and player.get("is_fully_initialized") != null:
-		return player.get("is_fully_initialized")
-	if player.has_signal("player_fully_ready"):
-		return true
-	
-	return true
-
 func setup_camera_from_player(player: Node) -> bool:
 	if player == null:
 		return false
@@ -143,9 +96,7 @@ func setup_camera_from_player(player: Node) -> bool:
 	var camera_paths = [
 		"PlayerController/Camera3D",
 		"Camera3D",
-		"Head/Camera3D",
-		"Camera",
-		"../Camera3D"
+		"Head/Camera3D"
 	]
 	
 	for path in camera_paths:
@@ -158,9 +109,6 @@ func setup_camera_from_player(player: Node) -> bool:
 	return camera_node != null
 
 func find_camera_recursive(node: Node) -> Camera3D:
-	if node == null:
-		return null
-	
 	for child in node.get_children():
 		if child is Camera3D:
 			return child
@@ -169,33 +117,9 @@ func find_camera_recursive(node: Node) -> Camera3D:
 			return found
 	return null
 
-func find_player_in_scene() -> Node:
-	var root = get_tree().root
-	return find_player_recursive(root)
-
-func find_player_recursive(node: Node) -> Node:
-	if node == null:
-		return null
-	
-	if node.is_in_group("player"):
-		return node
-	if node.has_method("is_player_ready") or node.has_method("get_initialization_status"):
-		return node
-	
-	for child in node.get_children():
-		var found = find_player_recursive(child)
-		if found:
-			return found
-	
-	return null
-
 func setup_all_systems():
 	setup_tree_lod_system()
 	setup_tree_culling_system()
-	
-	if player_node and camera_node:
-		tree_last_camera_forward = -camera_node.global_transform.basis.z
-		tree_last_player_position = player_node.global_position
 
 func _process(delta):
 	if not is_initializing and player_node and camera_node:
@@ -207,34 +131,11 @@ func _process(delta):
 				update_tree_lod()
 		
 		tree_culling_update_timer += delta
-		check_tree_immediate_culling_trigger()
 		
 		if tree_culling_update_timer >= tree_current_update_interval:
 			tree_culling_update_timer = 0.0
 			update_tree_culling()
 			update_tree_culling_priority()
-
-func check_tree_immediate_culling_trigger():
-	if not camera_node or not player_node:
-		return
-	
-	var current_camera_forward = -camera_node.global_transform.basis.z
-	var current_player_position = player_node.global_position
-	
-	var camera_dot = current_camera_forward.dot(tree_last_camera_forward)
-	var camera_changed = camera_dot < 0.9
-	
-	var position_delta = current_player_position.distance_to(tree_last_player_position)
-	var position_changed = position_delta > 3.0
-	
-	var distance_to_player = global_position.distance_to(current_player_position)
-	var entered_near_zone = distance_to_player <= 25.0 and tree_last_player_position.distance_to(global_position) > 25.0
-	
-	if camera_changed or position_changed or entered_near_zone:
-		update_tree_culling()
-		update_tree_culling_priority()
-		tree_last_camera_forward = current_camera_forward
-		tree_last_player_position = current_player_position
 
 func update_tree_culling_priority():
 	if not player_node:

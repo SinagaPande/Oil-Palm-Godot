@@ -1,5 +1,4 @@
 extends Node3D
-
 class_name PlayerController
 
 @export var player_body: CharacterBody3D
@@ -7,7 +6,6 @@ class_name PlayerController
 @export var egrek_node: Node3D
 @export var tojok_node: Node3D
 
-# ✅ Enum untuk jenis alat
 enum Tool { EGREK, TOJOK }
 var current_tool: Tool = Tool.EGREK
 
@@ -23,7 +21,6 @@ const EGREK_UP_ROTATION = Vector3(-45.5, -70, 80)
 const EGREK_DOWN_POSITION = Vector3(0.2, -0.4, 1.1)
 const EGREK_DOWN_ROTATION = Vector3(-45.5, -90.0, 80)
 
-# ✅ TOJOK HANYA MEMILIKI SATU POSISI TETAP
 const TOJOK_DEFAULT_POSITION = Vector3(0.215, -0.15, -0.735)
 const TOJOK_DEFAULT_ROTATION = Vector3(51.5, 90.0, 82.0)
 const TOJOK_SHOOT_POSITION = Vector3(0.18, -0.15, -0.9)
@@ -31,14 +28,12 @@ const TOJOK_SHOOT_ROTATION = Vector3(51.5, 90.0, 82.0)
 
 const TRANSITION_THRESHOLD = 35.0
 const ANIMATION_DISABLE_THRESHOLD = 10.0
-
-# ⬅️ TAMBAHKAN: Parameter untuk smooth deceleration
-const DECELERATION = 75  # Nilai percepatan pengereman (higher = faster stop)
-const MIN_VELOCITY_THRESHOLD = 0.01  # Kecepatan minimum sebelum dianggap berhenti
+const DECELERATION = 75
+const MIN_VELOCITY_THRESHOLD = 0.01
 
 var egrek_tween: Tween
 var tojok_tween: Tween
-var tojok_shoot_tween: Tween  # ✅ Tween khusus untuk animasi shoot Tojok
+var tojok_shoot_tween: Tween
 
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
@@ -47,8 +42,6 @@ func _ready():
 	
 	if player_body and player_body.has_method("get_base_speed"):
 		current_speed = player_body.get_base_speed()
-	else:
-		current_speed = 5.5
 
 func set_current_speed(new_speed: float):
 	current_speed = new_speed
@@ -57,7 +50,6 @@ func switch_tool(new_tool: Tool):
 	if current_tool == new_tool:
 		return
 	
-	# Sembunyikan alat sebelumnya
 	match current_tool:
 		Tool.EGREK:
 			if egrek_node:
@@ -68,7 +60,6 @@ func switch_tool(new_tool: Tool):
 	
 	current_tool = new_tool
 	
-	# Tampilkan alat baru
 	match current_tool:
 		Tool.EGREK:
 			if egrek_node:
@@ -101,9 +92,7 @@ func update_tool_position():
 				egrek_tween.tween_property(egrek_node, "rotation_degrees", target_rotation, 0.2)
 		
 		Tool.TOJOK:
-			# ✅ TOJOK TETAP DI POSISI DEFAULT TANPA PERUBAHAN BERDASARKAN SUDUT KAMERA
 			if tojok_node:
-				# Set posisi tetap untuk Tojok
 				if tojok_tween and tojok_tween.is_valid():
 					tojok_tween.kill()
 				
@@ -128,11 +117,9 @@ func set_tool_animation_enabled(enabled: bool):
 				egrek_node.set_meta("animation_enabled", enabled)
 		Tool.TOJOK:
 			if tojok_node:
-				# ✅ TOJOK SELALU BISA ANIMASI TANPA BATASAN SUDUT KAMERA
 				tojok_node.set_meta("animation_enabled", true)
 
 func _input(event):
-	# ⬅️ TAMBAHKAN: Jangan proses input jika game paused
 	if get_tree().paused:
 		return
 		
@@ -162,7 +149,6 @@ func toggle_mouse_mode():
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE if current_mode == Input.MOUSE_MODE_CAPTURED else Input.MOUSE_MODE_CAPTURED)
 
 func _physics_process(delta):
-	# ⬅️ TAMBAHKAN: Jangan proses physics jika game paused
 	if get_tree().paused:
 		return
 		
@@ -172,26 +158,20 @@ func _physics_process(delta):
 	var input_direction_2D = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 	var direction = player_body.transform.basis * Vector3(input_direction_2D.x, 0.0, input_direction_2D.y)
 	
-	# ⬅️ MODIFIKASI: Terapkan smooth deceleration
 	if input_direction_2D.length() > 0:
-		# Ada input - terapkan gerakan normal
 		player_body.velocity.x = direction.x * current_speed
 		player_body.velocity.z = direction.z * current_speed
 	else:
-		# Tidak ada input - terapkan deceleration
 		var horizontal_velocity = Vector2(player_body.velocity.x, player_body.velocity.z)
 		if horizontal_velocity.length() > MIN_VELOCITY_THRESHOLD:
-			# Kurangi kecepatan secara bertahap menggunakan move_toward
 			var deceleration_amount = DECELERATION * delta
 			horizontal_velocity = horizontal_velocity.move_toward(Vector2.ZERO, deceleration_amount)
 			player_body.velocity.x = horizontal_velocity.x
 			player_body.velocity.z = horizontal_velocity.y
 		else:
-			# Kecepatan sudah sangat kecil, set ke nol
 			player_body.velocity.x = 0.0
 			player_body.velocity.z = 0.0
 	
-	# Tetap terapkan gravity dan jump seperti semula
 	player_body.velocity.y -= GRAVITY * delta
 	
 	if Input.is_action_just_pressed("jump") and player_body.is_on_floor():
@@ -199,7 +179,6 @@ func _physics_process(delta):
 	
 	player_body.move_and_slide()
 
-# ✅ FUNGSI ANIMASI BERDASARKAN ALAT AKTIF
 func play_tool_animation():
 	match current_tool:
 		Tool.EGREK:
@@ -227,19 +206,15 @@ func play_tojok_animation():
 	if !tojok_node:
 		return
 	
-	# ✅ TOJOK SELALU BISA BERANIMASI TANPA KONDISI APAPUN
-	# ANIMASI SHOOT TOJOK
 	if tojok_shoot_tween and tojok_shoot_tween.is_valid():
 		tojok_shoot_tween.kill()
 	
 	tojok_shoot_tween = create_tween()
 	tojok_shoot_tween.set_parallel(true)
 	
-	# Animasi: Bergerak ke posisi shoot
 	tojok_shoot_tween.tween_property(tojok_node, "position", TOJOK_SHOOT_POSITION, 0.1)
 	tojok_shoot_tween.tween_property(tojok_node, "rotation_degrees", TOJOK_SHOOT_ROTATION, 0.1)
 	
-	# Animasi: Kembali ke posisi default
 	tojok_shoot_tween.tween_property(tojok_node, "position", TOJOK_DEFAULT_POSITION, 0.2).set_delay(0.1)
 	tojok_shoot_tween.tween_property(tojok_node, "rotation_degrees", TOJOK_DEFAULT_ROTATION, 0.2).set_delay(0.1)
 

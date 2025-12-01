@@ -1,5 +1,4 @@
 extends RigidBody3D
-
 class_name Fruit
 
 var has_touched_surface = false
@@ -7,7 +6,7 @@ var is_falling = false
 var fruit_type: String = "Masak"
 var can_be_collected: bool = false
 var has_been_collected: bool = false
-var has_given_points: bool = false  # Flag untuk mencegah duplikasi poin
+var has_given_points: bool = false
 
 var lod_self_update_timer: float = 0.0
 var culling_self_update_timer: float = 0.0
@@ -17,7 +16,6 @@ var camera_node: Camera3D = null
 
 var is_culled: bool = false
 var was_frozen: bool = true
-var last_culling_check_time: float = 0.0
 var current_update_interval: float = 0.3
 
 @export var linear_damping = 0.5
@@ -37,17 +35,12 @@ const BACKFACE_THRESHOLD: float = 0.3
 const NEAR_UPDATE_INTERVAL: float = 0.05
 const FAR_UPDATE_INTERVAL: float = 0.3
 
-var last_camera_forward: Vector3 = Vector3.ZERO
-var last_player_position: Vector3 = Vector3.ZERO
-
 const AREA_OFFSET = Vector3(0, -0.8, 0)
 const COLLISION_RADIUS = 0.8
 
 var is_initialized: bool = false
 var use_tree_culling: bool = true
 var parent_tree_ref: WeakRef = null
-
-
 
 func _ready():
 	add_to_group("buah")
@@ -80,12 +73,8 @@ func initialize_fruit():
 		find_player_and_camera()
 	
 	if player_node and camera_node:
-		last_camera_forward = -camera_node.global_transform.basis.z
-		last_player_position = player_node.global_position
-		update_culling_priority()
-	
-	is_initialized = true
-	set_process(true)
+		is_initialized = true
+		set_process(true)
 
 func _process(delta):
 	if not is_initialized:
@@ -103,14 +92,10 @@ func _process(delta):
 	
 	culling_self_update_timer += delta
 	
-	if player_node and camera_node:
-		check_immediate_culling_trigger()
-	
 	if culling_self_update_timer >= current_update_interval:
 		culling_self_update_timer = 0.0
 		if not use_tree_culling or not parent_tree:
 			update_culling()
-		update_culling_priority()
 	
 	if not is_culled:
 		lod_self_update_timer += delta
@@ -118,56 +103,14 @@ func _process(delta):
 			lod_self_update_timer = 0.0
 			update_lod()
 
-func check_immediate_culling_trigger():
-	if not camera_node or not player_node:
-		return
-	
-	var current_camera_forward = -camera_node.global_transform.basis.z
-	var current_player_position = player_node.global_position
-	
-	var camera_dot = current_camera_forward.dot(last_camera_forward)
-	var camera_changed = camera_dot < 0.9
-	
-	var position_delta = current_player_position.distance_to(last_player_position)
-	var position_changed = position_delta > 2.0
-	
-	var distance_to_player = global_position.distance_to(current_player_position)
-	var entered_near_zone = distance_to_player <= 20.0 and last_player_position.distance_to(global_position) > 20.0
-	
-	if camera_changed or position_changed or entered_near_zone:
-		if not use_tree_culling or not get_parent_tree():
-			update_culling()
-		update_culling_priority()
-		last_camera_forward = current_camera_forward
-		last_player_position = current_player_position
-
-func update_culling_priority():
-	if not player_node:
-		return
-	
-	var distance_to_player = global_position.distance_to(player_node.global_position)
-	
-	if distance_to_player <= 8.0:
-		current_update_interval = 0.02
-	elif distance_to_player <= 20.0 and (is_in_front_of_player() or is_in_camera_frustum()):
-		current_update_interval = NEAR_UPDATE_INTERVAL
-	elif distance_to_player <= 35.0:
-		current_update_interval = 0.15
-	else:
-		current_update_interval = FAR_UPDATE_INTERVAL
-
 func find_player_and_camera():
 	var players = get_tree().get_nodes_in_group("player")
 	if players.size() > 0:
 		player_node = players[0]
-		if player_node.has_node("PlayerController/Camera3D"):
-			camera_node = player_node.get_node("PlayerController/Camera3D")
-		else:
-			camera_node = _find_camera_recursive(player_node)
+		camera_node = _find_camera_recursive(player_node)
 	else:
-		if not is_initialized:
-			await get_tree().process_frame
-			find_player_and_camera()
+		await get_tree().process_frame
+		find_player_and_camera()
 
 func _find_camera_recursive(node: Node) -> Camera3D:
 	for child in node.get_children():
@@ -185,10 +128,7 @@ func set_fruit_type(type: String):
 func setup_fruit_model():
 	var nodes_to_remove = []
 	for child in get_children():
-		if (child is Node3D and 
-			not child is CollisionShape3D and 
-			not child is Area3D and
-			child.name != "ModelContainer"):
+		if child is Node3D and not child is CollisionShape3D and not child is Area3D and child.name != "ModelContainer":
 			nodes_to_remove.append(child)
 	
 	for node in nodes_to_remove:
@@ -336,7 +276,6 @@ func fall_from_tree(target_position: Vector3 = Vector3.ZERO):
 	is_falling = true
 	set_process(true)
 	
-	# ✅ PERBAIKAN: Berikan poin untuk buah mentah saat jatuh dari pohon
 	if fruit_type == "Mentah" and not has_given_points:
 		give_unripe_fruit_points()
 	
@@ -355,26 +294,25 @@ func fall_from_tree(target_position: Vector3 = Vector3.ZERO):
 		)
 	
 	apply_impulse(force_direction)
-	
+
 func give_unripe_fruit_points():
 	if has_given_points:
 		return
 	
 	has_given_points = true
 	
-	# Cari inventory system dan berikan poin
+	var inventory_system = _find_inventory_system()
+	if inventory_system and inventory_system.has_method("add_unripe_fruit_kg"):
+		var weight_kg = randi_range(25, 30)
+		inventory_system.add_unripe_fruit_kg(weight_kg)
+
+func _find_inventory_system():
 	var inventory_system = get_node_or_null("/root/Node3D/InventorySystem")
 	if not inventory_system:
 		var nodes = get_tree().get_nodes_in_group("inventory_system")
 		if nodes.size() > 0:
 			inventory_system = nodes[0]
-	
-	if inventory_system and inventory_system.has_method("add_unripe_fruit_kg"):
-		var weight_kg = randi_range(25, 30)  # Buah mentah: 25-30 kg
-		inventory_system.add_unripe_fruit_kg(weight_kg)
-		
-		print("Buah mentah jatuh: +%d kg" % weight_kg)
-
+	return inventory_system
 
 func _exit_tree():
 	parent_tree_ref = null
