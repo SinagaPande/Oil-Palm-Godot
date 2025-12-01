@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="palm's oil ninja"
+config/name="Panen Sawit"
 run/main_scene="uid://b21n6dxr2ma3k"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://icon.svg"

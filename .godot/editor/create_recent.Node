@@ -1,3 +1,6 @@
+AudioStreamPlayer
+CollisionShape3D
+CharacterBody3D
 Node
 ColorRect
 Label
@@ -5,10 +8,7 @@ Button
 VBoxContainer
 Control
 MeshInstance3D
-CollisionShape3D
 Marker3D
 Node3D
-CharacterBody3D
 StaticBody3D
 Area3D
-AnimationPlayer
