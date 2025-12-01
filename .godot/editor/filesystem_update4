@@ -1,9 +1,10 @@
-res://Scene/HarvesterNPC.tscn
+res://Scene/Level.tscn
 res://Script/PlayerController.gd
 res://Script/HarvesterNPC.gd
-res://Scene/Level.tscn
+res://Script/NPCManager.gd
 res://Scene/DeliveryZone.tscn
+res://Scene/HarvesterNPC.tscn
 res://Scene/Tree.tscn
 res://Scene/fruit.tscn
 res://Scene/UIManager.tscn
-res://Script/NPCManager.gd
+res://Script/GameModeManager.gd

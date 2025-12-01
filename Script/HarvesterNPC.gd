@@ -10,6 +10,10 @@ enum NPCState {
 	RETURN_TO_SPAWN
 }
 
+@export var animation_player: AnimationPlayer
+var egrek_model: Node3D = null
+var is_harvesting: bool = false
+
 # ⬅️ VARIABLE BARU: Untuk anti-stuck mechanism
 var nearest_spawn_point: Marker3D = null
 var stuck_timer: float = 0.0
@@ -58,11 +62,61 @@ var collision_shape: CollisionShape3D = null
 func _ready():
 	add_to_group("harvester_npc")
 	setup_collision_config()
+	
+	# Auto-find AnimationPlayer jika belum terhubung
+	if not animation_player:
+		find_animation_player_auto()
+	
+	# ⬅️ CARI MODEL EGREK SECARA OTOMATIS
+	find_egrek_model_auto()
+	
 	call_deferred("delayed_initialize")
 
 func delayed_initialize():
 	await get_tree().process_frame
+	
+	# ⬅️ PERBAIKAN: Pastikan posisi Y konsisten
+	var current_pos = global_position
+	global_position = Vector3(current_pos.x, 0, current_pos.z)
+	
 	initialize_npc()
+	
+# ⬅️ FUNGSI BARU: Cari model egrek secara otomatis
+func find_egrek_model_auto():
+	# Method 1: Cari node dengan nama mengandung "egrek"
+	egrek_model = find_child("*Egrek*", true, false)
+	
+	# Method 2: Jika tidak ketemu, cari di dalam node Maling
+	if not egrek_model:
+		var maling_node = find_child("Maling", true, false)
+		if maling_node:
+			# Cari semua MeshInstance3D di dalam Maling
+			var mesh_instances = find_all_mesh_instances_recursive(maling_node)
+			for mesh in mesh_instances:
+				# Cek nama mesh untuk identifikasi egrek
+				var mesh_name = mesh.name.to_lower()
+				if "Egrek" in mesh_name or "tool" in mesh_name or "weapon" in mesh_name:
+					egrek_model = mesh
+					break
+	
+	if egrek_model:
+		print("NPC: Auto-found egrek model: ", egrek_model.name)
+		# ⬅️ PASTIKAN EGREK AWALNYA TIDAK TERLIHAT
+		egrek_model.visible = false
+	else:
+		print("NPC: WARNING - Cannot find egrek model automatically")
+
+# ⬅️ FUNGSI BARU: Cari semua MeshInstance3D secara recursive
+func find_all_mesh_instances_recursive(node: Node) -> Array:
+	var meshes = []
+	
+	for child in node.get_children():
+		if child is MeshInstance3D:
+			meshes.append(child)
+		# Cari juga di child lebih dalam
+		meshes.append_array(find_all_mesh_instances_recursive(child))
+	
+	return meshes
 
 func setup_collision_config():
 	collision_shape = find_child("CollisionShape3D")
@@ -75,6 +129,25 @@ func setup_collision_config():
 		
 		if collision_shape.shape is CapsuleShape3D or collision_shape.shape is SphereShape3D:
 			collision_shape.shape.radius *= 0.8
+			
+func play_animation(anim_name: String):
+	if animation_player and animation_player.has_animation(anim_name):
+		animation_player.play(anim_name)
+	
+	# ⬅️ KONTROL VISIBILITY EGREK BERDASARKAN ANIMASI
+	update_egrek_visibility(anim_name)
+
+func update_egrek_visibility(anim_name: String):
+	if not egrek_model:
+		return
+	
+	# Tampilkan egrek hanya saat animasi "Panen"
+	if anim_name == "Panen":
+		egrek_model.visible = true
+		is_harvesting = true
+	else:
+		egrek_model.visible = false
+		is_harvesting = false
 
 func _physics_process(delta):
 	if get_tree().paused:
@@ -154,22 +227,30 @@ func state_process(delta):
 				
 				var distance_to_spawn = global_position.distance_to(nearest_spawn_point.global_position)
 				
-				# ⬅️ PERBAIKAN: Debug info untuk tracking pergerakan
+				# ⬅️ PERBAIKAN: Debug info yang lebih informatif
 				if Engine.get_frames_drawn() % 60 == 0:
-					print("NPC: Menuju spawn point, jarak: %.1f unit, kecepatan: %.1f" % [distance_to_spawn, velocity.length()])
+					print("NPC: Menuju spawn point '%s'" % nearest_spawn_point.name)
+					print("  Posisi NPC: %s" % global_position)
+					print("  Posisi Spawn: %s" % nearest_spawn_point.global_position)
+					print("  Jarak: %.1f unit, Kecepatan: %.1f" % [distance_to_spawn, velocity.length()])
 				
-				# ⬅️ MODIFIKASI: Jarak threshold dan anti-stuck mechanism
-				if distance_to_spawn <= 2.0:
-					print("NPC: Sampai di spawn point, menghilang dengan %d buah" % npc_carried_ripe_fruits)
+				# ⬅️ PERBAIKAN: Threshold yang lebih realistis
+				if distance_to_spawn <= 1.5:  # Kurangi dari 2.0 ke 1.5
+					print("NPC: Sampai di spawn point '%s', menghilang dengan %d buah" % [nearest_spawn_point.name, npc_carried_ripe_fruits])
 					destroy_npc()
-				elif stuck_timer >= STUCK_THRESHOLD and velocity.length() < 0.1:  # ⬅️ TAMBAH cek velocity
+				elif stuck_timer >= STUCK_THRESHOLD:
 					print("NPC: Terjebak selama %.1f detik, teleport ke spawn point" % stuck_timer)
-					global_position = nearest_spawn_point.global_position
+					# ⬅️ PERBAIKAN: Pastikan posisi Y konsisten saat teleport
+					var spawn_pos = nearest_spawn_point.global_position
+					global_position = Vector3(spawn_pos.x, global_position.y, spawn_pos.z)
 					destroy_npc()
 			else:
-				# Jika tidak ada spawn point, langsung destroy
-				print("NPC: Tidak ada spawn point yang ditemukan, menghilang")
-				destroy_npc()
+				# Jika tidak ada spawn point, cari lagi atau langsung destroy
+				print("NPC: Spawn point tidak valid, mencari yang baru...")
+				nearest_spawn_point = find_nearest_spawn_point()
+				if not nearest_spawn_point:
+					print("NPC: Tidak ada spawn point yang ditemukan, menghilang")
+					destroy_npc()
 
 # ⬅️ FUNGSI BARU: Anti-stuck mechanism - DIPERBAIKI
 func check_if_stuck(delta: float):
@@ -237,6 +318,11 @@ func harvest_single_fruit():
 	
 	if current_harvesting_fruits.size() == 0:
 		return
+		
+	if egrek_model:
+		egrek_model.visible = true
+		
+	play_animation("Panen")
 	
 	# Ambil buah pertama dari array
 	var fruit = current_harvesting_fruits[0]
@@ -255,8 +341,8 @@ func harvest_single_fruit():
 		npc_carried_ripe_kg += harvested_kg
 		total_harvested_by_npc += harvested_kg
 		
-		# Kirim signal dengan data panen
-		npc_harvested_fruits.emit(1, total_harvested_by_npc)
+		# ⬅️ PERBAIKAN: Signal hanya kirim INCREMENT, bukan total
+		npc_harvested_fruits.emit(harvested_kg)  # Hanya kirim berat buah ini saja
 		
 		print("NPC memanen 1 buah matang (%d kg). Total dipanen: %d kg, Kapasitas: %d/%d" % [harvested_kg, total_harvested_by_npc, npc_carried_ripe_fruits, max_carry_capacity])
 		
@@ -278,17 +364,22 @@ func transition_to_state(new_state: NPCState):
 	stuck_check_position = global_position
 
 func state_enter(state: NPCState):
-	if get_tree().paused:
-		return
-	
 	match state:
+		NPCState.SPAWN:
+			play_animation("Jalan")  # ⬅️ TAMBAH INI
+			
 		NPCState.SEARCH:
+			play_animation("Jalan")  # ⬅️ TAMBAH INI
 			search_attempts += 1
 			if search_attempts >= MAX_SEARCH_ATTEMPTS:
 				visited_trees.clear()
 				search_attempts = 0
 			
+		NPCState.MOVE:
+			play_animation("Jalan")  # ⬅️ TAMBAH INI
+			
 		NPCState.HARVEST:
+			play_animation("Panen")
 			# Cek kapasitas sebelum mulai harvest
 			if npc_carried_ripe_fruits >= max_carry_capacity:
 				print("NPC: Kapasitas penuh, langsung kembali ke spawn point")
@@ -323,12 +414,19 @@ func state_enter(state: NPCState):
 					transition_to_state(NPCState.SEARCH)
 			else:
 				transition_to_state(NPCState.SEARCH)
-		
+			
+		NPCState.IDLE:
+			play_animation("Jalan")  # ⬅️ TAMBAH INI
+			
 		NPCState.RETURN_TO_SPAWN:
+			play_animation("Jalan")  # ⬅️ TAMBAH INI
 			print("NPC: Mencari spawn point terdekat...")
 			nearest_spawn_point = find_nearest_spawn_point()
 			if nearest_spawn_point:
-				print("NPC: Menemukan spawn point, menuju: ", nearest_spawn_point.global_position)
+				print("NPC: Menemukan spawn point '%s' di posisi %s" % [nearest_spawn_point.name, nearest_spawn_point.global_position])
+				print("NPC: Posisi saat ini: %s" % global_position)
+				var initial_distance = global_position.distance_to(nearest_spawn_point.global_position)
+				print("NPC: Jarak awal: %.1f unit" % initial_distance)
 			else:
 				print("NPC: Tidak ada spawn point yang ditemukan, menghilang")
 				destroy_npc()
@@ -339,12 +437,44 @@ func state_exit(state: NPCState):
 	
 	match state:
 		NPCState.HARVEST:
+			# Kembali ke animasi jalan setelah selesai panen
+			play_animation("Jalan")
 			if target_tree and is_instance_valid(target_tree) and target_tree.has_method("set_harvesting_mode_active"):
 				target_tree.set_harvesting_mode_active(false)
 			current_harvesting_fruits.clear()
+			
+			# ⬅️ PASTIKAN EGREK TIDAK TERLIHAT SETELAH PANEN SELESAI
+			if egrek_model:
+				egrek_model.visible = false
+				is_harvesting = false
+			
+func find_animation_player_auto():
+	# Method 1: Cari langsung
+	animation_player = find_child("AnimationPlayer", true, false)
+	
+	# Method 2: Jika tidak ketemu, cari di dalam Maling
+	if not animation_player:
+		var maling_node = find_child("Maling", true, false)
+		if maling_node:
+			animation_player = maling_node.find_child("AnimationPlayer", true, false)
+	
+	if animation_player:
+		print("NPC: Auto-found AnimationPlayer: ", animation_player.name)
+		print("NPC: Animations: ", animation_player.get_animation_list())
 		
-		NPCState.RETURN_TO_SPAWN:
-			nearest_spawn_point = null
+		# AUTO-CONFIGURE LOOP FOR WALK ANIMATION
+		if animation_player.has_animation("Jalan"):
+			var walk_anim = animation_player.get_animation("Jalan")
+			walk_anim.loop_mode = Animation.LOOP_LINEAR
+			print("NPC: Set Jalan animation to LOOP")
+		
+		# ⬅️ MODIFIKASI: Animasi Panen TIDAK looping karena diputar sekali per buah
+		if animation_player.has_animation("Panen"):
+			var harvest_anim = animation_player.get_animation("Panen")
+			harvest_anim.loop_mode = Animation.LOOP_NONE  # ⬅️ TIDAK LOOPING
+			print("NPC: Set Panen animation to NO LOOP (play once per fruit)")
+	else:
+		print("NPC: ERROR - Cannot find AnimationPlayer automatically")
 
 # ⬅️ FUNGSI: Cari spawn point terdekat
 func find_nearest_spawn_point() -> Marker3D:
@@ -356,26 +486,53 @@ func find_nearest_spawn_point() -> Marker3D:
 		if not is_instance_valid(spawn_point):
 			continue
 		
+		# ⬅️ PERBAIKAN: Pastikan spawn point punya posisi valid
+		if spawn_point.global_position == Vector3.ZERO:
+			continue
+			
 		var distance = global_position.distance_to(spawn_point.global_position)
 		if distance < nearest_distance:
 			nearest_distance = distance
 			nearest_spawn = spawn_point
 	
+	if nearest_spawn:
+		print("NPC: Spawn point terdekat: '%s' (%.1f unit)" % [nearest_spawn.name, nearest_distance])
+	else:
+		print("NPC: WARNING - Tidak ada spawn point yang valid!")
+	
 	return nearest_spawn
 
-# ⬅️ HANYA SATU FUNGSI move_towards_target YANG TERSISA
 func move_towards_target(target_position: Vector3):
 	if get_tree().paused:
 		return
 	
-	var direction = (target_position - global_position).normalized()
-	direction.y = 0
+	# ⬅️ PERBAIKAN: Debug lebih detail
+	var current_pos = global_position
+	var target_pos_flat = Vector3(target_position.x, current_pos.y, target_position.z)
 	
-	velocity = direction * move_speed
-	velocity.y = -9.8
+	# Hitung arah dan jarak sebenarnya
+	var direction = (target_pos_flat - current_pos).normalized()
+	var actual_distance = current_pos.distance_to(target_pos_flat)
 	
-	if direction.length() > 0.1:
-		look_at(global_position + direction, Vector3.UP)
+	# ⬅️ DEBUG: Tampilkan info movement detail
+	if Engine.get_frames_drawn() % 30 == 0 and current_state == NPCState.RETURN_TO_SPAWN:
+		print("NPC Movement Debug:")
+		print("  Posisi NPC: %s" % current_pos)
+		print("  Target: %s" % target_pos_flat)
+		print("  Arah: %s" % direction)
+		print("  Jarak: %.1f" % actual_distance)
+		print("  Kecepatan: %.1f" % move_speed)
+	
+	# ⬅️ PERBAIKAN: Pastikan arah valid sebelum bergerak
+	if direction.length() > 0.1 and actual_distance > 0.5:
+		velocity = direction * move_speed
+		velocity.y = 0
+		
+		# Rotasi hanya jika bergerak cukup cepat
+		if velocity.length() > 0.5:
+			look_at(global_position + direction, Vector3.UP)
+	else:
+		velocity = Vector3.ZERO
 	
 	move_and_slide()
 
@@ -406,14 +563,10 @@ func calculate_fruits_to_harvest() -> int:
 
 # ⬅️ TAMBAHKAN FUNGSI YANG HILANG: initialize_npc
 func initialize_npc():
-	# ⬅️ TUNGGU SAMPAI PLAYER SIAP
-	var player_ready = await wait_for_player_ready()
-	if not player_ready:
-		print("NPC: Player tidak ditemukan, tetap beroperasi dengan mode fallback")
-		# Tetap lanjut meski player tidak ditemukan
-		find_player_fallback()
-	
+	# Simplifikasi total
+	await get_tree().create_timer(0.5).timeout  # Delay kecil
 	transition_to_state(NPCState.SEARCH)
+	
 
 # ⬅️ TAMBAHKAN FUNGSI YANG HILANG: get_ripe_fruits_from_tree
 func get_ripe_fruits_from_tree(tree: Node3D) -> Array:
@@ -467,28 +620,6 @@ func find_player_fallback():
 	else:
 		print("NPC: Player tidak ditemukan sama sekali, NPC akan tetap beroperasi")
 
-# ⬅️ TAMBAHKAN FUNGSI YANG HILANG: setup_camera_from_player
-func setup_camera_from_player(player: Node) -> bool:
-	if player == null:
-		return false
-	
-	var camera_paths = [
-		"PlayerController/Camera3D",
-		"Camera3D",
-		"Head/Camera3D",
-		"Camera",
-		"../Camera3D"
-	]
-	
-	for path in camera_paths:
-		if player.has_node(path):
-			var camera_node = player.get_node(path)
-			if camera_node and camera_node is Camera3D:
-				return true
-	
-	var camera_node = find_camera_recursive(player)
-	return camera_node != null
-
 # ⬅️ TAMBAHKAN FUNGSI YANG HILANG: find_player_recursive_fallback
 func find_player_recursive_fallback(node: Node) -> Node:
 	if node == null:
@@ -525,16 +656,6 @@ func is_player_ready(player: Node) -> bool:
 		return true
 	
 	return true
-
-# ⬅️ TAMBAHKAN FUNGSI YANG HILANG: find_camera_recursive
-func find_camera_recursive(node: Node) -> Camera3D:
-	for child in node.get_children():
-		if child is Camera3D:
-			return child
-		var found = find_camera_recursive(child)
-		if found:
-			return found
-	return null
 
 # ⬅️ TAMBAHKAN FUNGSI YANG HILANG: Inventory getters
 func get_npc_carried_fruits() -> int:

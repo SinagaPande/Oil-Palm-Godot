@@ -122,10 +122,15 @@ func get_safe_spawn_position(original_position: Vector3) -> Vector3:
 		return Vector3(original_position.x, spawn_height_offset, original_position.z)
 
 func add_npc_to_scene(npc_instance: HarvesterNPC, spawn_position: Vector3):
+	# ⬅️ TAMBAH ERROR HANDLING
+	if not is_instance_valid(npc_instance):
+		print("NPC Manager: Invalid NPC instance, skipping...")
+		return
+	
 	get_parent().add_child(npc_instance)
 	npc_instance.global_position = spawn_position
 	
-	# Connect signals
+	# Connect signals dengan validasi
 	if npc_instance.has_signal("npc_harvested_fruits"):
 		npc_instance.npc_harvested_fruits.connect(_on_npc_harvested_fruits)
 	
@@ -136,33 +141,33 @@ func add_npc_to_scene(npc_instance: HarvesterNPC, spawn_position: Vector3):
 		npc_instance.call_deferred("initialize_npc")
 	
 	active_npcs.append(npc_instance)
-	print("NPC Manager: Spawn NPC baru di %s. Total aktif: %d" % [spawn_position, active_npcs.size()])
+	print("NPC Manager: Spawn NPC baru. Total aktif: %d" % active_npcs.size())
 
 func _on_npc_returned_to_spawn(npc_instance: HarvesterNPC):
 	print("NPC Manager: NPC kembali ke spawn point, menghapus dari daftar")
 	
+	# ⬅️ PERBAIKAN: Disconnect signal untuk hindari memory leak
+	if npc_instance.has_signal("npc_harvested_fruits"):
+		npc_instance.npc_harvested_fruits.disconnect(_on_npc_harvested_fruits)
+	if npc_instance.has_signal("npc_returned_to_spawn"):
+		npc_instance.npc_returned_to_spawn.disconnect(_on_npc_returned_to_spawn)
+	
 	if npc_instance in active_npcs:
 		active_npcs.erase(npc_instance)
 	
-	# ⬅️ TAMBAHKAN: Update total harvest dari NPC yang kembali
+	# ⬅️ TAMBAHKAN: Update total harvest dari NPC yang kembali (optional)
 	var npc_harvest = npc_instance.get_total_harvested()
 	if npc_harvest > 0:
 		print("NPC Manager: NPC membawa %d kg buah sebelum menghilang" % npc_harvest)
 	
 	print("NPC Manager: Sisa NPC aktif: %d" % active_npcs.size())
 
-func _on_npc_harvested_fruits(harvested_count: int, total_harvested_kg: int):
-	# Gunakan data total_harvested_kg yang sudah dihitung oleh NPC
-	total_npc_harvest += total_harvested_kg
-	
-	# ⬅️ PANCAHKAN SIGNAL BARU SETELAH UPDATE TOTAL
+func _on_npc_harvested_fruits(harvested_kg: int):
+	# ⬅️ PERBAIKAN: Langsung tambahkan ke total, tanpa recalculate semua NPC
+	total_npc_harvest += harvested_kg
 	npc_total_harvest_updated.emit(total_npc_harvest)
-	
-	print("=== NPC HARVEST REPORT ===")
-	print("Buah dipanen saat ini: %d buah (%d kg)" % [harvested_count, total_harvested_kg])
-	print("Total buah dipanen NPC: %d kg" % total_npc_harvest)
-	print("Jumlah NPC aktif: %d" % active_npcs.size())
-	print("==========================")
+	print("NPC Manager: +%d kg dari panen (Total: %d kg)" % [harvested_kg, total_npc_harvest])
+
 
 func reset_npc_harvest():
 	"""Reset total panen NPC untuk ronde baru"""
