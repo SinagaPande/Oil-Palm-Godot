@@ -1,5 +1,7 @@
-AudioStreamPlayer
+Sprite3D
 CollisionShape3D
+Area3D
+AudioStreamPlayer
 CharacterBody3D
 Node
 ColorRect
@@ -11,4 +13,3 @@ MeshInstance3D
 Marker3D
 Node3D
 StaticBody3D
-Area3D

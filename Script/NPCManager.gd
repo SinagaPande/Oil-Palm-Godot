@@ -85,14 +85,12 @@ func initialize_spawn_system():
 	print("  - WildBoar: Max ", max_wildboars, ", Interval ", boar_spawn_interval, ", First spawn in ", boar_first_spawn_time)
 
 func _process(delta):
-	# Handle Harvester NPC spawning
-	if spawned_npcs_count < max_npcs:
+	if spawned_npcs_count < max_npcs:  # spawned_npcs_count adalah total yang PERNAH di-spawn
 		spawn_timer += delta
 		if spawn_timer >= spawn_interval:
 			if not is_spawning:
 				spawn_timer = 0.0
 				if spawn_points.size() > 0:
-					# Tambahkan ke queue
 					spawn_queue.append({"type": "npc"})
 					process_spawn_queue()
 	
@@ -270,13 +268,12 @@ func _on_npc_returned_to_spawn(npc_instance: HarvesterNPC):
 	if npc_instance in active_npcs:
 		active_npcs.erase(npc_instance)
 	
-	spawned_npcs_count -= 1
-	print("NPC returned to spawn. Remaining NPC slots: ", max_npcs - spawned_npcs_count)
+	print("NPC kembali ke spawn. TOTAL yang pernah spawn: ", spawned_npcs_count, "/", max_npcs)
 
 func reset_npc_harvest():
 	total_npc_harvest = 0
+	# spawned_npcs_count direset ke 0 hanya di sini (saat round baru)
 	spawned_npcs_count = 0
-	spawned_wildboars_count = 0  # DITAMBAHKAN: Reset counter WildBoar
 	
 	for npc in active_npcs:
 		if is_instance_valid(npc):
@@ -284,12 +281,6 @@ func reset_npc_harvest():
 				npc.reset_after_carrying()
 			npc.queue_free()
 	active_npcs.clear()
-	
-	# DITAMBAHKAN: Hapus semua WildBoar
-	for boar in active_wildboars:
-		if is_instance_valid(boar):
-			boar.queue_free()
-	active_wildboars.clear()
 	
 	# Reset queue
 	spawn_queue.clear()
@@ -299,9 +290,8 @@ func reset_npc_harvest():
 	
 	# Reset timer untuk round baru
 	spawn_timer = npc_first_spawn_time - spawn_interval
-	boar_spawn_timer = boar_first_spawn_time - boar_spawn_interval
 	
-	print("NPCManager: Semua NPC dan WildBoar direset untuk round baru")
+	print("NPCManager: Reset untuk round baru. Total spawn count: ", spawned_npcs_count)
 
 func get_active_npc_count() -> int:
 	return active_npcs.size()
@@ -352,3 +342,10 @@ func are_all_npcs_spawned() -> bool:
 # DITAMBAHKAN: Cek apakah semua WildBoar sudah di-spawn
 func are_all_wildboars_spawned() -> bool:
 	return spawned_wildboars_count >= max_wildboars
+
+# NPCManager.gd - Tambahkan fungsi ini
+func remove_wildboar_from_active(boar: WildBoar):
+	if boar in active_wildboars:
+		active_wildboars.erase(boar)
+		spawned_wildboars_count -= 1
+		print("WildBoar dihapus dari active list. Slots tersedia: ", get_remaining_wildboar_slots())

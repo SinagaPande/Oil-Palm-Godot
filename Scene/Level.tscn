@@ -1,4 +1,4 @@
-[gd_scene load_steps=49 format=4 uid="uid://b21n6dxr2ma3k"]
+[gd_scene load_steps=50 format=4 uid="uid://b21n6dxr2ma3k"]
 
 [ext_resource type="PackedScene" uid="uid://cro4dsaaw46m6" path="res://Scene/Player.tscn" id="1_bexhn"]
 [ext_resource type="Texture2D" uid="uid://fd37gd6tujy3" path="res://kloofendal_48d_partly_cloudy_puresky_4k.hdr" id="1_p43b4"]
@@ -13,6 +13,7 @@
 [ext_resource type="Script" uid="uid://b2ikfi0wypu7b" path="res://Script/GameModeManager.gd" id="10_to8gu"]
 [ext_resource type="PackedScene" uid="uid://c6uvgqkx66ky5" path="res://Scene/WildBoar.tscn" id="12_qyxxj"]
 [ext_resource type="AudioStream" uid="uid://c7mvadvnb6pjm" path="res://soundeffect/night.ogg" id="13_5mlvf"]
+[ext_resource type="PackedScene" uid="uid://bhbm0jpubxbq7" path="res://Scene/Genangan.tscn" id="14_0dfen"]
 
 [sub_resource type="Shader" id="Shader_p43b4"]
 code = "shader_type sky;
@@ -243,20 +244,6 @@ _bundled = {
 "node_paths": [],
 "nodes": PackedInt32Array(-1, -1, 1, 0, -1, 0, 0, 0, 0, 5, 2, -1, 2, 3, 0, 4, 1, 0),
 "variants": [SubResource("ArrayMesh_hh2gc"), NodePath("")],
-"version": 3
-}
-
-[sub_resource type="PackedScene" id="PackedScene_5mlvf"]
-resource_local_to_scene = true
-_bundled = {
-"conn_count": 0,
-"conns": PackedInt32Array(),
-"editable_instances": [],
-"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
-"node_count": 3,
-"node_paths": [],
-"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
-"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
 "version": 3
 }
 
@@ -526,6 +513,20 @@ _bundled = {
 "version": 3
 }
 
+[sub_resource type="PackedScene" id="PackedScene_3wgcd"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
 [node name="Node3D" type="Node3D"]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
@@ -557,82 +558,82 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 0, -41)
 
 [node name="Tree" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28, 0, 41)
-fruit_scene = SubResource("PackedScene_5mlvf")
+fruit_scene = SubResource("PackedScene_0dfen")
 
 [node name="Tree2" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -42, 0, 41)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_tnm6y")
 
 [node name="Tree3" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -57, 0, 41)
-fruit_scene = SubResource("PackedScene_tnm6y")
+fruit_scene = SubResource("PackedScene_u1s8k")
 
 [node name="Tree4" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -57, 0, 27)
-fruit_scene = SubResource("PackedScene_u1s8k")
+fruit_scene = SubResource("PackedScene_vs76y")
 
 [node name="Tree5" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -42, 0, 27)
-fruit_scene = SubResource("PackedScene_vs76y")
+fruit_scene = SubResource("PackedScene_f4a14")
 
 [node name="Tree6" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28, 0, 27)
-fruit_scene = SubResource("PackedScene_f4a14")
+fruit_scene = SubResource("PackedScene_nfgao")
 
 [node name="Tree7" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 0, 27)
-fruit_scene = SubResource("PackedScene_nfgao")
+fruit_scene = SubResource("PackedScene_uto0g")
 
 [node name="Tree8" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 27)
-fruit_scene = SubResource("PackedScene_uto0g")
+fruit_scene = SubResource("PackedScene_ytnep")
 
 [node name="Tree9" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 42)
-fruit_scene = SubResource("PackedScene_ytnep")
+fruit_scene = SubResource("PackedScene_mih3y")
 
 [node name="Tree10" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 0, 42)
-fruit_scene = SubResource("PackedScene_mih3y")
+fruit_scene = SubResource("PackedScene_ipgw0")
 
 [node name="Tree11" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28, 0, 14)
-fruit_scene = SubResource("PackedScene_ipgw0")
+fruit_scene = SubResource("PackedScene_cfe4r")
 
 [node name="Tree12" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -42, 0, 14)
-fruit_scene = SubResource("PackedScene_cfe4r")
+fruit_scene = SubResource("PackedScene_k2hdj")
 
 [node name="Tree13" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -57, 0, 14)
-fruit_scene = SubResource("PackedScene_k2hdj")
+fruit_scene = SubResource("PackedScene_icee0")
 
 [node name="Tree14" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -57, 0, 0)
-fruit_scene = SubResource("PackedScene_icee0")
+fruit_scene = SubResource("PackedScene_r60g4")
 
 [node name="Tree15" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -42, 0, 0)
-fruit_scene = SubResource("PackedScene_r60g4")
+fruit_scene = SubResource("PackedScene_akvj0")
 
 [node name="Tree16" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28, 0, 0)
-fruit_scene = SubResource("PackedScene_akvj0")
+fruit_scene = SubResource("PackedScene_4imuh")
 
 [node name="Tree17" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 0, 0)
-fruit_scene = SubResource("PackedScene_4imuh")
+fruit_scene = SubResource("PackedScene_qdylv")
 
 [node name="Tree18" parent="Trees" instance=ExtResource("2_t7iv1")]
-fruit_scene = SubResource("PackedScene_qdylv")
+fruit_scene = SubResource("PackedScene_28ekt")
 
 [node name="Tree19" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 15)
-fruit_scene = SubResource("PackedScene_28ekt")
+fruit_scene = SubResource("PackedScene_spg48")
 
 [node name="Tree20" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 0, 15)
-fruit_scene = SubResource("PackedScene_spg48")
+fruit_scene = SubResource("PackedScene_3wgcd")
 
 [node name="InventorySystem" type="Node" parent="."]
 script = ExtResource("2_6lu5p")
@@ -665,9 +666,13 @@ transform = Transform3D(1, 0, 0, 0, -1, 8.74228e-08, 0, -8.74228e-08, -1, 22, 5,
 
 [node name="GameModeManager" type="Node" parent="."]
 script = ExtResource("10_to8gu")
+max_wildboars = 0
 ripe_fruit_price = 1750
 npc_stolen_penalty = 750
 
 [node name="jangkrik" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("13_5mlvf")
 autoplay = true
+
+[node name="GenanganAir" parent="." instance=ExtResource("14_0dfen")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, 12)

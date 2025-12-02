@@ -7,5 +7,7 @@ res://Scene/fruit.tscn
 res://Scene/UIManager.tscn
 res://Scene/WildBoar.tscn
 res://Scene/Player.tscn
-res://Script/GameModeManager.gd
-res://Script/NPCManager.gd
+res://Script/Genanga.gd
+res://Script/Player.gd
+res://Scene/Genangan.tscn
+res://Script/Genangan.gd

@@ -37,6 +37,11 @@ const ANIMATION_DISABLE_THRESHOLD = 10.0
 const DECELERATION = 75
 const MIN_VELOCITY_THRESHOLD = 0.01
 
+var raycast_node: RayCast3D = null
+var is_shooting: bool = false
+const SHOOT_COOLDOWN: float = 1.0
+var shoot_timer: float = 0.0
+
 var egrek_tween: Tween
 var tojok_tween: Tween
 var tojok_shoot_tween: Tween
@@ -52,6 +57,10 @@ func _ready():
 	# Setup animasi ketapel setelah semua node siap
 	await get_tree().process_frame
 	setup_ketapel_animation()
+	
+	# Setup raycast untuk ketapel
+	setup_raycast()  # TAMBAHKAN INI
+	
 	
 func setup_ketapel_animation():
 	if ketapel_node:
@@ -227,6 +236,22 @@ func toggle_mouse_mode():
 	var current_mode = Input.get_mouse_mode()
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE if current_mode == Input.MOUSE_MODE_CAPTURED else Input.MOUSE_MODE_CAPTURED)
 
+func setup_raycast():
+	# Buat RayCast3D node untuk ketapel
+	raycast_node = RayCast3D.new()
+	raycast_node.enabled = false
+	raycast_node.collision_mask = 0b111111  # Deteksi semua layer
+	raycast_node.collide_with_areas = true
+	raycast_node.collide_with_bodies = true
+	raycast_node.exclude_parent = true
+	
+	# Tambahkan sebagai child dari camera
+	if camera_node:
+		camera_node.add_child(raycast_node)
+		raycast_node.target_position = Vector3(0, 0, -50)  # Ray sejauh 50 unit ke depan
+		print("RayCast3D diatur untuk ketapel")
+
+# PlayerController.gd - Tambahkan di _physics_process()
 func _physics_process(delta):
 	if get_tree().paused:
 		return
@@ -257,6 +282,14 @@ func _physics_process(delta):
 		player_body.velocity.y = JUMP_VELOCITY
 	
 	player_body.move_and_slide()
+	
+	# Update shoot cooldown
+	if shoot_timer > 0:
+		shoot_timer -= delta
+	
+	# Handle shooting input
+	if Input.is_action_just_pressed("shoot") and is_ketapel_active() and shoot_timer <= 0:
+		shoot_ketapel()
 
 func play_tool_animation():
 	match current_tool:
@@ -342,6 +375,133 @@ func play_tojok_animation():
 	
 	tojok_shoot_tween.tween_property(tojok_node, "position", TOJOK_DEFAULT_POSITION, 0.2).set_delay(0.1)
 	tojok_shoot_tween.tween_property(tojok_node, "rotation_degrees", TOJOK_DEFAULT_ROTATION, 0.2).set_delay(0.1)
+
+# PlayerController.gd - Tambahkan fungsi shoot_ketapel()
+func shoot_ketapel():
+	if not is_ketapel_active() or shoot_timer > 0:
+		return
+	
+	# Set cooldown
+	shoot_timer = SHOOT_COOLDOWN
+	
+	# Mainkan animasi ketapel
+	play_ketapel_animation()
+	
+	# Aktifkan dan tembak raycast
+	if raycast_node:
+		raycast_node.enabled = true
+		raycast_node.force_raycast_update()
+		
+		# Cek apakah mengenai sesuatu
+		if raycast_node.is_colliding():
+			var collider = raycast_node.get_collider()
+			var collision_point = raycast_node.get_collision_point()
+			
+			# Debug: Tampilkan info collision
+			print("Ketapel mengenai: ", collider.name if collider else "null")
+			print("Posisi collision: ", collision_point)
+			
+			# Handle collision dengan berbagai tipe object
+			handle_ketapel_collision(collider)
+		
+		# Nonaktifkan raycast setelah digunakan
+		raycast_node.enabled = false
+	
+	# Tampilkan efek visual shot (opsional)
+	show_shot_effect()
+
+func handle_ketapel_collision(collider: Object):
+	if not collider:
+		return
+	
+	# Cek jika mengenai HarvesterNPC
+	if collider is HarvesterNPC or collider.is_in_group("harvester_npc"):
+		print("Ketapel mengenai HarvesterNPC!")
+		send_npc_to_spawn(collider)
+		return
+	
+	# Cek jika mengenai WildBoar
+	if collider is WildBoar or collider.is_in_group("wild_boar"):
+		print("Ketapel mengenai WildBoar!")
+		send_wildboar_to_spawn(collider)
+		return
+	
+	# Cek parent jika langsung mengenai collision shape
+	var parent = collider.get_parent()
+	if parent:
+		if parent is HarvesterNPC or parent.is_in_group("harvester_npc"):
+			print("Ketapel mengenai collision shape HarvesterNPC!")
+			send_npc_to_spawn(parent)
+			return
+		elif parent is WildBoar or parent.is_in_group("wild_boar"):
+			print("Ketapel mengenai collision shape WildBoar!")
+			send_wildboar_to_spawn(parent)
+			return
+	
+	# Cek node yang lebih tinggi di hierarchy
+	var ancestor = collider
+	while ancestor and ancestor != get_tree().root:
+		if ancestor is HarvesterNPC or ancestor.is_in_group("harvester_npc"):
+			print("Ketapel mengenai bagian dari HarvesterNPC!")
+			send_npc_to_spawn(ancestor)
+			return
+		elif ancestor is WildBoar or ancestor.is_in_group("wild_boar"):
+			print("Ketapel mengenai bagian dari WildBoar!")
+			send_wildboar_to_spawn(ancestor)
+			return
+		ancestor = ancestor.get_parent()
+
+func send_npc_to_spawn(npc: HarvesterNPC):
+	if not is_instance_valid(npc):
+		return
+	
+	# Panggil fungsi untuk kembali ke spawn
+	if npc.has_method("transition_to_state"):
+		npc.transition_to_state(npc.NPCState.RETURN_TO_SPAWN)
+		print("HarvesterNPC dikirim kembali ke spawn point")
+		
+		# Tambahkan efek visual atau suara
+		show_hit_effect_on_npc(npc)
+
+func send_wildboar_to_spawn(boar: WildBoar):
+	if not is_instance_valid(boar):
+		return
+	
+	# Untuk WildBoar, gunakan stun lalu kembali ke spawn
+	if boar.has_method("stun_boar"):
+		# Stun boar dulu
+		boar.stun_boar(1.0)
+		
+		# Setelah stun, paksa kembali ke IDLE state yang akan di-respawn
+		await get_tree().create_timer(1.0).timeout
+		
+		if is_instance_valid(boar) and boar.has_method("transition_to_state"):
+			boar.transition_to_state(boar.BoarState.IDLE)
+			
+			# Cari NPCManager untuk menghapus dari active list
+			var npc_managers = get_tree().get_nodes_in_group("npc_manager")
+			if npc_managers.size() > 0:
+				var npc_manager = npc_managers[0]
+				if npc_manager.has_method("remove_wildboar_from_active"):
+					npc_manager.remove_wildboar_from_active(boar)
+		
+		print("WildBoar dikirim kembali ke spawn point")
+		show_hit_effect_on_boar(boar)
+
+func show_shot_effect():
+	# Tampilkan efek visual shot (misalnya particle system)
+	# Anda bisa menambahkan particle system di sini
+	pass
+
+func show_hit_effect_on_npc(npc: HarvesterNPC):
+	# Tampilkan efek visual ketika terkena ketapel
+	# Misalnya: particle system atau perubahan material sementara
+	pass
+
+func show_hit_effect_on_boar(boar: WildBoar):
+	# Tampilkan efek visual ketika terkena ketapel
+	# Misalnya: particle system atau perubahan material sementara
+	pass
 
 func is_egrek_active() -> bool:
 	return current_tool == Tool.EGREK

@@ -23,6 +23,11 @@ var speed_reduction_factor: float = 0.03  # DIUBAH: dari const ke var
 
 var is_fully_initialized: bool = false
 
+# VARIABEL BARU
+var water_slow_factor: float = 0  # 0 = no slow, 0.35 = 35% slow
+var is_in_water: bool = false
+var original_speed: float = BASE_SPEED
+
 # Setter untuk speed reduction factor
 func set_speed_reduction_factor(new_factor: float):
 	speed_reduction_factor = new_factor
@@ -130,25 +135,62 @@ func deliver_fruits():
 		if inventory_system:
 			inventory_system.add_delivered_ripe_kg(carried_ripe_kg)
 		
-		# Tampilkan notifikasi dengan total kg melalui UIManager
 		if ui_manager:
 			ui_manager.show_delivery_notification(carried_ripe_kg)
 		
 		carried_ripe_fruits = 0
 		carried_ripe_kg = 0
 		carried_fruits_updated.emit(0, 0)
-		update_speed()
+		update_speed_with_water()  # Ganti ini
 		return true
 	
 	return false
 
 func update_speed():
+	update_speed_with_water()  # Ganti dengan fungsi baru
+		
+func apply_water_slowdown(factor: float):
+	if not is_in_water:
+		is_in_water = true
+		water_slow_factor = factor  # factor = 0.35 dari Genangan
+		print("Player terkena efek air: ", factor * 100, "% slowdown")
+		update_speed_with_water()
+	else:
+		# Jika sudah di air, update faktor (jika berbeda)
+		water_slow_factor = max(water_slow_factor, factor)
+		update_speed_with_water()
+
+func remove_water_slowdown():
+	if is_in_water:
+		is_in_water = false
+		water_slow_factor = 0.0
+		print("Player keluar dari air")
+		update_speed_with_water()
+		
+func update_speed_with_water():
+	# Hitung reduksi dari buah
 	var total_kg = carried_ripe_kg
-	var speed_reduction = total_kg * speed_reduction_factor  # DIUBAH: gunakan variabel bukan konstanta
-	var new_speed = max(1.0, BASE_SPEED - speed_reduction)  # Minimum speed 1.0
+	var weight_reduction = total_kg * speed_reduction_factor
+	
+	# Hitung reduksi dari air (jika ada)
+	var water_reduction = 0.0
+	if is_in_water and water_slow_factor > 0:
+		water_reduction = BASE_SPEED * water_slow_factor
+	
+	# Total speed
+	var new_speed = max(1.0, BASE_SPEED - weight_reduction - water_reduction)
 	
 	if player_controller:
 		player_controller.set_current_speed(new_speed)
+	
+	# DEBUG: Tampilkan info detail
+	print("===== SPEED CALCULATION =====")
+	print("Base Speed: ", BASE_SPEED)
+	print("Carried KG: ", total_kg, " | Weight Reduction: ", weight_reduction)
+	print("In Water: ", is_in_water, " | Water Slow Factor: ", water_slow_factor)
+	print("Water Reduction: ", water_reduction)
+	print("New Speed: ", new_speed)
+	print("=============================")
 
 func get_initialization_status() -> bool:
 	return is_fully_initialized
@@ -161,3 +203,4 @@ func get_carried_ripe_fruits() -> int:
 
 func get_carried_ripe_kg() -> int:
 	return carried_ripe_kg
+	
