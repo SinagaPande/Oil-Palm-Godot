@@ -1,10 +1,11 @@
-res://Scene/Player.tscn
-res://Script/PlayerController.gd
-res://Script/Player.gd
 res://Scene/Level.tscn
+res://Script/PlayerController.gd
 res://Scene/DeliveryZone.tscn
 res://Scene/HarvesterNPC.tscn
 res://Scene/Tree.tscn
 res://Scene/fruit.tscn
 res://Scene/UIManager.tscn
 res://Scene/WildBoar.tscn
+res://Scene/Player.tscn
+res://Script/GameModeManager.gd
+res://Script/NPCManager.gd

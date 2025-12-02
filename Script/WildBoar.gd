@@ -8,12 +8,14 @@ enum BoarState {
 	IDLE
 }
 
+# DIUBAH: Hapus @export dari variabel statistik
+var move_speed: float = 8.0
+var attack_range: float = 2.5
+var detection_range: float = 20.0
+var attack_cooldown: float = 2.0
+
 # Export variables - simple configuration
-@export var move_speed: float = 8.0
-@export var attack_range: float = 2.5
-@export var detection_range: float = 20.0
 @export var attack_damage: int = 20
-@export var attack_cooldown: float = 2.0
 
 # Variabel animasi
 @export var chase_animation_name: String = "Chase"
@@ -31,6 +33,19 @@ var can_attack: bool = true
 var animation_player: AnimationPlayer = null
 var current_animation: String = ""
 var is_attack_playing: bool = false
+
+# Setter untuk statistik dari GameModeManager
+func set_stats(new_detection_range: float, new_move_speed: float, new_attack_range: float, new_attack_cooldown: float):
+	detection_range = new_detection_range
+	move_speed = new_move_speed
+	attack_range = new_attack_range
+	attack_cooldown = new_attack_cooldown
+	
+	print("WildBoar statistik diatur:")
+	print("  - Detection range: ", detection_range)
+	print("  - Move speed: ", move_speed)
+	print("  - Attack range: ", attack_range)
+	print("  - Attack cooldown: ", attack_cooldown)
 
 func _ready():
 	add_to_group("wild_boar")

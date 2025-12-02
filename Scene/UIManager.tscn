@@ -155,9 +155,9 @@ grow_vertical = 2
 
 [node name="FinalScoreLabel" type="Label" parent="RoundEndPanel"]
 layout_mode = 2
-offset_top = 300.0
+offset_top = 310.0
 offset_right = 1920.0
-offset_bottom = 555.0
+offset_bottom = 565.0
 theme_override_fonts/font = ExtResource("3_ujxo0")
 theme_override_font_sizes/font_size = 50
 text = "FinalScoreLabel"
@@ -169,7 +169,7 @@ layout_mode = 0
 offset_left = 26.0
 offset_top = 57.0
 offset_right = 1946.0
-offset_bottom = 443.0
+offset_bottom = 457.0
 theme_override_fonts/font = ExtResource("2_10rq1")
 theme_override_font_sizes/font_size = 50
 text = "DetailsLabel"
@@ -196,6 +196,6 @@ icon = ExtResource("6_n3pna")
 [node name="Sprite2D" type="Sprite2D" parent="RoundEndPanel"]
 self_modulate = Color(0.790123, 0.700858, 0.932401, 1)
 z_index = -99
-position = Vector2(960, 295)
-scale = Vector2(3.52462, 0.6)
+position = Vector2(960, 300)
+scale = Vector2(3.82, 0.61)
 texture = ExtResource("4_ujxo0")

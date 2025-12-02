@@ -646,21 +646,27 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.531, 1.58868, 23.0644)
 [node name="NPCManager" type="Node" parent="." node_paths=PackedStringArray("manual_spawn_points")]
 script = ExtResource("7_e4n2r")
 harvester_npc_scene = ExtResource("8_akbbc")
-manual_spawn_points = [NodePath("Marker3D"), NodePath("Marker3D2")]
+wild_boar_scene = ExtResource("12_qyxxj")
+manual_spawn_points = [NodePath("Marker3D"), NodePath("Marker3D2"), NodePath("Marker3D3"), NodePath("Marker3D4")]
 
 [node name="Marker3D" type="Marker3D" parent="NPCManager"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 10, 17)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 5, 17)
 
 [node name="Marker3D2" type="Marker3D" parent="NPCManager"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27, 4, 16)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27, 5, 16)
+
+[node name="Marker3D3" type="Marker3D" parent="NPCManager"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 5, -20)
+
+[node name="Marker3D4" type="Marker3D" parent="NPCManager"]
+transform = Transform3D(1, 0, 0, 0, -1, 8.74228e-08, 0, -8.74228e-08, -1, 22, 5, -33)
 
 [node name="UIManager" parent="." instance=ExtResource("9_akbbc")]
 
 [node name="GameModeManager" type="Node" parent="."]
 script = ExtResource("10_to8gu")
-
-[node name="Node3D" parent="." instance=ExtResource("12_qyxxj")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.967, 0, 16.828)
+ripe_fruit_price = 1750
+npc_stolen_penalty = 750
 
 [node name="jangkrik" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("13_5mlvf")

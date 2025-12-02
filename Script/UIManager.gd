@@ -292,6 +292,11 @@ func setup_round_end_ui():
 func show_round_end_notification(final_score: int, score_details: Dictionary):
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	
+	# Ambil harga dari score_details - DITAMBAHKAN
+	var ripe_price = score_details.get("ripe_fruit_price", 2000)
+	var unripe_penalty_price = score_details.get("unripe_fruit_penalty", 500)
+	var npc_penalty_price = score_details.get("npc_stolen_penalty", 500)
+	
 	if round_end_panel:
 		round_end_panel.visible = true
 		
@@ -315,23 +320,56 @@ func show_round_end_notification(final_score: int, score_details: Dictionary):
 			
 			var ripe_kg = score_details.get("delivered_ripe_kg", 0)
 			var ripe_income = score_details.get("ripe_income", 0)
-			details_text += "+ PENJUALAN BUAH MATANG:    %3d kg × Rp 2.000 = +Rp %8s\n" % [
+			
+			# Format harga dengan padding yang dinamis - DIPERBAHARUI
+			var ripe_price_formatted = _format_currency(ripe_price)
+			var ripe_price_padding = ""
+			if ripe_price >= 1000 and ripe_price < 10000:
+				ripe_price_padding = " "
+			elif ripe_price < 1000:
+				ripe_price_padding = "   "
+			
+			details_text += "+ PENJUALAN BUAH MATANG:    %3d kg × Rp%s%s = +Rp %8s\n" % [
 				ripe_kg, 
+				ripe_price_padding,
+				ripe_price_formatted,
 				_format_currency_with_padding(ripe_income)
 			]
 			
 			var unripe_kg = score_details.get("collected_unripe_kg", 0)
-			var unripe_penalty = score_details.get("unripe_penalty", 0)
-			details_text += "- KERUGIAN BUAH MENTAH:     %3d kg × Rp   500 = -Rp %8s\n" % [
+			var unripe_penalty_amount = score_details.get("unripe_penalty", 0)
+			
+			# Format harga dengan padding yang dinamis - DIPERBAHARUI
+			var unripe_price_formatted = _format_currency(unripe_penalty_price)
+			var unripe_price_padding = ""
+			if unripe_penalty_price >= 1000 and unripe_penalty_price < 10000:
+				unripe_price_padding = " "
+			elif unripe_penalty_price < 1000:
+				unripe_price_padding = "   "
+			
+			details_text += "- KERUGIAN BUAH MENTAH:     %3d kg × Rp%s%s = -Rp %8s\n" % [
 				unripe_kg,
-				_format_currency_with_padding(unripe_penalty)
+				unripe_price_padding,
+				unripe_price_formatted,
+				_format_currency_with_padding(unripe_penalty_amount)
 			]
 			
 			var npc_kg = score_details.get("npc_stolen_kg", 0)
-			var npc_penalty = score_details.get("npc_penalty", 0)
-			details_text += "- KERUGIAN KARENA PENCURIAN: %3d kg × Rp   500 = -Rp %8s" % [
+			var npc_penalty_amount = score_details.get("npc_penalty", 0)
+			
+			# Format harga dengan padding yang dinamis - DIPERBAHARUI
+			var npc_price_formatted = _format_currency(npc_penalty_price)
+			var npc_price_padding = ""
+			if npc_penalty_price >= 1000 and npc_penalty_price < 10000:
+				npc_price_padding = " "
+			elif npc_penalty_price < 1000:
+				npc_price_padding = "   "
+			
+			details_text += "- KERUGIAN KARENA PENCURIAN: %3d kg × Rp%s%s = -Rp %8s" % [
 				npc_kg,
-				_format_currency_with_padding(npc_penalty)
+				npc_price_padding,
+				npc_price_formatted,
+				_format_currency_with_padding(npc_penalty_amount)
 			]
 			
 			details_label.text = details_text

@@ -19,9 +19,15 @@ var inventory_system: Node
 var ui_manager: UIManager  # Referensi ke UIManager
 
 const BASE_SPEED = 14
-const SPEED_REDUCTION_PER_KG = 0.03
+var speed_reduction_factor: float = 0.03  # DIUBAH: dari const ke var
 
 var is_fully_initialized: bool = false
+
+# Setter untuk speed reduction factor
+func set_speed_reduction_factor(new_factor: float):
+	speed_reduction_factor = new_factor
+	print("Player speed reduction factor diatur ke: ", speed_reduction_factor)
+	update_speed()
 
 func _ready():
 	add_to_group("player")
@@ -138,7 +144,7 @@ func deliver_fruits():
 
 func update_speed():
 	var total_kg = carried_ripe_kg
-	var speed_reduction = total_kg * SPEED_REDUCTION_PER_KG
+	var speed_reduction = total_kg * speed_reduction_factor  # DIUBAH: gunakan variabel bukan konstanta
 	var new_speed = max(1.0, BASE_SPEED - speed_reduction)  # Minimum speed 1.0
 	
 	if player_controller:

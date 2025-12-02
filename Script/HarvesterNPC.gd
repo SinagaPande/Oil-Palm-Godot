@@ -14,7 +14,8 @@ enum NPCState {
 @export var move_speed: float = 3.0
 @export var harvest_range: float = 2.0
 @export var search_radius: float = 15.0
-@export var max_carry_capacity: int = 2
+# DIUBAH: Hapus @export
+var max_carry_capacity: int = 2
 
 var current_state: NPCState = NPCState.SPAWN
 var target_tree: Node3D = null
@@ -48,6 +49,11 @@ const TREE_COOLDOWN_TIME: float = 10.0
 
 signal npc_harvested_fruits(harvested_count, total_harvested)
 signal npc_returned_to_spawn(npc_instance)
+
+# Setter untuk carry capacity dari NPCManager
+func set_carry_capacity(new_capacity: int):
+	max_carry_capacity = new_capacity
+	print("HarvesterNPC: Kapasitas dibawa diatur ke ", max_carry_capacity)
 
 func _ready():
 	add_to_group("harvester_npc")
