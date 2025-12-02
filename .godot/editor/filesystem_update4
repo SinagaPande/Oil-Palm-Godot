@@ -1,13 +1,6 @@
 res://Scene/Level.tscn
 res://Script/PlayerController.gd
-res://Scene/DeliveryZone.tscn
 res://Scene/HarvesterNPC.tscn
-res://Scene/Tree.tscn
-res://Scene/fruit.tscn
 res://Scene/UIManager.tscn
-res://Scene/WildBoar.tscn
-res://Scene/Player.tscn
-res://Script/Genanga.gd
-res://Script/Player.gd
 res://Scene/Genangan.tscn
-res://Script/Genangan.gd
+res://Scene/Player.tscn
