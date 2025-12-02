@@ -6,8 +6,14 @@ class_name PlayerController
 @export var egrek_node: Node3D
 @export var tojok_node: Node3D
 
-enum Tool { EGREK, TOJOK }
+enum Tool { EGREK, TOJOK, KETAPEL } 
 var current_tool: Tool = Tool.EGREK
+
+@export var ketapel_node: Node3D  
+
+# Tambah variabel untuk animasi ketapel
+var ketapel_animation_player: AnimationPlayer = null
+const KETAPEL_SHOOT_ANIM_NAME: String = "Shoot"  # Nama animasi shoot
 
 var current_speed = 5.5
 const JUMP_VELOCITY = 7.0
@@ -42,6 +48,58 @@ func _ready():
 	
 	if player_body and player_body.has_method("get_base_speed"):
 		current_speed = player_body.get_base_speed()
+	
+	# Setup animasi ketapel setelah semua node siap
+	await get_tree().process_frame
+	setup_ketapel_animation()
+	
+func setup_ketapel_animation():
+	if ketapel_node:
+		# Cari AnimationPlayer di ketapel_node seperti di WildBoar.gd
+		ketapel_animation_player = find_animation_player_in_node(ketapel_node)
+		
+		if ketapel_animation_player:
+			print("AnimationPlayer ditemukan untuk Ketapel")
+			print("Animasi yang tersedia: ", ketapel_animation_player.get_animation_list())
+			
+			# Cek apakah animasi "Shoot" ada
+			if ketapel_animation_player.has_animation(KETAPEL_SHOOT_ANIM_NAME):
+				print("Animasi 'Shoot' tersedia untuk Ketapel")
+			else:
+				print("Peringatan: Animasi 'Shoot' tidak ditemukan untuk Ketapel")
+		else:
+			print("Peringatan: AnimationPlayer tidak ditemukan untuk Ketapel")
+
+func find_animation_player_in_node(node: Node3D) -> AnimationPlayer:
+	# Cari AnimationPlayer di dalam node dan children-nya
+	# Sama seperti di WildBoar.gd
+	var animation_player = node.find_child("AnimationPlayer", true, false)
+	
+	# Jika tidak ditemukan, cari secara rekursif
+	if not animation_player:
+		# Cari semua AnimationPlayer di children
+		for child in node.get_children():
+			if child is AnimationPlayer:
+				return child
+			
+			# Cari lebih dalam
+			var found = find_animation_player_recursive(child)
+			if found:
+				return found
+	
+	return animation_player
+
+func find_animation_player_recursive(node: Node) -> AnimationPlayer:
+	# Cari rekursif untuk AnimationPlayer
+	if node is AnimationPlayer:
+		return node
+	
+	for child in node.get_children():
+		var found = find_animation_player_recursive(child)
+		if found:
+			return found
+	
+	return null
 
 func set_current_speed(new_speed: float):
 	current_speed = new_speed
@@ -50,6 +108,7 @@ func switch_tool(new_tool: Tool):
 	if current_tool == new_tool:
 		return
 	
+	# Sembunyikan semua tool terlebih dahulu
 	match current_tool:
 		Tool.EGREK:
 			if egrek_node:
@@ -57,9 +116,13 @@ func switch_tool(new_tool: Tool):
 		Tool.TOJOK:
 			if tojok_node:
 				tojok_node.visible = false
+		Tool.KETAPEL:
+			if ketapel_node:
+				ketapel_node.visible = false
 	
 	current_tool = new_tool
 	
+	# Tampilkan tool yang baru
 	match current_tool:
 		Tool.EGREK:
 			if egrek_node:
@@ -67,6 +130,12 @@ func switch_tool(new_tool: Tool):
 		Tool.TOJOK:
 			if tojok_node:
 				tojok_node.visible = true
+		Tool.KETAPEL:
+			if ketapel_node:
+				ketapel_node.visible = true
+				# Setup animasi saat ketapel diaktifkan
+				if not ketapel_animation_player:
+					setup_ketapel_animation()
 	
 	update_tool_position()
 
@@ -100,6 +169,10 @@ func update_tool_position():
 				tojok_tween.set_parallel(true)
 				tojok_tween.tween_property(tojok_node, "position", TOJOK_DEFAULT_POSITION, 0.2)
 				tojok_tween.tween_property(tojok_node, "rotation_degrees", TOJOK_DEFAULT_ROTATION, 0.2)
+		
+		Tool.KETAPEL:  # Ketapel diam di tempat
+			# Tidak ada animasi atau perubahan posisi untuk sekarang
+			pass
 	
 	update_tool_animation_status()
 
@@ -118,6 +191,10 @@ func set_tool_animation_enabled(enabled: bool):
 		Tool.TOJOK:
 			if tojok_node:
 				tojok_node.set_meta("animation_enabled", true)
+		Tool.KETAPEL:
+			# Ketapel tidak butuh animasi untuk sekarang
+			if ketapel_node:
+				ketapel_node.set_meta("animation_enabled", false)
 
 func _input(event):
 	if get_tree().paused:
@@ -131,6 +208,8 @@ func _input(event):
 		switch_tool(Tool.EGREK)
 	elif event.is_action_pressed("tool_2"):
 		switch_tool(Tool.TOJOK)
+	elif event.is_action_pressed("tool_3"):  # Tambah untuk tombol 3
+		switch_tool(Tool.KETAPEL)
 
 func handle_mouse_motion(event):
 	if !player_body or !camera_node:
@@ -185,6 +264,52 @@ func play_tool_animation():
 			play_egrek_animation()
 		Tool.TOJOK:
 			play_tojok_animation()
+		Tool.KETAPEL:
+			play_ketapel_animation()  # Akan kita buat
+
+func play_ketapel_animation():
+	# Ketapel: Mainkan animasi "Shoot" jika ada
+	if not ketapel_node or not is_instance_valid(ketapel_node):
+		return
+	
+	# Pastikan ketapel aktif
+	if not is_ketapel_active():
+		return
+	
+	# Cari AnimationPlayer jika belum ditemukan
+	if not ketapel_animation_player:
+		setup_ketapel_animation()
+	
+	# Mainkan animasi Shoot
+	if ketapel_animation_player and ketapel_animation_player.has_animation(KETAPEL_SHOOT_ANIM_NAME):
+		# Mainkan animasi shoot (tidak loop)
+		ketapel_animation_player.play(KETAPEL_SHOOT_ANIM_NAME)
+		
+		# Tunggu animasi selesai jika ingin sinkronisasi dengan logika lain
+		# var anim_length = ketapel_animation_player.current_animation_length
+		# await get_tree().create_timer(anim_length).timeout
+		
+		print("Ketapel: Memutar animasi 'Shoot'")
+	else:
+		# Fallback: Log atau efek visual sederhana jika tidak ada animasi
+		print("Ketapel: Tidak ada animasi 'Shoot' yang ditemukan")
+		
+		# Anda bisa tambahkan efek visual sederhana di sini
+		# Misalnya: menggerakkan ketapel dengan tween
+		play_ketapel_fallback_animation()
+
+func play_ketapel_fallback_animation():
+	# Animasi fallback sederhana dengan tween jika tidak ada AnimationPlayer
+	if ketapel_node:
+		var tween = create_tween()
+		tween.set_parallel(true)
+		
+		# Efek "recoil" sederhana
+		var original_position = ketapel_node.position
+		var recoil_position = original_position + Vector3(0, 0, -0.1)
+		
+		tween.tween_property(ketapel_node, "position", recoil_position, 0.1)
+		tween.tween_property(ketapel_node, "position", original_position, 0.2).set_delay(0.1)
 
 func play_egrek_animation():
 	if !egrek_node:
@@ -218,11 +343,14 @@ func play_tojok_animation():
 	tojok_shoot_tween.tween_property(tojok_node, "position", TOJOK_DEFAULT_POSITION, 0.2).set_delay(0.1)
 	tojok_shoot_tween.tween_property(tojok_node, "rotation_degrees", TOJOK_DEFAULT_ROTATION, 0.2).set_delay(0.1)
 
-func get_current_tool() -> Tool:
-	return current_tool
-
 func is_egrek_active() -> bool:
 	return current_tool == Tool.EGREK
 
 func is_tojok_active() -> bool:
 	return current_tool == Tool.TOJOK
+
+func is_ketapel_active() -> bool:  # Tambah ini
+	return current_tool == Tool.KETAPEL
+
+func get_current_tool() -> Tool:
+	return current_tool

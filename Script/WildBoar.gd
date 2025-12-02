@@ -15,6 +15,11 @@ enum BoarState {
 @export var attack_damage: int = 20
 @export var attack_cooldown: float = 2.0
 
+# Variabel animasi
+@export var chase_animation_name: String = "Chase"
+@export var idle_animation_name: String = "Idle"
+@export var attack_animation_name: String = "Attack"
+
 var current_state: BoarState = BoarState.SPAWN
 var player_node: Node3D = null
 var camera_node: Camera3D = null
@@ -22,24 +27,39 @@ var camera_node: Camera3D = null
 var attack_timer: float = 0.0
 var can_attack: bool = true
 
-# Untuk animasi sederhana - gunakan @onready dengan ? operator
-@onready var mesh_instance: MeshInstance3D = get_node_or_null("Babi_Hutan")
-@onready var animation_player: AnimationPlayer = get_node_or_null("AnimationPlayer")
+# Untuk animasi sederhana
+var animation_player: AnimationPlayer = null
+var current_animation: String = ""
+var is_attack_playing: bool = false
 
 func _ready():
 	add_to_group("wild_boar")
 	add_to_group("enemy")
 	setup_collision_config()
 	
-	# Cari mesh instance secara manual jika path langsung tidak berfungsi
-	if not mesh_instance:
-		mesh_instance = find_child("*", true, false) as MeshInstance3D
-	
-	# Cari AnimationPlayer secara manual
-	if not animation_player:
-		animation_player = find_child("AnimationPlayer", true, false)
+	# Cari AnimationPlayer secara otomatis
+	find_animation_player_auto()
 	
 	transition_to_state(BoarState.SPAWN)
+
+func find_animation_player_auto():
+	# Cari AnimationPlayer di dalam scene tree
+	animation_player = find_child("AnimationPlayer", true, false)
+	
+	# Jika tidak ditemukan langsung, cari secara rekursif
+	if not animation_player:
+		var all_nodes = get_tree().get_nodes_in_group("animation")
+		for node in all_nodes:
+			if node is AnimationPlayer:
+				animation_player = node
+				break
+	
+	# Debug info
+	if animation_player:
+		print("AnimationPlayer ditemukan untuk WildBoar")
+		print("Animasi yang tersedia: ", animation_player.get_animation_list())
+	else:
+		print("Peringatan: AnimationPlayer tidak ditemukan untuk WildBoar")
 
 func setup_collision_config():
 	# Setup collision sederhana seperti HarvesterNPC
@@ -106,7 +126,8 @@ func state_process(delta):
 			elif distance_to_player <= detection_range:
 				# Mengejar player
 				move_towards_target(player_node.global_position)
-				play_animation("run")
+				# Play animasi Chase dengan loop
+				play_animation(chase_animation_name, true)
 			else:
 				# Player terlalu jauh, idle
 				transition_to_state(BoarState.IDLE)
@@ -123,16 +144,19 @@ func state_process(delta):
 				direction.y = 0
 				if direction.length() > 0.1:
 					look_at(global_position + direction, Vector3.UP)
+				# Jika tidak menyerang, kembali ke idle animasi
+				if not is_attack_playing:
+					play_animation(idle_animation_name, true)
 			
 		BoarState.IDLE:
 			# Jika player masuk range deteksi, kejar
 			if distance_to_player <= detection_range and not player_is_dead:
 				transition_to_state(BoarState.CHASE)
 			else:
-				# Idle animation
+				# Idle animation dengan loop
 				velocity.x = 0
 				velocity.z = 0
-				play_animation("idle")
+				play_animation(idle_animation_name, true)
 
 func perform_attack():
 	if not player_node or not is_instance_valid(player_node):
@@ -146,20 +170,34 @@ func perform_attack():
 		transition_to_state(BoarState.IDLE)
 		return
 	
+	# Tandai sedang memainkan animasi serangan
+	is_attack_playing = true
+	
+	# Play attack animation (non-loop)
+	play_animation(attack_animation_name, false)
+	
+	# Tunggu sedikit untuk sinkronisasi animasi dengan damage
+	await get_tree().create_timer(0.3).timeout
+	
 	# Serang player dengan damage 20 HP
 	if player_node.has_method("take_damage"):
 		player_node.take_damage(attack_damage)
 		print("Babi hutan menyerang player! Damage: %d HP" % attack_damage)
 	
-	# Play attack animation
-	play_animation("attack")
-	
 	# Attack cooldown
 	can_attack = false
 	attack_timer = attack_cooldown
 	
+	# Tunggu animasi serangan selesai
+	if animation_player and animation_player.has_animation(attack_animation_name):
+		var attack_anim = animation_player.get_animation(attack_animation_name)
+		if attack_anim:
+			await get_tree().create_timer(attack_anim.length - 0.3).timeout
+	
+	# Reset flag
+	is_attack_playing = false
+	
 	# Kembali ke chase state setelah attack
-	await get_tree().create_timer(0.5).timeout
 	if current_state == BoarState.ATTACK:
 		transition_to_state(BoarState.CHASE)
 
@@ -171,21 +209,25 @@ func transition_to_state(new_state: BoarState):
 func state_enter(state: BoarState):
 	match state:
 		BoarState.SPAWN:
-			play_animation("idle")
+			play_animation(idle_animation_name, true)
 			
 		BoarState.CHASE:
 			can_attack = true
 			attack_timer = 0.0
-			play_animation("run")
+			is_attack_playing = false
+			play_animation(chase_animation_name, true)
 			
 		BoarState.ATTACK:
-			play_animation("attack_prepare")
+			# Hanya set state, animasi akan diputar di perform_attack()
+			pass
 			
 		BoarState.IDLE:
-			play_animation("idle")
+			play_animation(idle_animation_name, true)
 
 func state_exit(state: BoarState):
-	pass
+	# Reset attack flag saat keluar dari attack state
+	if state == BoarState.ATTACK:
+		is_attack_playing = false
 
 func move_towards_target(target_position: Vector3):
 	var direction = (target_position - global_position).normalized()
@@ -222,30 +264,59 @@ func find_player():
 	if players.size() > 0:
 		player_node = players[0]
 
-func play_animation(anim_name: String):
+func play_animation(anim_name: String, loop: bool = false):
+	# Jika animasi sama dan sedang diputar, jangan ganggu
+	if anim_name == current_animation and animation_player and animation_player.is_playing():
+		return
+	
 	if animation_player and animation_player.has_animation(anim_name):
+		current_animation = anim_name
+		
+		# Set loop mode jika tersedia
+		var anim = animation_player.get_animation(anim_name)
+		if anim:
+			if loop:
+				anim.loop_mode = Animation.LOOP_LINEAR
+			else:
+				anim.loop_mode = Animation.LOOP_NONE
+		
 		animation_player.play(anim_name)
-	elif animation_player:
+	else:
 		# Coba cari animasi dengan nama yang mirip
-		for anim in animation_player.get_animation_list():
-			if anim_name in anim:
-				animation_player.play(anim)
-				return
-		# Fallback ke animasi pertama yang ada
-		var animations = animation_player.get_animation_list()
-		if animations.size() > 0:
-			animation_player.play(animations[0])
-	elif mesh_instance:
-		# Fallback jika tidak ada animation player
-		pass  # Hanya print jika debugging
-		# print("Animation '%s' tidak ditemukan" % anim_name)
+		if animation_player:
+			for anim in animation_player.get_animation_list():
+				if anim_name.to_lower() in anim.to_lower():
+					current_animation = anim
+					
+					# Set loop mode
+					var anim_ref = animation_player.get_animation(anim)
+					if anim_ref:
+						if loop:
+							anim_ref.loop_mode = Animation.LOOP_LINEAR
+						else:
+							anim_ref.loop_mode = Animation.LOOP_NONE
+					
+					animation_player.play(anim)
+					return
+			
+			# Fallback ke animasi pertama yang ada
+			var animations = animation_player.get_animation_list()
+			if animations.size() > 0:
+				current_animation = animations[0]
+				animation_player.play(animations[0])
 
 # Public methods untuk interaksi eksternal
 func stun_boar(duration: float = 1.5):
 	# Interupsi state saat ini
 	can_attack = false
 	attack_timer = duration
-	play_animation("hurt")
+	is_attack_playing = false
+	
+	# Coba mainkan animasi "Hurt" jika ada
+	if animation_player and animation_player.has_animation("Hurt"):
+		play_animation("Hurt", false)
+	else:
+		play_animation(idle_animation_name, true)
 	
 	# Stop movement selama stunned
 	velocity = Vector3.ZERO

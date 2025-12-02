@@ -1,5 +1,7 @@
-res://Scene/Level.tscn
+res://Scene/Player.tscn
 res://Script/PlayerController.gd
+res://Script/Player.gd
+res://Scene/Level.tscn
 res://Scene/DeliveryZone.tscn
 res://Scene/HarvesterNPC.tscn
 res://Scene/Tree.tscn

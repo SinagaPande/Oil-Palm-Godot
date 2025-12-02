@@ -660,7 +660,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27, 4, 16)
 script = ExtResource("10_to8gu")
 
 [node name="Node3D" parent="." instance=ExtResource("12_qyxxj")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.9666, 0.113156, 16.8283)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.967, 0, 16.828)
 
 [node name="jangkrik" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("13_5mlvf")

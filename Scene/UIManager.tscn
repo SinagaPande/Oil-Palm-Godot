@@ -196,6 +196,6 @@ icon = ExtResource("6_n3pna")
 [node name="Sprite2D" type="Sprite2D" parent="RoundEndPanel"]
 self_modulate = Color(0.790123, 0.700858, 0.932401, 1)
 z_index = -99
-position = Vector2(959.5, 358.438)
-scale = Vector2(3.16, 0.86052)
+position = Vector2(960, 295)
+scale = Vector2(3.52462, 0.6)
 texture = ExtResource("4_ujxo0")

@@ -19,7 +19,7 @@ var inventory_system: Node
 var ui_manager: UIManager  # Referensi ke UIManager
 
 const BASE_SPEED = 14
-const SPEED_REDUCTION_PER_KG = 0.02
+const SPEED_REDUCTION_PER_KG = 0.03
 
 var is_fully_initialized: bool = false
 
@@ -46,6 +46,13 @@ func setup_components():
 		player_controller.camera_node = camera
 		player_controller.egrek_node = egrek
 		player_controller.tojok_node = tojok
+		
+		# Cari node Ketapel di scene
+		var ketapel = camera.get_node_or_null("Ketapel")
+		if ketapel:
+			player_controller.ketapel_node = ketapel
+		else:
+			print("Warning: Ketapel node not found under camera")
 	
 	if interaction_system:
 		interaction_system.camera = camera
