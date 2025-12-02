@@ -1,0 +1,32 @@
+=== GODOT PERFORMANCE REPORT ===
+Time: 2025-11-14T12:42:06
+
+FPS 19
+Process 0.07 ms
+Physics Process 0.00 ms
+Navigation Process 0.00 ms
+
+Memory
+Static 60.18 MiB
+Static Max 61.12 MiB
+Msg Buf Max 4.00 KiB
+
+Object
+Objects 3222
+Resources 67
+Nodes 1624
+Orphan Nodes 0
+
+Raster
+Total Objects Drawn 270
+Total Primitives Drawn 874902
+Total Draw Calls 237
+
+Video
+Video Mem 92.51 MiB
+Texture Mem 58.59 MiB
+Buffer Mem 33.93 MiB
+
+Physics 3D
+Active Objects 1
+Collision Pairs 1226

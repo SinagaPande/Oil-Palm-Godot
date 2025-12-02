@@ -1,0 +1,23 @@
+[gd_scene load_steps=2 format=3 uid="uid://s32mga8hhl4v"]
+
+[ext_resource type="Script" uid="uid://bfw2npq73q3oo" path="res://Script/UI_Inventory.gd" id="1_pirco"]
+
+[node name="UI_Inventory" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_pirco")
+
+[node name="RipeLabel" type="Label" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+text = "oi"
+horizontal_alignment = 1
+
+[node name="UnripeLabel" type="Label" parent="."]
+layout_mode = 0
+offset_top = 72.0
+offset_right = 40.0
+offset_bottom = 95.0

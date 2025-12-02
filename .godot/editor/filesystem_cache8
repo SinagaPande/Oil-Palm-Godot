@@ -1,0 +1,240 @@
+ea4bc82a6ad023ab7ee23ee620429895
+::res://::1763092969
+icon.png::CompressedTexture2D::557325075131260776::1763060442::1763092982::1::::<><>::
+icon.svg::CompressedTexture2D::5881908033975481201::1763060442::1763092982::1::::<><>::
+README.md::TextFile::-1::1763060442::0::1::::<><>::
+::res://3D Asset/::1763060442
+Buah_Sawit_Masak.gltf::PackedScene::2676336059647147747::1763060442::1763092991::1::::<><>::
+Buah_Sawit_Masak_LowMesh.gltf::PackedScene::1391482050387750499::1763060442::1763092991::1::::<><>::
+Buah_Sawit_Mentah.gltf::PackedScene::1416976459013122950::1763060442::1763092992::1::::<><>::
+Buah_Sawit_Mentah_LowMesh.gltf::PackedScene::8707208223954909789::1763060442::1763092993::1::::<><>::
+Egrek.glb::PackedScene::5551451398478270202::1763060442::1763092993::1::::<><>::
+Pohon_Sawit.gltf::PackedScene::2380164502437566581::1763060442::1763092994::1::::<><>::
+Pohon_Sawit_LowMesh.gltf::PackedScene::4315764909665232682::1763060442::1763092994::1::::<><>::
+::res://addons/::1763060442
+::res://addons/gltf2meshlib/::1763060442
+flagsdetect.gd::GDScript::-1::1763060442::0::1::::<>Resource<>::
+gltf2meshlib.gd::GDScript::-1::1763060442::0::1::::<>EditorPlugin<>::
+gltf2meshlib.png::CompressedTexture2D::9150109106235463008::1763060442::1763092984::1::::<><>::
+gltf2meshlib.svg::CompressedTexture2D::281839957332462377::1763060442::1763092984::1::::<><>::
+helpers.gd::GDScript::-1::1763060442::0::1::::<>Resource<>::
+importer.gd::GDScript::-1::1763060442::0::1::::GLTF2MeshLibraryImporter<>EditorImportPlugin<>::
+lambdas.gd::GDScript::-1::1763060442::0::1::::<>Resource<>::
+plugin.cfg::TextFile::-1::1763060442::0::1::::<><>::
+::res://addons/gltf2meshlib/examples/::1763060442
+test_scene.tscn::PackedScene::6306062603958846010::1763060442::0::1::::<><>::uid://dkhg7gw4mpo7y::::res://addons/gltf2meshlib/examples/gltf/test_mesh.gltf
+::res://addons/gltf2meshlib/examples/blockbench_project/::1763060442
+::res://addons/gltf2meshlib/examples/gltf/::1763060442
+test_mesh.gltf::PackedScene::6345506190984222990::1763060442::1763092994::1::::<><>::uid://cm65irjsyqto4::::res://addons/gltf2meshlib/examples/gltf/test_mesh_0.png<>uid://uu35k361fdnh::::res://addons/gltf2meshlib/examples/gltf/test_mesh_1.png<>uid://tru5visbhwit::::res://addons/gltf2meshlib/examples/gltf/test_mesh_2.png<>uid://cdvk3begewr0h::::res://addons/gltf2meshlib/examples/gltf/test_mesh_3.png
+test_mesh_0.png::CompressedTexture2D::5680939905203430085::1763060442::1763092985::1::::<><>::
+test_mesh_1.png::CompressedTexture2D::1446818647387919477::1763060442::1763092985::1::::<><>::
+test_mesh_2.png::CompressedTexture2D::1369951480782370819::1763060442::1763092985::1::::<><>::
+test_mesh_3.png::CompressedTexture2D::5027417062273967181::1763060442::1763092985::1::::<><>::
+::res://addons/gltf2meshlib/examples/imgs/::1763060442
+label_example.png::CompressedTexture2D::7670423703354116226::1763060442::1763092985::1::::<><>::
+showcase.png::CompressedTexture2D::2582041168152037882::1763060442::1763092986::1::::<><>::
+structure_example.png::CompressedTexture2D::7016920587209195843::1763060442::1763092984::1::::<><>::
+::res://addons/terrain_3d/::1763060442
+LICENSE.txt::TextFile::-1::1763060442::0::1::::<><>::
+plugin.cfg::TextFile::-1::1763060442::0::1::::<><>::
+README.md::TextFile::-1::1763060442::0::1::::<><>::
+terrain.gdextension::GDExtension::-1::1763060442::0::1::::<><>::
+::res://addons/terrain_3d/bin/::1763092957
+::res://addons/terrain_3d/bin/libterrain.macos.debug.framework/::1763060442
+::res://addons/terrain_3d/bin/libterrain.macos.release.framework/::1763060442
+::res://addons/terrain_3d/extras/::1763060442
+hex_grid.gdshaderinc::ShaderInclude::-1::1763060442::0::1::::<><>::
+import_sgt.gd::GDScript::-1::1763060442::0::1::::<>Terrain3D<>::
+lightweight.gdshader::Shader::-1::1763060442::0::1::::<><>::
+lowpoly_colormap.gdshader::Shader::-1::1763060442::0::1::::<><>::
+lowpoly_minimum.gdshader::Shader::-1::1763060442::0::1::::<><>::
+minimum.gdshader::Shader::-1::1763060442::0::1::::<><>::
+project_on_terrain3d.gd::GDScript::-1::1763060442::0::1::::<>RefCounted<>::
+region_mover.gd::GDScript::-1::1763060442::0::1::::<>Terrain3D<>::
+::res://addons/terrain_3d/icons/::1763060442
+autoshader.svg::CompressedTexture2D::2643274391178341217::1763060442::1763092984::1::::<><>::
+color_paint.svg::CompressedTexture2D::738037264959165742::1763060442::1763092984::1::::<><>::
+height_add.svg::CompressedTexture2D::2551661123966185934::1763060442::1763092984::1::::<><>::
+height_div.svg::CompressedTexture2D::7186582126980917722::1763060442::1763092984::1::::<><>::
+height_flat.svg::CompressedTexture2D::5986190407186579724::1763060442::1763092984::1::::<><>::
+height_mul.svg::CompressedTexture2D::3849017924698988715::1763060442::1763092984::1::::<><>::
+height_slope.svg::CompressedTexture2D::1759090111221642070::1763060442::1763092984::1::::<><>::
+height_smooth.svg::CompressedTexture2D::5299361044254028739::1763060442::1763092984::1::::<><>::
+height_sub.svg::CompressedTexture2D::872880673408351296::1763060442::1763092984::1::::<><>::
+holes.svg::CompressedTexture2D::3674633701816631779::1763060442::1763092984::1::::<><>::
+layers.svg::CompressedTexture2D::6090583645565862918::1763060442::1763092984::1::::<><>::
+multimesh.svg::CompressedTexture2D::5427391786099256013::1763060442::1763092988::1::::<><>::
+navigation.svg::CompressedTexture2D::409684150827103899::1763060442::1763092988::1::::<><>::
+picker_checked.svg::CompressedTexture2D::2877130841666407487::1763060442::1763092988::1::::<><>::
+region_add.svg::CompressedTexture2D::6567628363799703520::1763060442::1763092988::1::::<><>::
+region_remove.svg::CompressedTexture2D::4874899699697418333::1763060442::1763092988::1::::<><>::
+terrain3d.svg::CompressedTexture2D::3337497743794818701::1763060442::1763092988::1::::<><>::
+texture_paint.svg::CompressedTexture2D::8593981392022078875::1763060442::1763092988::1::::<><>::
+texture_spray.svg::CompressedTexture2D::1890372997461750014::1763060442::1763092987::1::::<><>::
+wetness.svg::CompressedTexture2D::2539594556547046321::1763060442::1763092987::1::::<><>::
+::res://addons/terrain_3d/menu/::1763060442
+baker.gd::GDScript::-1::1763060442::0::1::::<>Node<>::
+bake_lod_dialog.gd::GDScript::-1::1763060442::0::1::::<>ConfirmationDialog<>::
+bake_lod_dialog.tscn::PackedScene::2922157702694130781::1763060442::0::1::::<><>::res://addons/terrain_3d/menu/bake_lod_dialog.gd
+channel_packer.gd::GDScript::-1::1763060442::0::1::::<>RefCounted<>::
+channel_packer.tscn::PackedScene::953980224932829149::1763060442::0::1::::<><>::
+channel_packer_dragdrop.gd::GDScript::-1::1763060442::0::1::::<>Button<>::
+channel_packer_import_template.txt::TextFile::-1::1763060442::0::1::::<><>::
+directory_setup.gd::GDScript::-1::1763060442::0::1::::<>Node<>::
+directory_setup.tscn::PackedScene::4129394475485463890::1763060442::0::1::::<><>::
+terrain_menu.gd::GDScript::-1::1763060442::0::1::::<>HBoxContainer<>::
+::res://addons/terrain_3d/src/::1763060442
+asset_dock.gd::GDScript::-1::1763060442::0::1::::<>PanelContainer<>::
+asset_dock.tscn::PackedScene::7865110026461604383::1763060442::0::1::::<><>::res://addons/terrain_3d/src/asset_dock.gd
+double_slider.gd::GDScript::-1::1763060442::0::1::::DoubleSlider<>Control<>::
+editor_plugin.gd::GDScript::-1::1763060442::0::1::::<>EditorPlugin<>::
+gradient_operation_builder.gd::GDScript::-1::1763060442::0::1::::<>RefCounted<>::
+multi_picker.gd::GDScript::-1::1763060442::0::1::::<>HBoxContainer<>::
+operation_builder.gd::GDScript::-1::1763060442::0::1::::<>RefCounted<>::
+region_gizmo.gd::GDScript::-1::1763060442::0::1::::<>EditorNode3DGizmo<>::
+toolbar.gd::GDScript::-1::1763060442::0::1::::<>VFlowContainer<>::
+tool_settings.gd::GDScript::-1::1763060442::0::1::::<>PanelContainer<>::
+ui.gd::GDScript::-1::1763060442::0::1::::<>Node<>::
+::res://addons/terrain_3d/tools/::1763060442
+importer.gd::GDScript::-1::1763060442::0::1::::<>Terrain3D<>::
+importer.tscn::PackedScene::3158990868267418980::1763060442::0::1::::<><>::res://addons/terrain_3d/tools/importer.gd
+::res://addons/terrain_3d/utils/::1763060442
+terrain_3d_objects.gd::GDScript::-1::1763060442::0::1::::Terrain3DObjects<>Node3D<>::
+transform_changed_notifier.gd::GDScript::-1::1763060442::0::1::::<>Node3D<>::
+::res://demo/::1763060442
+CodeGeneratedDemo.tscn::PackedScene::5766609049318048670::1763060442::0::1::::<><>::res://demo/src/CodeGenerated.gd<>uid://domhm87hbhbg1::::res://demo/components/Player.tscn<>uid://bb2lp50sjndus::::res://demo/components/Environment.tscn<>uid://di5fovhcyd7re::::res://demo/components/Enemy.tscn<>uid://d2jihfohphuue::::res://demo/components/UI.tscn<>res://demo/src/RuntimeNavigationBaker.gd
+Demo.tscn::PackedScene::5293781890024210248::1763060442::0::1::::<><>::res://demo/src/DemoScene.gd<>uid://d2jihfohphuue::::res://demo/components/UI.tscn<>uid://dwnhqfjq7v1pq::::res://demo/components/Borders.tscn<>uid://domhm87hbhbg1::::res://demo/components/Player.tscn<>uid://djhl3foqkj4e2::::res://demo/components/Tunnel.tscn<>uid://bb2lp50sjndus::::res://demo/components/Environment.tscn<>uid://dal3jhw6241qg::::res://demo/data/assets.tres
+NavigationDemo.tscn::PackedScene::1673915473815048340::1763060442::0::1::::<><>::res://demo/src/DemoScene.gd<>uid://bb2lp50sjndus::::res://demo/components/Environment.tscn<>uid://dwnhqfjq7v1pq::::res://demo/components/Borders.tscn<>uid://domhm87hbhbg1::::res://demo/components/Player.tscn<>uid://djhl3foqkj4e2::::res://demo/components/Tunnel.tscn<>uid://d2jihfohphuue::::res://demo/components/UI.tscn<>uid://yf3fu23666k8::::res://demo/data/nav_mesh.res<>uid://dal3jhw6241qg::::res://demo/data/assets.tres<>uid://di5fovhcyd7re::::res://demo/components/Enemy.tscn
+::res://demo/assets/::1763060442
+::res://demo/assets/materials/::1763060442
+M_crystal_blue.tres::StandardMaterial3D::372031320502569055::1763060442::0::1::::<><>::uid://c307hdmos4gtm::::res://demo/assets/textures/rock023_nrm_rgh.png
+M_crystal_purple.tres::StandardMaterial3D::6066912994794361678::1763060442::0::1::::<><>::uid://c307hdmos4gtm::::res://demo/assets/textures/rock023_nrm_rgh.png
+M_crystal_red.tres::StandardMaterial3D::566264803754831616::1763060442::0::1::::<><>::uid://c307hdmos4gtm::::res://demo/assets/textures/rock023_nrm_rgh.png
+M_rock23_black_tp.tres::StandardMaterial3D::8929906877695265822::1763060442::0::1::::<><>::uid://c88j3oj0lf6om::::res://demo/assets/textures/rock023_alb_ht.png<>uid://c307hdmos4gtm::::res://demo/assets/textures/rock023_nrm_rgh.png
+M_rock23_tp.tres::StandardMaterial3D::914586349378320779::1763060442::0::1::::<><>::uid://c88j3oj0lf6om::::res://demo/assets/textures/rock023_alb_ht.png<>uid://c307hdmos4gtm::::res://demo/assets/textures/rock023_nrm_rgh.png
+::res://demo/assets/models/::1763060442
+CrystalC.tscn::PackedScene::5982640349226821032::1763060442::0::1::::<><>::uid://c8cx4xjwluvxw::::res://demo/assets/models/RockC.glb<>uid://fkhkir6t1hml::::res://demo/assets/materials/M_crystal_blue.tres
+LODExample.tscn::PackedScene::3361606763662026007::1763060442::0::1::::<><>::
+RockA.glb::PackedScene::4046695924926250789::1763060442::1763092994::1::::<><>::
+RockA.tscn::PackedScene::2731991749350214203::1763060442::0::1::::<><>::uid://bxwiqxgwoh630::::res://demo/assets/models/RockA.glb<>uid://nbbdrx8vma80::::res://demo/assets/materials/M_rock23_tp.tres
+RockB.glb::PackedScene::951729098719127583::1763060442::1763092994::1::::<><>::
+RockB.tscn::PackedScene::3975092670503483564::1763060442::0::1::::<><>::uid://nta3sef6c2el::::res://demo/assets/models/RockB.glb<>uid://nbbdrx8vma80::::res://demo/assets/materials/M_rock23_tp.tres
+RockC.glb::PackedScene::7094651464761644232::1763060442::1763092995::1::::<><>::
+RockC.tscn::PackedScene::810545015481710900::1763060442::0::1::::<><>::uid://c8cx4xjwluvxw::::res://demo/assets/models/RockC.glb<>uid://nbbdrx8vma80::::res://demo/assets/materials/M_rock23_tp.tres
+Tunnel.glb::PackedScene::648330476698116424::1763060442::1763092995::1::::<><>::
+Tunnel.tscn::PackedScene::1517361014733673259::1763060442::0::1::::<><>::uid://jib546bbort5::::res://demo/assets/models/Tunnel.glb<>uid://nbbdrx8vma80::::res://demo/assets/materials/M_rock23_tp.tres
+::res://demo/assets/textures/::1763060442
+asset_licenses.txt::TextFile::-1::1763060442::0::1::::<><>::
+ground037_alb_ht.png::CompressedTexture2D::7401858713486131787::1763060442::1763092989::1::::<><>::
+ground037_nrm_rgh.png::CompressedTexture2D::6627840073837815244::1763060442::1763092988::1::::<><>::
+rock023_alb_ht.png::CompressedTexture2D::7157794878870438556::1763060442::1763092987::1::::<><>::
+rock023_nrm_rgh.png::CompressedTexture2D::6791694054197465202::1763060442::1763092986::1::::<><>::
+::res://demo/components/::1763060442
+Borders.tscn::PackedScene::8730707390861212254::1763060442::0::1::::<><>::uid://d0hyi5n6ng25w::::res://demo/assets/materials/M_rock23_black_tp.tres
+DemoBase.tscn::PackedScene::8885026162472399387::1763060442::0::1::::<><>::res://demo/src/DemoScene.gd<>uid://bb2lp50sjndus::::res://demo/components/Environment.tscn<>uid://dwnhqfjq7v1pq::::res://demo/components/Borders.tscn<>uid://domhm87hbhbg1::::res://demo/components/Player.tscn<>uid://d2jihfohphuue::::res://demo/components/UI.tscn<>uid://dal3jhw6241qg::::res://demo/data/assets.tres
+Enemy.tscn::PackedScene::7783033832810938718::1763060442::0::1::::<><>::res://demo/src/Enemy.gd
+Environment.tscn::PackedScene::2513044015670746430::1763060442::0::1::::<><>::
+Player.tscn::PackedScene::8167126626560654738::1763060442::0::1::::<><>::res://demo/src/Player.gd<>res://demo/src/CameraManager.gd
+Tunnel.tscn::PackedScene::7806130462234511359::1763060442::0::1::::<><>::uid://be6nrf0b8j4l0::::res://demo/assets/models/RockA.tscn<>uid://bwvtgwartxt0g::::res://demo/assets/models/RockB.tscn<>uid://lsvs8a7urkca::::res://demo/assets/models/RockC.tscn<>uid://vvayjv3rbx1d::::res://demo/assets/models/Tunnel.tscn<>uid://cribhhvg03u8g::::res://demo/assets/models/CrystalC.tscn<>uid://cso4f2iyuxpmc::::res://demo/assets/materials/M_crystal_purple.tres<>uid://ickkffutwcvo::::res://demo/assets/materials/M_crystal_red.tres<>uid://c444j1ucmv5ti::::res://demo/src/CaveEntrance.gd
+UI.tscn::PackedScene::9073438750174585988::1763060442::0::1::::<><>::res://demo/src/UI.gd
+::res://demo/data/::1763060442
+assets.tres::Terrain3DAssets::7183686757411463558::1763060442::0::1::::<><>::uid://bn5nf4esciwex::::res://demo/assets/models/LODExample.tscn<>uid://c88j3oj0lf6om::::res://demo/assets/textures/rock023_alb_ht.png<>uid://ddprscrpsofah::::res://demo/assets/textures/ground037_alb_ht.png<>uid://c307hdmos4gtm::::res://demo/assets/textures/rock023_nrm_rgh.png<>uid://c1ots7w6i0i1q::::res://demo/assets/textures/ground037_nrm_rgh.png
+nav_mesh.res::NavigationMesh::1696564234341656601::1763060442::0::1::::<><>::
+terrain3d_00-01.res::Terrain3DRegion::489566701116439619::1763060442::0::1::::<><>::
+terrain3d_00-02.res::Terrain3DRegion::7168624212953799330::1763060442::0::1::::<><>::
+terrain3d_00_00.res::Terrain3DRegion::3003020531041116028::1763060442::0::1::::<><>::
+::res://demo/src/::1763060442
+CameraManager.gd::GDScript::-1::1763060442::0::1::::<>Node3D<>::
+CaveEntrance.gd::GDScript::-1::1763060442::0::1::::<>Area3D<>::
+CodeGenerated.gd::GDScript::-1::1763060442::0::1::::<>Node<>::
+DemoScene.gd::GDScript::-1::1763060442::0::1::::<>Node<>::
+Enemy.gd::GDScript::-1::1763060442::0::1::::<>CharacterBody3D<>::
+Player.gd::GDScript::-1::1763060442::0::1::::<>CharacterBody3D<>::
+RuntimeNavigationBaker.gd::GDScript::-1::1763060442::0::1::::<>Node<>::
+UI.gd::GDScript::-1::1763060442::0::1::::<>Control<>::
+::res://Performance Report/::1763060442
+performancemonitor.gd::GDScript::-1::1763060442::0::1::::<>Node<>::
+performance_report_2025-11-13T18-25-01.txt::TextFile::-1::1763060442::0::1::::<><>::
+::res://Scene/::1763060442
+DeliveryZone.tscn::PackedScene::7282198304629499503::1763060442::0::1::::<><>::uid://cdopw8tuc7t5i::::res://Script/DeliveryZone.gd
+fruit.tscn::PackedScene::367893611287629632::1763060442::0::1::::<><>::uid://d1eqpbdwh5vd::::res://Script/Fruit.gd
+Level.tscn::PackedScene::4336038157952053298::1763060442::0::1::::<><>::uid://cro4dsaaw46m6::::res://Scene/Player.tscn<>uid://yhgy8yiuvq0a::::res://Script/InventorySystem.gd<>uid://ce7kun3axgivb::::res://Scene/Tree.tscn<>uid://d1eqpbdwh5vd::::res://Script/Fruit.gd<>uid://brqv3uxwljvdi::::res://Performance Report/performancemonitor.gd<>uid://db0s0h54nq8sx::::res://Scene/DeliveryZone.tscn
+Player.tscn::PackedScene::5996720093412409723::1763060442::0::1::::<><>::uid://xrqu7ocbd6ce::::res://Script/PlayerController.gd<>uid://bpfyr0a0ogs5x::::res://Script/Player.gd<>uid://cldfugbgjbpxy::::res://3D Asset/Egrek.glb<>uid://d2113ln4fmisb::::res://Script/InteractionSystem.gd<>uid://s32mga8hhl4v::::res://Scene/UI_Inventory.tscn
+Tree.tscn::PackedScene::5120300441963064075::1763060442::0::1::::<><>::uid://cix5mto7iuouh::::res://Script/Tree.gd<>uid://fihfib6eqs53::::res://Scene/fruit.tscn<>uid://b2quauiv873h3::::res://3D Asset/Pohon_Sawit_LowMesh.gltf<>uid://8577xvcn1iun::::res://3D Asset/Pohon_Sawit.gltf
+UI_Inventory.tscn::PackedScene::1322862867578922979::1763060442::0::1::::<><>::uid://bfw2npq73q3oo::::res://Script/UI_Inventory.gd
+::res://Script/::1763060442
+DeliveryZone.gd::GDScript::-1::1763060442::0::1::::DeliveryZone<>Area3D<>::
+Fruit.gd::GDScript::-1::1763060442::0::1::::<>RigidBody3D<>::
+InteractionSystem.gd::GDScript::-1::1763060442::0::1::::<>Node3D<>::
+InventorySystem.gd::GDScript::-1::1763060442::0::1::::InventorySystem<>Node<>::
+Player.gd::GDScript::-1::1763060442::0::1::::<>CharacterBody3D<>::
+PlayerController.gd::GDScript::-1::1763060442::0::1::::<>Node3D<>::
+Tree.gd::GDScript::-1::1763060442::0::1::::<>Node3D<>::
+UI_Inventory.gd::GDScript::-1::1763060442::0::1::::UI_Inventory<>Control<>::
+::res://UIux/::1763092884
+Menu Buttons sprite (BnW).png::CompressedTexture2D::4383086090752638321::1591107720::1763092983::1::::<><>::
+Menu Buttons sprite (Colored).png::CompressedTexture2D::4481459369767877952::1591107745::1763092983::1::::<><>::
+::res://UIux/Large Buttons/::1591099259
+::res://UIux/Large Buttons/Colored Large Buttons/::1591098492
+Back  col_Button.png::CompressedTexture2D::4602495163771744861::1591098492::1763092985::1::::<><>::
+Continue  col_Button.png::CompressedTexture2D::724929203045480604::1591098463::1763092985::1::::<><>::
+Controls  col_Button.png::CompressedTexture2D::2666981853766915392::1591098433::1763092985::1::::<><>::
+Exit  col_Button.png::CompressedTexture2D::5873030084968770955::1591098376::1763092985::1::::<><>::
+Load  col_Button.png::CompressedTexture2D::2146645276196891825::1591098396::1763092985::1::::<><>::
+Menu  col_Button.png::CompressedTexture2D::5722889447973031067::1591098481::1763092985::1::::<><>::
+New Game  col_Button.png::CompressedTexture2D::1032946440156618509::1591098449::1763092985::1::::<><>::
+Options  col_Button.png::CompressedTexture2D::5337788619815488985::1591098422::1763092982::1::::<><>::
+Play col_Button.png::CompressedTexture2D::2411311571506361120::1591098347::1763092982::1::::<><>::
+Quit  col_Button.png::CompressedTexture2D::2401274055805285653::1591098386::1763092982::1::::<><>::
+Resume  col_Button.png::CompressedTexture2D::8218542665635628939::1591098472::1763092982::1::::<><>::
+Settings  col_Button.png::CompressedTexture2D::4978525494679487345::1591098411::1763092982::1::::<><>::
+Start  col_Button.png::CompressedTexture2D::8993201795869850726::1591098363::1763092982::1::::<><>::
+::res://UIux/Large Buttons/Large Buttons/::1591098053
+Back Button.png::CompressedTexture2D::4314894982089989594::1591098053::1763092982::1::::<><>::
+Continue Button.png::CompressedTexture2D::754482318108662312::1591098021::1763092982::1::::<><>::
+Controls Button.png::CompressedTexture2D::6280469147485383641::1591097983::1763092982::1::::<><>::
+Exit Button.png::CompressedTexture2D::683109965293966075::1591097758::1763092982::1::::<><>::
+Load Button.png::CompressedTexture2D::8218036645382747650::1591097933::1763092981::1::::<><>::
+Menu Button.png::CompressedTexture2D::4193297717166604893::1591098042::1763092981::1::::<><>::
+New game Button.png::CompressedTexture2D::6452996291016947372::1591097999::1763092981::1::::<><>::
+Options Button.png::CompressedTexture2D::7824679500657042220::1591097970::1763092981::1::::<><>::
+Play Button.png::CompressedTexture2D::5906633239277887938::1591097713::1763092981::1::::<><>::
+Quit Button.png::CompressedTexture2D::4314531806672365559::1591097917::1763092981::1::::<><>::
+Resume Button.png::CompressedTexture2D::6943863487022239642::1591098033::1763092981::1::::<><>::
+Settings Button.png::CompressedTexture2D::9038036779038573262::1591097954::1763092981::1::::<><>::
+Start Button.png::CompressedTexture2D::1521968748063515869::1591097726::1763092981::1::::<><>::
+::res://UIux/Square Buttons/::1591099231
+::res://UIux/Square Buttons/Colored Square Buttons/::1591099201
+Audio col_Square Button.png::CompressedTexture2D::2721998467026880748::1591099173::1763092981::1::::<><>::
+Back col_Square Button.png::CompressedTexture2D::8339193335180046383::1591099139::1763092981::1::::<><>::
+Down col_Square Button.png::CompressedTexture2D::5449533088857260619::1591099165::1763092981::1::::<><>::
+Home col_Square Button.png::CompressedTexture2D::7275627275082867402::1591099182::1763092981::1::::<><>::
+Info col_Square Button.png::CompressedTexture2D::634835980080624496::1591099060::1763092981::1::::<><>::
+Music col_Square Button.png::CompressedTexture2D::3853984282618121538::1591099201::1763092981::1::::<><>::
+Next col_Square Button.png::CompressedTexture2D::1242573158377279801::1591099147::1763092981::1::::<><>::
+On Off col_Square Button.png::CompressedTexture2D::5996784504340917354::1591099075::1763092981::1::::<><>::
+Pause col_Square Button.png::CompressedTexture2D::6653843400009596098::1591099049::1763092984::1::::<><>::
+Play col_Square Button.png::CompressedTexture2D::3415186668222656206::1591099038::1763092984::1::::<><>::
+Questionmark col_Square Button.png::CompressedTexture2D::5990988968285488738::1591099192::1763092984::1::::<><>::
+Return col_Square Button.png::CompressedTexture2D::5676001973266341530::1591099130::1763092984::1::::<><>::
+Settings col_Square Button.png::CompressedTexture2D::6513432905156710841::1591099116::1763092984::1::::<><>::
+Up col_Square Button.png::CompressedTexture2D::486248855684327625::1591099156::1763092983::1::::<><>::
+V col_Square Button.png::CompressedTexture2D::4225552507701924382::1591099085::1763092983::1::::<><>::
+X col_Square Button.png::CompressedTexture2D::2029490364816242197::1591099103::1763092983::1::::<><>::
+::res://UIux/Square Buttons/Square Buttons/::1591098883
+Audio Square Button.png::CompressedTexture2D::160241960666253601::1591098851::1763092983::1::::<><>::
+Back Square Button.png::CompressedTexture2D::4575407234495620922::1591098811::1763092983::1::::<><>::
+Down Square Button.png::CompressedTexture2D::3087606090756467680::1591098840::1763092983::1::::<><>::
+Home Square Button.png::CompressedTexture2D::7376223713973068258::1591098860::1763092983::1::::<><>::
+Info Square Button.png::CompressedTexture2D::8790420457869590943::1591098612::1763092983::1::::<><>::
+Music Square Button.png::CompressedTexture2D::6843647082113817051::1591098883::1763092983::1::::<><>::
+Next Square Button.png::CompressedTexture2D::7173886592879577122::1591098821::1763092983::1::::<><>::
+On Off Square Button.png::CompressedTexture2D::2044988210688461445::1591098648::1763092983::1::::<><>::
+Pause Square Button.png::CompressedTexture2D::3966053995125949014::1591098602::1763092983::1::::<><>::
+Play Square Button.png::CompressedTexture2D::5793107395835407357::1591098589::1763092983::1::::<><>::
+Questionmark Square Button.png::CompressedTexture2D::2975821232796827870::1591098873::1763092983::1::::<><>::
+Return Square Button.png::CompressedTexture2D::3992491192503481686::1591098801::1763092982::1::::<><>::
+Settings Square Button.png::CompressedTexture2D::5537999071749793431::1591098787::1763092982::1::::<><>::
+Up Square Button.png::CompressedTexture2D::3180508926597537016::1591098829::1763092982::1::::<><>::
+V Square Button.png::CompressedTexture2D::7872070465553094922::1591098666::1763092982::1::::<><>::
+X Square Button.png::CompressedTexture2D::8409879091353826771::1591098765::1763092982::1::::<><>::

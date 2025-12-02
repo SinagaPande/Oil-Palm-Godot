@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://db0s0h54nq8sx"]
+
+[ext_resource type="Script" uid="uid://cdopw8tuc7t5i" path="res://Script/DeliveryZone.gd" id="1_govq6"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_bt8su"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_nbq77"]
+
+[node name="Area3D" type="Area3D"]
+script = ExtResource("1_govq6")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_bt8su")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_nbq77")

@@ -1,0 +1,92 @@
+[gd_scene load_steps=5 format=3 uid="uid://cvaellwg5snmg"]
+
+[ext_resource type="Texture2D" uid="uid://djqllfmvgn0vw" path="res://UIux/Large Buttons/Large Buttons/Options Button.png" id="1_iteoj"]
+[ext_resource type="Script" path="res://Scene/options.gd" id="1_qg334"]
+[ext_resource type="Texture2D" uid="uid://b2qfxpto705xm" path="res://UIux/Large Buttons/Large Buttons/Back Button.png" id="3_4g2xe"]
+
+[sub_resource type="Theme" id="Theme_paqvd"]
+
+[node name="Options" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -18.0
+offset_top = 2.0
+offset_right = -18.0
+offset_bottom = 2.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_qg334")
+metadata/_edit_lock_ = true
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="OptionsButton" type="Sprite2D" parent="."]
+position = Vector2(972, 82)
+scale = Vector2(1.09, 0.57)
+texture = ExtResource("1_iteoj")
+
+[node name="HSlider" type="HSlider" parent="."]
+layout_mode = 0
+offset_left = 665.0
+offset_top = 277.0
+offset_right = 1282.0
+offset_bottom = 377.0
+theme = SubResource("Theme_paqvd")
+
+[node name="TextEdit" type="Label" parent="."]
+z_index = -1
+layout_mode = 0
+offset_left = 666.0
+offset_top = 290.0
+offset_right = 1267.0
+offset_bottom = 347.0
+text = "MUSIC"
+
+[node name="HSlider2" type="HSlider" parent="."]
+layout_mode = 0
+offset_left = 664.0
+offset_top = 366.0
+offset_right = 1256.0
+offset_bottom = 466.0
+theme = SubResource("Theme_paqvd")
+
+[node name="TextEdit2" type="Label" parent="."]
+z_index = -1
+layout_mode = 0
+offset_left = 665.0
+offset_top = 379.0
+offset_right = 1294.0
+offset_bottom = 436.0
+text = "VOICE "
+
+[node name="HSlider3" type="HSlider" parent="."]
+layout_mode = 0
+offset_left = 664.0
+offset_top = 460.0
+offset_right = 1262.0
+offset_bottom = 560.0
+theme = SubResource("Theme_paqvd")
+
+[node name="TextEdit3" type="Label" parent="."]
+z_index = -1
+layout_mode = 0
+offset_left = 665.0
+offset_top = 473.0
+offset_right = 1294.0
+offset_bottom = 530.0
+text = "SOUND EFFECT"
+
+[node name="Back" type="Button" parent="."]
+layout_mode = 0
+offset_left = 663.0
+offset_top = 574.0
+offset_right = 1271.0
+offset_bottom = 782.0
+icon = ExtResource("3_4g2xe")
+
+[connection signal="pressed" from="Back" to="." method="_on_back_pressed"]
