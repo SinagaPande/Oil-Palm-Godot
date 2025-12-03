@@ -10,9 +10,15 @@ const RAY_LENGTH = 5.25
 var current_target = null
 var player_node: Node3D = null
 
+# Audio untuk suara tojok dan egrek
+var audio_player: AudioStreamPlayer3D = null
+var tusuk_sound: AudioStream = null
+var enggrek_sound: AudioStream = null
+
 func _ready():
 	find_ui_manager()
 	player_node = get_parent()
+	setup_audio_player()
 
 func find_ui_manager():
 	var paths_to_try = [
@@ -33,8 +39,66 @@ func find_ui_manager():
 	if ui_manager == null:
 		ui_manager = get_tree().root.find_child("UIManager", true, false)
 
+func setup_audio_player():
+	# Setup AudioStreamPlayer3D untuk suara tojok dan egrek
+	audio_player = AudioStreamPlayer3D.new()
+	audio_player.volume_db = 0.0
+	audio_player.max_distance = 15.0
+	audio_player.attenuation_model = AudioStreamPlayer3D.ATTENUATION_INVERSE_DISTANCE
+	audio_player.bus = "Master"
+	
+	# Load sound effect tusuk.mp3
+	var tusuk_path = "res://soundeffect/tusuk.mp3"
+	
+	if ResourceLoader.exists(tusuk_path):
+		tusuk_sound = load(tusuk_path)
+		if tusuk_sound:
+			print("Sound tusuk.mp3 dimuat untuk InteractionSystem")
+		else:
+			print("Peringatan: Gagal memuat tusuk.mp3")
+	else:
+		print("Peringatan: File tusuk.mp3 tidak ditemukan: ", tusuk_path)
+	
+	# Load sound effect enggrek.mp3
+	var enggrek_path = "res://soundeffect/enggrek.mp3"
+	
+	if ResourceLoader.exists(enggrek_path):
+		enggrek_sound = load(enggrek_path)
+		if enggrek_sound:
+			print("Sound enggrek.mp3 dimuat untuk InteractionSystem")
+		else:
+			print("Peringatan: Gagal memuat enggrek.mp3")
+	else:
+		print("Peringatan: File enggrek.mp3 tidak ditemukan: ", enggrek_path)
+	
+	# Tambahkan sebagai child dari InteractionSystem
+	add_child(audio_player)
+
+func play_tusuk_sound():
+	# Mainkan suara tusuk.mp3 saat mengambil buah dengan tojok
+	if audio_player and tusuk_sound:
+		# Stop suara sebelumnya jika ada
+		if audio_player.playing:
+			audio_player.stop()
+		audio_player.stream = tusuk_sound
+		audio_player.play()
+		print("InteractionSystem: Memutar suara tusuk.mp3 (tojok buah)")
+
+func play_enggrek_sound():
+	# Mainkan suara enggrek.mp3 saat menjatuhkan buah dengan egrek
+	if audio_player and enggrek_sound:
+		# Stop suara sebelumnya jika ada
+		if audio_player.playing:
+			audio_player.stop()
+		audio_player.stream = enggrek_sound
+		audio_player.play()
+		print("InteractionSystem: Memutar suara enggrek.mp3 (egrek buah)")
+
 func _input(event):
 	if event.is_action_pressed("shoot"):
+		# Jangan handle interaction jika ketapel aktif (biarkan PlayerController handle)
+		if player_controller and player_controller.has_method("is_ketapel_active") and player_controller.is_ketapel_active():
+			return
 		handle_interaction()
 
 func _physics_process(_delta):
@@ -70,7 +134,11 @@ func handle_target_interaction():
 
 func handle_fruit_harvest():
 	var player_position = get_parent().global_position
-	var fruit_type = current_target.get("fruit_type")
+	# fruit_type tidak digunakan, jadi kita hapus atau prefix dengan underscore
+	# var _fruit_type = current_target.get("fruit_type")
+	
+	# Mainkan suara enggrek saat menjatuhkan buah
+	play_enggrek_sound()
 	
 	current_target.fall_from_tree(player_position)
 
@@ -150,6 +218,9 @@ func collect_fruit(fruit):
 		
 	if fruit.is_in_group("buah_jatuh") and fruit.has_touched_surface and fruit.can_be_collected:
 		var fruit_type = fruit.get("fruit_type")
+		
+		# Mainkan suara tusuk saat mengambil buah
+		play_tusuk_sound()
 		
 		if fruit_type == "Masak":
 			if player_node and player_node.has_method("add_to_inventory"):

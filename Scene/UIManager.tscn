@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://s32mga8hhl4v"]
+[gd_scene load_steps=12 format=3 uid="uid://s32mga8hhl4v"]
 
 [ext_resource type="Script" uid="uid://bfw2npq73q3oo" path="res://Script/UIManager.gd" id="1_jmley"]
 [ext_resource type="FontFile" uid="uid://bu4yj2c0kckej" path="res://FONT/Colorfiction - Messy.otf" id="2_10rq1"]
@@ -8,6 +8,25 @@
 [ext_resource type="Texture2D" uid="uid://cdhvimjgr4t6y" path="res://FONT/pause.PNG" id="4_witq5"]
 [ext_resource type="Texture2D" uid="uid://1qxc3knxmm65" path="res://FONT/settings.PNG" id="5_fd5t1"]
 [ext_resource type="Texture2D" uid="uid://b40c81e020xcc" path="res://FONT/exit.PNG" id="6_n3pna"]
+
+[sub_resource type="StyleBoxFlat" id="HealthBarBackground"]
+bg_color = Color(0.2, 0.2, 0.2, 0.8)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="HealthBarFill"]
+bg_color = Color(1, 0.2, 0.2, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
 
 [sub_resource type="Theme" id="Theme_rdqnu"]
 
@@ -86,6 +105,36 @@ theme_override_fonts/font = ExtResource("2_10rq1")
 theme_override_font_sizes/font_size = 50
 text = "Timer"
 horizontal_alignment = 1
+
+[node name="HealthBarContainer" type="Control" parent="."]
+anchors_preset = 0
+offset_left = 1600.0
+offset_top = 10.0
+offset_right = 1910.0
+offset_bottom = 80.0
+
+[node name="HealthLabel" type="Label" parent="HealthBarContainer"]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 5.0
+offset_right = 100.0
+offset_bottom = 35.0
+theme_override_colors/font_color = Color(1, 0.2, 0.2, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_10rq1")
+theme_override_font_sizes/font_size = 28
+text = "HP: 100/100"
+
+[node name="HealthBar" type="ProgressBar" parent="HealthBarContainer"]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 40.0
+offset_right = 305.0
+offset_bottom = 70.0
+theme_override_styles/background = SubResource("HealthBarBackground")
+theme_override_styles/fill = SubResource("HealthBarFill")
+value = 100.0
+show_percentage = false
 
 [node name="PauseMenu" type="Control" parent="."]
 layout_mode = 1
@@ -199,3 +248,70 @@ z_index = -99
 position = Vector2(960, 300)
 scale = Vector2(3.82, 0.61)
 texture = ExtResource("4_ujxo0")
+
+[node name="Crosshair" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="CenterContainer" type="Control" parent="Crosshair"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -30.0
+offset_top = -30.0
+offset_right = 30.0
+offset_bottom = 30.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HorizontalLine" type="ColorRect" parent="Crosshair/CenterContainer"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -2.0
+offset_right = 20.0
+offset_bottom = 2.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VerticalLine" type="ColorRect" parent="Crosshair/CenterContainer"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -2.0
+offset_top = -20.0
+offset_right = 2.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CenterDot" type="ColorRect" parent="Crosshair/CenterContainer"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -2.0
+offset_top = -2.0
+offset_right = 2.0
+offset_bottom = 2.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1, 0, 0, 1)

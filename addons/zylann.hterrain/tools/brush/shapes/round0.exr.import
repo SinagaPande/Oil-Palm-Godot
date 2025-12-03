@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dekau2j7fx14d"
-path="res://.godot/imported/round0.exr-fc6d691e8892911b1b4496769ee75dbb.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://addons/zylann.hterrain/tools/brush/shapes/round0.exr"
-dest_files=["res://.godot/imported/round0.exr-fc6d691e8892911b1b4496769ee75dbb.ctex"]
 
 [params]
 

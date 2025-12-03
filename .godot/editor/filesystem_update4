@@ -1,8 +1,15 @@
 res://Scene/HarvesterNPC.tscn
 res://Script/PlayerController.gd
 res://Scene/UIManager.tscn
-res://Scene/Level.tscn
 res://Scene/Genangan.tscn
 res://Scene/Player.tscn
 res://Scene/DeliveryZone.tscn
+res://Scene/Level.tscn
+res://Script/UIManager.gd
+res://Script/InteractionSystem.gd
+res://Script/DeliveryZone.gd
+res://Script/WildBoar.gd
+res://Script/HarvesterNPC.gd
 res://Script/Player.gd
+res://addons/simplegrasstextured/default_mesh.tres
+res://Script/GameModeManager.gd

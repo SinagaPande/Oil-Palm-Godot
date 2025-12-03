@@ -30,6 +30,13 @@ class_name GameModeManager
 @export var raycast_start_height: float = 10.0  # Tinggi awal raycast dari atas
 @export var max_spawn_attempts_per_pool: int = 30  # Maksimal percobaan spawn per genangan
 
+# Konfigurasi Spawn Random Genangan - DITAMBAHKAN
+@export var enable_random_spawn: bool = true  # Aktifkan spawn random
+@export var max_water_pools: int = 15  # Maksimal jumlah genangan di map
+@export var random_spawn_interval: float = 20.0  # Interval spawn genangan baru (detik)
+@export var random_spawn_first_time: float = 10.0  # Waktu pertama spawn random (detik)
+@export var random_spawn_count: int = 1  # Jumlah genangan yang di-spawn setiap interval
+
 # Harga yang bisa diatur dari inspector - DITAMBAHKAN
 @export var ripe_fruit_price: int = 2000
 @export var unripe_fruit_penalty: int = 500
@@ -45,6 +52,7 @@ var ui_manager: UIManager
 # Variabel untuk manajemen genangan
 var water_pool_container: Node3D  # Container untuk genangan
 var current_water_pools: Array = []  # Array untuk menyimpan referensi genangan yang aktif
+var random_spawn_timer: Timer  # Timer untuk spawn random genangan
 
 signal game_time_updated(remaining_time)
 signal round_ended_with_score(final_score, score_details)
@@ -125,6 +133,7 @@ func apply_config_to_systems():
 	print("Max WildBoars: ", max_wildboars, " | Boar Spawn Interval: ", boar_spawn_interval, " | First Spawn: ", boar_first_spawn_time)
 	print("Boar Speed: ", boar_move_speed)
 	print("Water Pool Count: ", water_pool_count, " | Spawn Area: ", spawn_area_size)
+	print("Random Spawn: ", enable_random_spawn, " | Max Pools: ", max_water_pools, " | Interval: ", random_spawn_interval, "s")
 	print("Ripe Price: Rp ", ripe_fruit_price)
 	print("Penalties: Rp ", unripe_fruit_penalty, " (unripe), Rp ", npc_stolen_penalty, " (stolen)")
 
@@ -141,6 +150,10 @@ func initialize_water_pool_system():
 	# Reset array tracking
 	current_water_pools.clear()
 	
+	# Setup timer untuk spawn random - DITAMBAHKAN
+	if enable_random_spawn:
+		setup_random_spawn_timer()
+	
 	print("Sistem genangan diinisialisasi")
 
 func start_round():
@@ -152,6 +165,31 @@ func start_round():
 	
 	# SPAWN SEMUA GENANGAN DI AWAL ROUND (seperti spawn pohon)
 	spawn_all_water_pools_at_start()
+	
+	# Mulai timer spawn random - DITAMBAHKAN
+	print("=== START ROUND - Setup Random Spawn ===")
+	print("enable_random_spawn: ", enable_random_spawn)
+	print("random_spawn_timer exists: ", random_spawn_timer != null)
+	print("water_pool_scene exists: ", water_pool_scene != null)
+	
+	if enable_random_spawn:
+		if not random_spawn_timer:
+			print("ERROR: random_spawn_timer tidak ada! Membuat ulang...")
+			setup_random_spawn_timer()
+		
+		if not water_pool_scene:
+			print("ERROR: water_pool_scene tidak di-set! Spawn random tidak bisa berjalan.")
+		elif random_spawn_timer:
+			random_spawn_timer.wait_time = random_spawn_first_time
+			random_spawn_timer.one_shot = true
+			random_spawn_timer.process_mode = Node.PROCESS_MODE_INHERIT
+			random_spawn_timer.start()
+			print("✓ Timer spawn random genangan dimulai. Spawn pertama dalam ", random_spawn_first_time, " detik")
+			print("  Timer is_stopped: ", random_spawn_timer.is_stopped(), " | wait_time: ", random_spawn_timer.wait_time)
+		else:
+			print("ERROR: random_spawn_timer masih null setelah setup!")
+	else:
+		print("Random spawn DISABLED")
 	
 	round_started.emit()
 	game_time_updated.emit(remaining_time)
@@ -177,13 +215,22 @@ func spawn_all_water_pools_at_start():
 	print("Total genangan aktif: ", current_water_pools.size())
 
 func try_spawn_single_water_pool() -> bool:
+	if not water_pool_scene:
+		print("ERROR try_spawn: water_pool_scene tidak di-set!")
+		return false
+	
 	# Dapatkan posisi spawn yang valid
 	var spawn_position = find_valid_spawn_position_for_pool()
 	if spawn_position == Vector3.ZERO:
+		print("try_spawn: Gagal menemukan posisi spawn yang valid")
 		return false
 	
 	# Instantiate genangan baru
 	var new_water_pool_instance = water_pool_scene.instantiate()
+	if not water_pool_container:
+		print("ERROR: water_pool_container tidak ada!")
+		return false
+	
 	water_pool_container.add_child(new_water_pool_instance)
 	
 	# Atur posisi genangan
@@ -192,18 +239,20 @@ func try_spawn_single_water_pool() -> bool:
 	# Tambahkan ke array tracking
 	current_water_pools.append(new_water_pool_instance)
 	
+	print("Genangan berhasil di-spawn di posisi: ", spawn_position)
 	return true
 
 func find_valid_spawn_position_for_pool() -> Vector3:
 	var players = get_tree().get_nodes_in_group("player")
 	if players.size() == 0:
-		print("Tidak ada player ditemukan untuk validasi posisi spawn")
+		print("find_valid_spawn: Tidak ada player ditemukan")
 		return Vector3.ZERO
 	
 	var player = players[0]
 	var player_position = player.global_position
 	
 	var attempts = 0
+	var failed_reasons = {"too_close_to_player": 0, "too_close_to_pool": 0, "no_ground": 0}
 	
 	while attempts < max_spawn_attempts_per_pool:
 		# Generate posisi acak dalam area spawn
@@ -219,6 +268,7 @@ func find_valid_spawn_position_for_pool() -> Vector3:
 		# Cek jarak dari player
 		var distance_to_player = final_position.distance_to(player_position)
 		if distance_to_player < min_spawn_distance_from_player:
+			failed_reasons["too_close_to_player"] += 1
 			attempts += 1
 			continue
 		
@@ -232,6 +282,7 @@ func find_valid_spawn_position_for_pool() -> Vector3:
 					break
 		
 		if too_close_to_other_pool:
+			failed_reasons["too_close_to_pool"] += 1
 			attempts += 1
 			continue
 		
@@ -249,10 +300,16 @@ func find_valid_spawn_position_for_pool() -> Vector3:
 			# Gunakan posisi hasil raycast (di atas tanah)
 			var ground_position = result.position
 			return ground_position + Vector3(0, spawn_height_above_ground, 0)
+		else:
+			failed_reasons["no_ground"] += 1
 		
 		attempts += 1
 	
-	# print("Gagal menemukan posisi spawn yang valid setelah ", max_spawn_attempts_per_pool, " percobaan")
+	# Debug output untuk melihat alasan kegagalan
+	print("Gagal menemukan posisi spawn setelah ", max_spawn_attempts_per_pool, " percobaan")
+	print("  - Terlalu dekat player: ", failed_reasons["too_close_to_player"])
+	print("  - Terlalu dekat genangan lain: ", failed_reasons["too_close_to_pool"])
+	print("  - Tidak ada ground: ", failed_reasons["no_ground"])
 	return Vector3.ZERO
 
 func _process(delta):
@@ -270,6 +327,13 @@ func _process(delta):
 	if remaining_time <= 0:
 		remaining_time = 0
 		end_round_and_calculate_score()
+	
+	# Debug: Cek status timer setiap 5 detik - DITAMBAHKAN
+	if int(remaining_time) % 5 == 0 and int(remaining_time + delta) % 5 != 0:
+		if enable_random_spawn and random_spawn_timer:
+			var time_left = random_spawn_timer.time_left
+			var is_stopped = random_spawn_timer.is_stopped()
+			print("DEBUG Timer Status - Time left: ", time_left, " | Stopped: ", is_stopped, " | Active pools: ", current_water_pools.size())
 
 func cleanup_existing_water_pools():
 	# Hapus semua genangan yang ada
@@ -278,6 +342,11 @@ func cleanup_existing_water_pools():
 			water_pool.queue_free()
 	
 	current_water_pools.clear()
+	
+	# Stop timer spawn random - DITAMBAHKAN
+	if random_spawn_timer:
+		random_spawn_timer.stop()
+	
 	print("Semua genangan dibersihkan")
 
 func _on_water_pool_destroyed(water_pool: Node):
@@ -285,6 +354,78 @@ func _on_water_pool_destroyed(water_pool: Node):
 	if current_water_pools.has(water_pool):
 		current_water_pools.erase(water_pool)
 		print("Genangan dihapus dari tracking. Total: ", current_water_pools.size())
+
+# Fungsi untuk setup timer spawn random - DITAMBAHKAN
+func setup_random_spawn_timer():
+	if has_node("RandomSpawnTimer"):
+		random_spawn_timer = get_node("RandomSpawnTimer")
+		# Pastikan signal terhubung
+		if not random_spawn_timer.timeout.is_connected(_on_random_spawn_timer_timeout):
+			random_spawn_timer.timeout.connect(_on_random_spawn_timer_timeout)
+	else:
+		random_spawn_timer = Timer.new()
+		random_spawn_timer.name = "RandomSpawnTimer"
+		random_spawn_timer.wait_time = random_spawn_interval
+		random_spawn_timer.one_shot = true  # Akan diubah setelah spawn pertama
+		random_spawn_timer.timeout.connect(_on_random_spawn_timer_timeout)
+		random_spawn_timer.autostart = false
+		random_spawn_timer.process_mode = Node.PROCESS_MODE_INHERIT  # Ikuti mode parent
+		add_child(random_spawn_timer)
+		print("RandomSpawnTimer dibuat dengan wait_time: ", random_spawn_timer.wait_time)
+
+# Handler untuk timer spawn random - DITAMBAHKAN
+func _on_random_spawn_timer_timeout():
+	print("=== TIMER SPAWN RANDOM TRIGGERED ===")
+	
+	if not is_round_active:
+		print("Round tidak aktif, spawn dibatalkan")
+		return
+	
+	if not water_pool_scene:
+		print("ERROR: water_pool_scene tidak di-set!")
+		return
+	
+	# Cek apakah sudah mencapai maksimal genangan
+	if current_water_pools.size() >= max_water_pools:
+		print("Maksimal genangan tercapai (", max_water_pools, "). Spawn random dilewati.")
+		# Tetap restart timer untuk cek lagi nanti
+		restart_random_spawn_timer()
+		return
+	
+	# Spawn genangan secara random
+	var spawn_count = min(random_spawn_count, max_water_pools - current_water_pools.size())
+	var successful_spawns = 0
+	
+	print("Mencoba spawn ", spawn_count, " genangan...")
+	for i in range(spawn_count):
+		if try_spawn_single_water_pool():
+			successful_spawns += 1
+		else:
+			print("Gagal spawn genangan ke-", i + 1)
+	
+	if successful_spawns > 0:
+		print("Spawn random genangan BERHASIL: ", successful_spawns, " genangan baru. Total: ", current_water_pools.size())
+	else:
+		print("Spawn random genangan GAGAL: Tidak ada genangan yang berhasil di-spawn")
+	
+	# Restart timer untuk spawn berikutnya
+	restart_random_spawn_timer()
+
+# Fungsi untuk restart timer dengan interval normal - DITAMBAHKAN
+func restart_random_spawn_timer():
+	if not random_spawn_timer:
+		print("ERROR restart_timer: random_spawn_timer tidak ada!")
+		return
+	
+	if not is_round_active:
+		print("Round tidak aktif, timer tidak di-restart")
+		return
+	
+	random_spawn_timer.wait_time = random_spawn_interval
+	random_spawn_timer.one_shot = true
+	random_spawn_timer.start()
+	print("✓ Timer restart untuk spawn berikutnya dalam ", random_spawn_interval, " detik")
+	print("  Timer is_stopped: ", random_spawn_timer.is_stopped(), " | time_left: ", random_spawn_timer.time_left)
 
 func end_round_and_calculate_score():
 	if not is_round_active:

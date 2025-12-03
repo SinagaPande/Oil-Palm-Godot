@@ -109,7 +109,7 @@ func calculate_models_to_show() -> int:
 	if current_weight > 0:
 		models_to_show = 1
 		if current_weight >= weight_threshold_per_model:
-			models_to_show = (current_weight / weight_threshold_per_model) + 1
+			models_to_show = int((current_weight / float(weight_threshold_per_model))) + 1
 	
 	models_to_show = min(models_to_show, lod_models_high.size())
 	return models_to_show

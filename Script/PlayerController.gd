@@ -46,6 +46,8 @@ var egrek_tween: Tween
 var tojok_tween: Tween
 var tojok_shoot_tween: Tween
 
+var audio_player: AudioStreamPlayer3D = null
+
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	switch_tool(Tool.EGREK)
@@ -59,7 +61,13 @@ func _ready():
 	setup_ketapel_animation()
 	
 	# Setup raycast untuk ketapel
-	setup_raycast()  # TAMBAHKAN INI
+	setup_raycast()
+	
+	# Setup audio player untuk efek suara ketapel
+	setup_audio_player()
+	
+	# Setup audio player untuk efek suara ketapel
+	setup_audio_player()
 	
 	
 func setup_ketapel_animation():
@@ -237,19 +245,35 @@ func toggle_mouse_mode():
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE if current_mode == Input.MOUSE_MODE_CAPTURED else Input.MOUSE_MODE_CAPTURED)
 
 func setup_raycast():
-	# Buat RayCast3D node untuk ketapel
-	raycast_node = RayCast3D.new()
-	raycast_node.enabled = false
-	raycast_node.collision_mask = 0b111111  # Deteksi semua layer
-	raycast_node.collide_with_areas = true
-	raycast_node.collide_with_bodies = true
-	raycast_node.exclude_parent = true
+	# Tidak perlu RayCast3D node, kita akan menggunakan intersect_ray langsung
+	# untuk memastikan raycast mengarah ke tengah layar (crosshair)
+	raycast_node = null  # Tidak digunakan, kita pakai intersect_ray langsung
+	print("Raycast system diatur untuk ketapel (menggunakan intersect_ray dari tengah layar)")
+
+func setup_audio_player():
+	# Setup AudioStreamPlayer3D untuk efek suara ketapel
+	audio_player = AudioStreamPlayer3D.new()
+	audio_player.volume_db = 0.0
+	audio_player.max_distance = 50.0
+	audio_player.attenuation_model = AudioStreamPlayer3D.ATTENUATION_INVERSE_DISTANCE
 	
-	# Tambahkan sebagai child dari camera
+	# Load sound effect ketapel
+	var sound_path = "res://soundeffect/katapel.mp3"
+	if ResourceLoader.exists(sound_path):
+		var audio_stream = load(sound_path)
+		if audio_stream:
+			audio_player.stream = audio_stream
+			print("Sound effect ketapel dimuat")
+		else:
+			print("Peringatan: Gagal memuat sound effect ketapel")
+	else:
+		print("Peringatan: File sound effect ketapel tidak ditemukan: ", sound_path)
+	
+	# Tambahkan sebagai child dari camera atau player
 	if camera_node:
-		camera_node.add_child(raycast_node)
-		raycast_node.target_position = Vector3(0, 0, -50)  # Ray sejauh 50 unit ke depan
-		print("RayCast3D diatur untuk ketapel")
+		camera_node.add_child(audio_player)
+	elif player_body:
+		player_body.add_child(audio_player)
 
 # PlayerController.gd - Tambahkan di _physics_process()
 func _physics_process(delta):
@@ -379,77 +403,267 @@ func play_tojok_animation():
 # PlayerController.gd - Tambahkan fungsi shoot_ketapel()
 func shoot_ketapel():
 	if not is_ketapel_active() or shoot_timer > 0:
+		print("Ketapel tidak bisa menembak: ketapel aktif=", is_ketapel_active(), ", cooldown=", shoot_timer)
 		return
+	
+	print("=== KETAPEL MENEMBAK! ===")
 	
 	# Set cooldown
 	shoot_timer = SHOOT_COOLDOWN
 	
+	# Mainkan efek suara ketapel
+	play_ketapel_sound()
+	
 	# Mainkan animasi ketapel
 	play_ketapel_animation()
 	
-	# Aktifkan dan tembak raycast
-	if raycast_node:
-		raycast_node.enabled = true
-		raycast_node.force_raycast_update()
+	# Tampilkan efek visual shot
+	show_shot_effect()
+	
+	# Tembak raycast dari tengah layar (crosshair)
+	if camera_node:
+		# Dapatkan viewport center (tengah layar dimana crosshair berada)
+		var viewport = get_viewport()
+		var viewport_size = viewport.get_visible_rect().size
+		var screen_center = viewport_size / 2.0
 		
-		# Cek apakah mengenai sesuatu
-		if raycast_node.is_colliding():
-			var collider = raycast_node.get_collider()
-			var collision_point = raycast_node.get_collision_point()
+		# Project screen center ke 3D space
+		var ray_origin = camera_node.project_ray_origin(screen_center)
+		var ray_direction = camera_node.project_ray_normal(screen_center)
+		var ray_end = ray_origin + ray_direction * 200.0  # Ray sejauh 200 unit (diperpanjang)
+		
+		# Gunakan intersect_ray untuk deteksi collision
+		var space_state = get_world_3d().direct_space_state
+		var query = PhysicsRayQueryParameters3D.create(ray_origin, ray_end)
+		# Deteksi layer 3 (NPC), layer 4 (Enemy/WildBoar) - fokus pada layer ini
+		query.collision_mask = 0b111111  # Deteksi semua layer
+		query.collide_with_areas = false  # Hanya bodies, tidak areas
+		query.collide_with_bodies = true
+		
+		# Exclude player dari collision
+		var exclude_list = []
+		if player_body:
+			exclude_list.append(player_body)
+		# Exclude camera dan child-nya
+		if camera_node:
+			exclude_list.append(camera_node)
+		# Exclude ground/terrain (layer 1) - kita akan cek manual
+		query.exclude = exclude_list
+		
+		# Coba beberapa raycast dengan prioritas berbeda
+		# Pertama, coba dengan mask yang fokus pada NPC dan Enemy
+		var query_npc_enemy = PhysicsRayQueryParameters3D.create(ray_origin, ray_end)
+		query_npc_enemy.collision_mask = 0b001100  # Hanya layer 3 (NPC) dan 4 (Enemy)
+		query_npc_enemy.collide_with_areas = false
+		query_npc_enemy.collide_with_bodies = true
+		query_npc_enemy.exclude = exclude_list
+		
+		var result = space_state.intersect_ray(query_npc_enemy)
+		
+		# Jika tidak menemukan NPC/Enemy, coba dengan semua layer
+		if not result:
+			result = space_state.intersect_ray(query)
+		
+		if result:
+			var collider = result.get("collider")
+			var collision_point = result.get("position")
 			
 			# Debug: Tampilkan info collision
+			print("=== KETAPEL HIT ===")
 			print("Ketapel mengenai: ", collider.name if collider else "null")
+			print("Tipe collider: ", collider.get_class() if collider else "null")
 			print("Posisi collision: ", collision_point)
+			if collider:
+				print("Groups: ", collider.get_groups())
+				print("Parent: ", collider.get_parent().name if collider.get_parent() else "null")
+				# Cek collision layer
+				if collider.has_method("get_collision_layer"):
+					print("Collision layer: ", collider.get_collision_layer())
 			
-			# Handle collision dengan berbagai tipe object
-			handle_ketapel_collision(collider)
-		
-		# Nonaktifkan raycast setelah digunakan
-		raycast_node.enabled = false
+			# Cek apakah mengenai babi atau pencuri
+			var is_target = false
+			if collider is HarvesterNPC or collider is WildBoar:
+				is_target = true
+			elif collider.is_in_group("harvester_npc") or collider.is_in_group("wild_boar"):
+				is_target = true
+			else:
+				# Cek parent
+				var parent = collider.get_parent()
+				if parent:
+					if parent is HarvesterNPC or parent is WildBoar:
+						is_target = true
+					elif parent.is_in_group("harvester_npc") or parent.is_in_group("wild_boar"):
+						is_target = true
+			
+			if is_target:
+				# Handle collision dengan target
+				handle_ketapel_collision(collider)
+			else:
+				# Jika hanya mengenai ground/object lain, cari target terdekat di sekitar crosshair
+				print("Ketapel hanya mengenai ground/object lain, mencari target terdekat di sekitar crosshair...")
+				find_nearest_target_near_crosshair(ray_origin, ray_direction)
+		else:
+			# Jika tidak ada collision langsung, coba cari babi/pencuri terdekat di sekitar crosshair
+			print("Ketapel tidak mengenai apapun langsung, mencari target terdekat...")
+			find_nearest_target_near_crosshair(ray_origin, ray_direction)
+	else:
+		print("ERROR: Camera node tidak ditemukan!")
+
+func find_nearest_target_near_crosshair(ray_origin: Vector3, ray_direction: Vector3):
+	# Cari babi atau pencuri terdekat di sekitar raycast
+	var search_radius = 8.0  # Radius pencarian 8 unit (diperbesar)
+	var max_distance = 50.0  # Maksimal jarak dari camera
+	var nearest_boar: WildBoar = null
+	var nearest_npc: HarvesterNPC = null
+	var nearest_boar_distance = INF
+	var nearest_npc_distance = INF
 	
-	# Tampilkan efek visual shot (opsional)
-	show_shot_effect()
+	print("Mencari target terdekat di sekitar crosshair (radius: ", search_radius, ", max distance: ", max_distance, ")")
+	
+	# Cari semua babi
+	var boars = get_tree().get_nodes_in_group("wild_boar")
+	print("Ditemukan ", boars.size(), " babi di scene")
+	for boar in boars:
+		if not is_instance_valid(boar) or not (boar is WildBoar):
+			continue
+		
+		# Hitung jarak dari ray ke babi
+		var boar_pos = boar.global_position
+		var to_boar = boar_pos - ray_origin
+		var distance_from_camera = to_boar.length()
+		
+		# Skip jika terlalu jauh
+		if distance_from_camera > max_distance:
+			continue
+		
+		var projection_length = to_boar.dot(ray_direction)
+		
+		# Jika proyeksi negatif, babi di belakang camera
+		if projection_length < 0:
+			continue
+		
+		# Hitung jarak dari ray ke babi
+		var closest_point_on_ray = ray_origin + ray_direction * projection_length
+		var distance_to_ray = boar_pos.distance_to(closest_point_on_ray)
+		
+		print("  Babi ditemukan - pos: ", boar_pos, ", distance to ray: ", distance_to_ray, ", projection: ", projection_length)
+		
+		# Jika dalam radius dan lebih dekat dari sebelumnya
+		if distance_to_ray <= search_radius and projection_length < nearest_boar_distance:
+			nearest_boar = boar
+			nearest_boar_distance = projection_length
+			print("    -> Babi ini lebih dekat!")
+	
+	# Cari semua NPC
+	var npcs = get_tree().get_nodes_in_group("harvester_npc")
+	print("Ditemukan ", npcs.size(), " NPC di scene")
+	for npc in npcs:
+		if not is_instance_valid(npc) or not (npc is HarvesterNPC):
+			continue
+		
+		# Hitung jarak dari ray ke NPC
+		var npc_pos = npc.global_position
+		var to_npc = npc_pos - ray_origin
+		var distance_from_camera = to_npc.length()
+		
+		# Skip jika terlalu jauh
+		if distance_from_camera > max_distance:
+			continue
+		
+		var projection_length = to_npc.dot(ray_direction)
+		
+		# Jika proyeksi negatif, NPC di belakang camera
+		if projection_length < 0:
+			continue
+		
+		# Hitung jarak dari ray ke NPC
+		var closest_point_on_ray = ray_origin + ray_direction * projection_length
+		var distance_to_ray = npc_pos.distance_to(closest_point_on_ray)
+		
+		print("  NPC ditemukan - pos: ", npc_pos, ", distance to ray: ", distance_to_ray, ", projection: ", projection_length)
+		
+		# Jika dalam radius dan lebih dekat dari sebelumnya
+		if distance_to_ray <= search_radius and projection_length < nearest_npc_distance:
+			nearest_npc = npc
+			nearest_npc_distance = projection_length
+			print("    -> NPC ini lebih dekat!")
+	
+	# Pilih target terdekat
+	if nearest_boar and (not nearest_npc or nearest_boar_distance < nearest_npc_distance):
+		print("Menemukan babi terdekat di sekitar crosshair (jarak: ", nearest_boar_distance, ")")
+		send_wildboar_to_spawn(nearest_boar)
+	elif nearest_npc:
+		print("Menemukan NPC terdekat di sekitar crosshair (jarak: ", nearest_npc_distance, ")")
+		send_npc_to_spawn(nearest_npc)
+	else:
+		print("Tidak ada target terdekat di sekitar crosshair")
 
 func handle_ketapel_collision(collider: Object):
 	if not collider:
 		return
 	
-	# Cek jika mengenai HarvesterNPC
-	if collider is HarvesterNPC or collider.is_in_group("harvester_npc"):
-		print("Ketapel mengenai HarvesterNPC!")
+	print("handle_ketapel_collision - Collider: ", collider.name, " Type: ", collider.get_class())
+	
+	# Cek langsung jika collider adalah HarvesterNPC atau WildBoar
+	if collider is HarvesterNPC:
+		print("Ketapel mengenai HarvesterNPC (langsung)!")
 		send_npc_to_spawn(collider)
 		return
 	
-	# Cek jika mengenai WildBoar
-	if collider is WildBoar or collider.is_in_group("wild_boar"):
-		print("Ketapel mengenai WildBoar!")
+	if collider is WildBoar:
+		print("Ketapel mengenai WildBoar (langsung)!")
 		send_wildboar_to_spawn(collider)
+		return
+	
+	# Cek group
+	if collider.is_in_group("harvester_npc"):
+		print("Ketapel mengenai HarvesterNPC (by group)!")
+		# Cari parent yang merupakan HarvesterNPC
+		var npc = collider
+		while npc and not (npc is HarvesterNPC):
+			npc = npc.get_parent()
+		if npc and npc is HarvesterNPC:
+			send_npc_to_spawn(npc)
+		return
+	
+	if collider.is_in_group("wild_boar"):
+		print("Ketapel mengenai WildBoar (by group)!")
+		# Cari parent yang merupakan WildBoar
+		var boar = collider
+		while boar and not (boar is WildBoar):
+			boar = boar.get_parent()
+		if boar and boar is WildBoar:
+			send_wildboar_to_spawn(boar)
 		return
 	
 	# Cek parent jika langsung mengenai collision shape
 	var parent = collider.get_parent()
 	if parent:
-		if parent is HarvesterNPC or parent.is_in_group("harvester_npc"):
+		if parent is HarvesterNPC:
 			print("Ketapel mengenai collision shape HarvesterNPC!")
 			send_npc_to_spawn(parent)
 			return
-		elif parent is WildBoar or parent.is_in_group("wild_boar"):
+		elif parent is WildBoar:
 			print("Ketapel mengenai collision shape WildBoar!")
 			send_wildboar_to_spawn(parent)
 			return
 	
-	# Cek node yang lebih tinggi di hierarchy
+	# Cek node yang lebih tinggi di hierarchy (hingga 5 level)
 	var ancestor = collider
-	while ancestor and ancestor != get_tree().root:
-		if ancestor is HarvesterNPC or ancestor.is_in_group("harvester_npc"):
-			print("Ketapel mengenai bagian dari HarvesterNPC!")
+	var depth = 0
+	while ancestor and ancestor != get_tree().root and depth < 5:
+		if ancestor is HarvesterNPC:
+			print("Ketapel mengenai bagian dari HarvesterNPC (depth ", depth, ")!")
 			send_npc_to_spawn(ancestor)
 			return
-		elif ancestor is WildBoar or ancestor.is_in_group("wild_boar"):
-			print("Ketapel mengenai bagian dari WildBoar!")
+		elif ancestor is WildBoar:
+			print("Ketapel mengenai bagian dari WildBoar (depth ", depth, ")!")
 			send_wildboar_to_spawn(ancestor)
 			return
 		ancestor = ancestor.get_parent()
+		depth += 1
+	
+	print("Peringatan: Collider tidak dikenali sebagai HarvesterNPC atau WildBoar")
 
 func send_npc_to_spawn(npc: HarvesterNPC):
 	if not is_instance_valid(npc):
@@ -465,43 +679,56 @@ func send_npc_to_spawn(npc: HarvesterNPC):
 
 func send_wildboar_to_spawn(boar: WildBoar):
 	if not is_instance_valid(boar):
+		print("ERROR: WildBoar tidak valid di send_wildboar_to_spawn")
 		return
 	
-	# Untuk WildBoar, gunakan stun lalu kembali ke spawn
-	if boar.has_method("stun_boar"):
-		# Stun boar dulu
-		boar.stun_boar(1.0)
-		
-		# Setelah stun, paksa kembali ke IDLE state yang akan di-respawn
-		await get_tree().create_timer(1.0).timeout
-		
-		if is_instance_valid(boar) and boar.has_method("transition_to_state"):
-			boar.transition_to_state(boar.BoarState.IDLE)
-			
-			# Cari NPCManager untuk menghapus dari active list
-			var npc_managers = get_tree().get_nodes_in_group("npc_manager")
-			if npc_managers.size() > 0:
-				var npc_manager = npc_managers[0]
-				if npc_manager.has_method("remove_wildboar_from_active"):
-					npc_manager.remove_wildboar_from_active(boar)
-		
-		print("WildBoar dikirim kembali ke spawn point")
+	print("=== send_wildboar_to_spawn DIPANGGIL ===")
+	print("Babi name: ", boar.name)
+	print("Babi state saat ini: ", boar.get_current_state())
+	print("Babi position: ", boar.global_position)
+	
+	# Panggil fungsi flee_from_player() untuk membuat babi lari dan hilang setelah 3 detik
+	if boar.has_method("flee_from_player"):
+		print("Memanggil flee_from_player() pada babi...")
+		boar.flee_from_player()
+		print("Babi hutan terkena ketapel, akan lari dan hilang setelah 3 detik")
 		show_hit_effect_on_boar(boar)
+	else:
+		# Fallback jika fungsi tidak ada
+		print("Peringatan: Fungsi flee_from_player() tidak ditemukan di WildBoar")
+		print("Methods yang tersedia: ", boar.get_method_list())
+
+func show_hit_effect_on_npc(_npc: HarvesterNPC):
+	# Tampilkan efek visual ketika terkena ketapel
+	# Misalnya: particle system atau perubahan material sementara
+	pass
+
+func show_hit_effect_on_boar(_boar: WildBoar):
+	# Tampilkan efek visual ketika terkena ketapel
+	# Misalnya: particle system atau perubahan material sementara
+	pass
+
+func play_ketapel_sound():
+	# Mainkan efek suara ketapel
+	if audio_player and audio_player.stream:
+		audio_player.play()
+		print("Memutar suara ketapel")
+	else:
+		print("Peringatan: Audio player atau stream tidak tersedia")
 
 func show_shot_effect():
-	# Tampilkan efek visual shot (misalnya particle system)
-	# Anda bisa menambahkan particle system di sini
-	pass
-
-func show_hit_effect_on_npc(npc: HarvesterNPC):
-	# Tampilkan efek visual ketika terkena ketapel
-	# Misalnya: particle system atau perubahan material sementara
-	pass
-
-func show_hit_effect_on_boar(boar: WildBoar):
-	# Tampilkan efek visual ketika terkena ketapel
-	# Misalnya: particle system atau perubahan material sementara
-	pass
+	# Tampilkan efek visual shot - flash effect pada ketapel
+	if ketapel_node:
+		# Efek flash/recoil pada ketapel
+		var original_scale = ketapel_node.scale
+		var flash_scale = original_scale * 1.1
+		
+		var tween = create_tween()
+		tween.set_parallel(true)
+		tween.tween_property(ketapel_node, "scale", flash_scale, 0.05)
+		tween.tween_property(ketapel_node, "scale", original_scale, 0.15).set_delay(0.05)
+		
+		print("Efek visual shot ditampilkan")
 
 func is_egrek_active() -> bool:
 	return current_tool == Tool.EGREK

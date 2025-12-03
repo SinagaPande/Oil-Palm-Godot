@@ -42,6 +42,10 @@ var stuck_timer: float = 0.0
 var stuck_check_position: Vector3 = Vector3.ZERO
 var is_destroyed: bool = false
 
+# Audio untuk suara terkena ketapel
+var audio_player: AudioStreamPlayer3D = null
+var scream_sound: AudioStream = null
+
 const STUCK_THRESHOLD: float = 3.0
 const MIN_MOVEMENT_DISTANCE: float = 0.5
 const MAX_SEARCH_ATTEMPTS: int = 15
@@ -58,6 +62,7 @@ func set_carry_capacity(new_capacity: int):
 func _ready():
 	add_to_group("harvester_npc")
 	setup_collision_config()
+	setup_audio_player()
 	
 	if not animation_player:
 		find_animation_player_auto()
@@ -73,11 +78,37 @@ func delayed_initialize():
 func setup_collision_config():
 	var collision_shape = find_child("CollisionShape3D")
 	if collision_shape:
-		collision_mask = 0x00000001
-		set_collision_layer_value(2, false)
-		set_collision_layer_value(3, false)
-		set_collision_layer_value(4, false)
-		set_collision_layer_value(5, false)
+		# Set collision layer untuk NPC (layer 3)
+		collision_layer = 3  # NPC layer
+		collision_mask = 0x00000001  # Hanya layer ground
+		# Pastikan layer 3 aktif
+		set_collision_layer_value(3, true)
+		set_collision_layer_value(2, false)  # Player
+		set_collision_layer_value(4, false)  # Enemy
+		set_collision_layer_value(5, false)  # Object lainnya
+
+func setup_audio_player():
+	# Setup AudioStreamPlayer3D untuk suara pencuri
+	audio_player = AudioStreamPlayer3D.new()
+	audio_player.volume_db = 0.0
+	audio_player.max_distance = 30.0
+	audio_player.attenuation_model = AudioStreamPlayer3D.ATTENUATION_INVERSE_DISTANCE
+	audio_player.bus = "Master"
+	
+	# Load sound effect screamman.mp3
+	var scream_path = "res://soundeffect/screamman.mp3"
+	
+	if ResourceLoader.exists(scream_path):
+		scream_sound = load(scream_path)
+		if scream_sound:
+			print("Sound screamman.mp3 dimuat untuk HarvesterNPC")
+		else:
+			print("Peringatan: Gagal memuat screamman.mp3")
+	else:
+		print("Peringatan: File screamman.mp3 tidak ditemukan: ", scream_path)
+	
+	# Tambahkan sebagai child dari HarvesterNPC
+	add_child(audio_player)
 
 func play_animation(anim_name: String):
 	if animation_player and animation_player.has_animation(anim_name):
@@ -98,6 +129,16 @@ func update_egrek_visibility(anim_name: String):
 	else:
 		egrek_model.visible = false
 		is_harvesting = false
+
+func play_scream_sound():
+	# Mainkan suara screamman.mp3 saat terkena ketapel
+	if audio_player and scream_sound:
+		# Stop suara sebelumnya jika ada
+		if audio_player.playing:
+			audio_player.stop()
+		audio_player.stream = scream_sound
+		audio_player.play()
+		print("HarvesterNPC: Memutar suara screamman.mp3 (terkena ketapel)")
 
 func _physics_process(delta):
 	if get_tree().paused:
@@ -313,6 +354,7 @@ func state_enter(state: NPCState):
 			
 		NPCState.RETURN_TO_SPAWN:
 			play_animation("Jalan")
+			play_scream_sound()  # Mainkan suara saat terkena ketapel
 			nearest_spawn_point = find_nearest_spawn_point()
 			if not nearest_spawn_point:
 				destroy_npc()

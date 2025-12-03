@@ -9,6 +9,8 @@ class_name Player
 
 signal carried_fruits_updated(ripe_count, total_kg)
 signal player_fully_ready
+signal health_changed(current_health, max_health)
+signal player_died
 
 # Ubah sistem bawa buah
 var carried_ripe_fruits: int = 0  # Jumlah buah (untuk display)
@@ -28,6 +30,11 @@ var water_slow_factor: float = 0  # 0 = no slow, 0.35 = 35% slow
 var is_in_water: bool = false
 var original_speed: float = BASE_SPEED
 
+# Health system
+const MAX_HEALTH: int = 100
+var current_health: int = MAX_HEALTH
+var is_dead: bool = false
+
 # Setter untuk speed reduction factor
 func set_speed_reduction_factor(new_factor: float):
 	speed_reduction_factor = new_factor
@@ -43,6 +50,11 @@ func _ready():
 	
 	find_inventory_system()
 	find_ui_manager()
+	
+	# Initialize health
+	current_health = MAX_HEALTH
+	is_dead = false
+	health_changed.emit(current_health, MAX_HEALTH)
 	
 	await get_tree().process_frame
 	is_fully_initialized = true
@@ -203,4 +215,37 @@ func get_carried_ripe_fruits() -> int:
 
 func get_carried_ripe_kg() -> int:
 	return carried_ripe_kg
+
+# Health system functions
+func take_damage(damage: int):
+	if is_dead:
+		return
+	
+	current_health = max(0, current_health - damage)
+	health_changed.emit(current_health, MAX_HEALTH)
+	
+	print("Player terkena damage: ", damage, " HP. Health sekarang: ", current_health, "/", MAX_HEALTH)
+	
+	if current_health <= 0:
+		die()
+
+func die():
+	if is_dead:
+		return
+	
+	is_dead = true
+	current_health = 0
+	health_changed.emit(0, MAX_HEALTH)
+	player_died.emit()
+	
+	print("Player MATI! Game Over")
+
+func is_player_dead() -> bool:
+	return is_dead
+
+func get_current_health() -> int:
+	return current_health
+
+func get_max_health() -> int:
+	return MAX_HEALTH
 	

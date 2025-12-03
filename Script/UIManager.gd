@@ -9,6 +9,9 @@ class_name UIManager
 @onready var timer_label: Label = find_child("TimerLabel", true, false)
 @onready var pause_menu: Control = $PauseMenu
 @onready var round_end_panel: Control = $RoundEndPanel
+@onready var crosshair: Control = $Crosshair
+@onready var health_label: Label = $HealthBarContainer/HealthLabel
+@onready var health_bar: ProgressBar = $HealthBarContainer/HealthBar
 
 var notification_timer: Timer
 var is_paused: bool = false
@@ -28,14 +31,41 @@ func _ready():
 	interaction_label.visible = false
 	notification_label.visible = false
 	
+	# Setup crosshair
+	if crosshair:
+		crosshair.visible = false
+	
+	# Setup health bar - make sure it's visible
+	if health_bar:
+		health_bar.visible = true
+	if health_label:
+		health_label.visible = true
+	
 	call_deferred("setup_pause_menu")
 	call_deferred("setup_round_end_ui")
 	call_deferred("show_inventory_labels")
 	call_deferred("connect_to_game_systems")
+	call_deferred("setup_crosshair")
 
 func _process(_delta):
 	if not should_show_ui_labels():
 		update_sensitive_labels_visibility()
+		if crosshair:
+			crosshair.visible = false
+	else:
+		# Update crosshair visibility berdasarkan tool aktif
+		var player_controller = _find_player_controller()
+		if player_controller:
+			if player_controller.has_method("is_ketapel_active"):
+				var is_ketapel = player_controller.is_ketapel_active()
+				update_crosshair_visibility(is_ketapel)
+			else:
+				if crosshair:
+					crosshair.visible = false
+		else:
+			# Debug: PlayerController tidak ditemukan
+			if crosshair and crosshair.visible:
+				crosshair.visible = false
 
 func _enter_tree():
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -64,7 +94,7 @@ func setup_timer_display():
 
 func update_timer_display(remaining_time: float):
 	if timer_label:
-		var minutes = int(remaining_time) / 60
+		var minutes = int(remaining_time) / 60.0  # Gunakan float division
 		var seconds = int(remaining_time) % 60
 		timer_label.text = "%02d:%02d" % [minutes, seconds]
 		
@@ -103,6 +133,14 @@ func connect_to_game_systems():
 		player.player_fully_ready.connect(_on_player_ready)
 	else:
 		update_ui_from_player()
+	
+	# Connect health system
+	if player and player.has_signal("health_changed"):
+		if not player.health_changed.is_connected(update_health_display):
+			player.health_changed.connect(update_health_display)
+		# Initialize health display
+		if player.has_method("get_current_health") and player.has_method("get_max_health"):
+			update_health_display(player.get_current_health(), player.get_max_health())
 	
 	if npc_manager:
 		if npc_manager.has_signal("npc_total_harvest_updated"):
@@ -179,7 +217,14 @@ func _on_restart_pressed():
 
 func _on_quit_pressed():
 	resume_game()
-	get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
+	# Cek apakah MainMenu.tscn ada, jika tidak reload scene saat ini
+	var main_menu_path = "res://Scenes/MainMenu.tscn"
+	if ResourceLoader.exists(main_menu_path):
+		get_tree().change_scene_to_file(main_menu_path)
+	else:
+		# Fallback: reload scene saat ini atau quit
+		print("MainMenu.tscn tidak ditemukan, reload scene saat ini")
+		get_tree().reload_current_scene()
 
 func update_npc_harvest_display(total_kg: int):
 	if npc_harvest_label:
@@ -278,8 +323,9 @@ func setup_round_end_ui():
 	if round_end_panel:
 		round_end_panel.visible = false
 		
-		var final_score_label = round_end_panel.find_child("FinalScoreLabel", true, false)
-		var details_label = round_end_panel.find_child("DetailsLabel", true, false)
+		# Variabel tidak digunakan, hanya untuk koneksi signal
+		var _final_score_label = round_end_panel.find_child("FinalScoreLabel", true, false)
+		var _details_label = round_end_panel.find_child("DetailsLabel", true, false)
 		var restart_button_end = round_end_panel.find_child("RestartButton", true, false)
 		var quit_button_end = round_end_panel.find_child("QuitButton", true, false)
 		
@@ -425,3 +471,72 @@ func _find_node_by_path_or_group(path: String, group: String) -> Node:
 		if nodes.size() > 0:
 			node = nodes[0]
 	return node
+
+func _find_player_controller() -> PlayerController:
+	# Cari Player node dari group
+	var players = get_tree().get_nodes_in_group("player")
+	if players.size() > 0:
+		var player = players[0]
+		# PlayerController adalah child dari Player
+		var player_controller = player.get_node_or_null("PlayerController")
+		if player_controller and player_controller is PlayerController:
+			return player_controller
+	
+	# Fallback: coba path langsung
+	var paths_to_try = [
+		"/root/Node3D/Player/PlayerController",
+		"../Player/PlayerController"
+	]
+	
+	for path in paths_to_try:
+		var node = get_node_or_null(path)
+		if node and node is PlayerController:
+			return node
+	
+	return null
+
+func setup_crosshair():
+	# Hubungkan dengan PlayerController untuk update crosshair visibility
+	await get_tree().process_frame
+	var player_controller = _find_player_controller()
+	if player_controller:
+		print("PlayerController ditemukan untuk crosshair")
+		# Cek tool yang aktif dan update crosshair
+		if player_controller.has_method("is_ketapel_active"):
+			update_crosshair_visibility(player_controller.is_ketapel_active())
+	else:
+		print("Peringatan: PlayerController tidak ditemukan untuk crosshair")
+
+func update_crosshair_visibility(is_visible: bool):
+	if not crosshair:
+		print("ERROR: Crosshair node tidak ditemukan!")
+		return
+	
+	var should_show = is_visible and should_show_ui_labels()
+	
+	if crosshair.visible != should_show:
+		crosshair.visible = should_show
+		if should_show:
+			print("Crosshair DITAMPILKAN (ketapel aktif)")
+		else:
+			print("Crosshair DISEMBUNYIKAN")
+
+func update_health_display(current_health: int, max_health: int):
+	if health_label:
+		health_label.text = "HP: %d/%d" % [current_health, max_health]
+	
+	if health_bar:
+		health_bar.max_value = max_health
+		health_bar.value = current_health
+		
+		# Update color based on health percentage
+		var health_percentage = float(current_health) / float(max_health)
+		if health_percentage > 0.6:
+			# Green when health > 60%
+			health_bar.modulate = Color(0.2, 1.0, 0.2, 1.0)
+		elif health_percentage > 0.3:
+			# Yellow when health 30-60%
+			health_bar.modulate = Color(1.0, 1.0, 0.2, 1.0)
+		else:
+			# Red when health < 30%
+			health_bar.modulate = Color(1.0, 0.2, 0.2, 1.0)
