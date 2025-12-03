@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=4 uid="uid://b21n6dxr2ma3k"]
+[gd_scene load_steps=87 format=4 uid="uid://b21n6dxr2ma3k"]
 
 [ext_resource type="PackedScene" uid="uid://cro4dsaaw46m6" path="res://Scene/Player.tscn" id="1_bexhn"]
 [ext_resource type="Texture2D" uid="uid://fd37gd6tujy3" path="res://kloofendal_48d_partly_cloudy_puresky_4k.hdr" id="1_p43b4"]
@@ -73,7 +73,7 @@ glow_enabled = true
 [sub_resource type="BoxShape3D" id="BoxShape3D_bexhn"]
 size = Vector3(100, 0.1, 100)
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_akbbc"]
+[sub_resource type="BoxShape3D" id="BoxShape3D_bdkrw"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_7yftu"]
 
@@ -248,7 +248,777 @@ _bundled = {
 "version": 3
 }
 
-[sub_resource type="PackedScene" id="PackedScene_0dfen"]
+[sub_resource type="PackedScene" id="PackedScene_tnm6y"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_u1s8k"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_vs76y"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_f4a14"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_nfgao"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_uto0g"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_ytnep"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_mih3y"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_ipgw0"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_cfe4r"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_k2hdj"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_icee0"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_r60g4"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_akvj0"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_4imuh"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_qdylv"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_28ekt"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_spg48"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_3wgcd"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_85fom"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_1l7dj"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_lg8qe"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_37tog"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_ku7l5"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_2ex28"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_fqnvq"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_saykd"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_uy4mn"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_r0p3h"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_707ek"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_ga45e"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_a33qv"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_ys6bp"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_uv0xq"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_m1vcw"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_ogieb"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_lk2ss"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_ihsen"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_7tcvg"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_ofams"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_xo1tm"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_6x47r"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_j6pa5"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_7f18w"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_871xw"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_lpel3"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_tlo8v"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_cjugk"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_vrhp3"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_m2cbd"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_o4y43"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_hfb7o"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_kkrca"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_jve6t"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_hfvke"]
+resource_local_to_scene = true
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("Fruit", "script", "RigidBody3D", "CollisionShape3D", "transform", "shape", "Buah_Sawit"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 3, 3, -1, 2, 4, 1, 5, 2, 0, 0, 0, 2147483647, 6, 3, 0, 0),
+"variants": [ExtResource("3_wkftn"), Transform3D(0.425, 0, 0, 0, 0.55, 0, 0, 0, 0.4, 0, 0, 0), SubResource("SphereShape3D_7yftu"), SubResource("PackedScene_2nifc")],
+"version": 3
+}
+
+[sub_resource type="PackedScene" id="PackedScene_3rd0p"]
 resource_local_to_scene = true
 _bundled = {
 "conn_count": 0,
@@ -272,7 +1042,7 @@ transform = Transform3D(0.707107, -0.353553, 0.612372, 0, 0.866025, 0.5, -0.7071
 light_energy = 2.0
 
 [node name="CharacterBody3D" parent="." instance=ExtResource("1_bexhn")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 24)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 5, 13)
 
 [node name="PerformanceMonitor" type="Node3D" parent="."]
 script = ExtResource("4_wkftn")
@@ -281,243 +1051,254 @@ script = ExtResource("4_wkftn")
 transform = Transform3D(1.75, 0, 0, 0, 1.75, 0, 0, 0, 1.75, 0, 0, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(2, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -13.7143)
 shape = SubResource("BoxShape3D_bexhn")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
-transform = Transform3D(25, 0, 0, 0, 1, 0, 0, 0, 30, 0, 0, 0)
-visible = false
-mesh = SubResource("PlaneMesh_akbbc")
-skeleton = NodePath("../..")
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(130, 0, 0, 0, 10, 0, 0, 0, 0.5, 0, 1.5, -34.286)
+shape = SubResource("BoxShape3D_bdkrw")
+
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(130, 0, 0, 0, 10, 0, 0, 0, 0.5, 0, 1.5, 15)
+shape = SubResource("BoxShape3D_bdkrw")
+
+[node name="CollisionShape3D4" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(-3.27835e-06, 0, 0.25, 0, 10, 0, -75, 0, -1.09278e-08, 68, 2, -1)
+shape = SubResource("BoxShape3D_bdkrw")
+
+[node name="CollisionShape3D5" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(-3.27835e-06, 0, 0.25, 0, 10, 0, -75, 0, -1.09278e-08, -68, 2, -1)
+shape = SubResource("BoxShape3D_bdkrw")
 
 [node name="Map" parent="StaticBody3D" instance=ExtResource("4_tnm6y")]
 transform = Transform3D(0.571429, 0, 0, 0, 0.571429, 0, 0, 0, 0.571429, 0, 0, 0)
 
 [node name="Trees" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 71, 0, -41)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 71, -0.05, -41)
 
 [node name="Tree" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -57, 0, 39)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_tnm6y")
 
 [node name="Tree2" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -42, 0, 39)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_u1s8k")
 
 [node name="Tree3" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27, 0, 39)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_vs76y")
 
 [node name="Tree4" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, 39)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_f4a14")
 
 [node name="Tree5" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 39)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_nfgao")
 
 [node name="Tree6" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0, 39)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_uto0g")
 
 [node name="Tree7" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33, 0, 39)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_ytnep")
 
 [node name="Tree8" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -57, 0, 24)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_mih3y")
 
 [node name="Tree9" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -42, 0, 24)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_ipgw0")
 
 [node name="Tree10" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27, 0, 24)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_cfe4r")
 
 [node name="Tree11" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, 24)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_k2hdj")
 
 [node name="Tree12" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 24)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_icee0")
 
 [node name="Tree13" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0, 24)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_r60g4")
 
 [node name="Tree14" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33, 0, 24)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_akvj0")
 
 [node name="Tree15" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -57, 0, 10)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_4imuh")
 
 [node name="Tree16" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -42, 0, 10)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_qdylv")
 
 [node name="Tree17" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27, 0, 10)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_28ekt")
 
 [node name="Tree18" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, 10)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_spg48")
 
 [node name="Tree19" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 10)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_3wgcd")
 
 [node name="Tree20" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0, 10)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_85fom")
 
 [node name="Tree21" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33, 0, 10)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_1l7dj")
 
 [node name="Tree22" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -57, 0, -5)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_lg8qe")
 
 [node name="Tree23" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -42, 0, -5)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_37tog")
 
 [node name="Tree24" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27, 0, -5)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_ku7l5")
 
 [node name="Tree25" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, -5)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_2ex28")
 
 [node name="Tree26" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -5)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_fqnvq")
 
 [node name="Tree27" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0, -5)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_saykd")
 
 [node name="Tree28" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33, 0, -5)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_uy4mn")
 
 [node name="Tree29" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -180, 0, 39)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_r0p3h")
 
 [node name="Tree30" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -165, 0, 39)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_707ek")
 
 [node name="Tree31" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -150, 0, 39)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_ga45e")
 
 [node name="Tree32" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -135, 0, 39)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_a33qv")
 
 [node name="Tree33" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -120, 0, 39)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_ys6bp")
 
 [node name="Tree34" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -105, 0, 39)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_uv0xq")
 
 [node name="Tree35" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -90, 0, 39)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_m1vcw")
 
 [node name="Tree36" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -180, 0, 24)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_ogieb")
 
 [node name="Tree37" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -165, 0, 24)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_lk2ss")
 
 [node name="Tree38" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -150, 0, 24)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_ihsen")
 
 [node name="Tree39" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -135, 0, 24)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_7tcvg")
 
 [node name="Tree40" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -120, 0, 24)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_ofams")
 
 [node name="Tree41" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -105, 0, 24)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_xo1tm")
 
 [node name="Tree42" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -90, 0, 24)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_6x47r")
 
 [node name="Tree43" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -180, 0, 10)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_j6pa5")
 
 [node name="Tree44" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -165, 0, 10)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_7f18w")
 
 [node name="Tree45" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -150, 0, 10)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_871xw")
 
 [node name="Tree46" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -135, 0, 10)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_lpel3")
 
 [node name="Tree47" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -120, 0, 10)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_tlo8v")
 
 [node name="Tree48" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -105, 0, 10)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_cjugk")
 
 [node name="Tree49" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -90, 0, 10)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_vrhp3")
 
 [node name="Tree50" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -180, 0, -5)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_m2cbd")
 
 [node name="Tree51" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -165, 0, -5)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_o4y43")
 
 [node name="Tree52" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -150, 0, -5)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_hfb7o")
 
 [node name="Tree53" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -135, 0, -5)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_kkrca")
 
 [node name="Tree54" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -120, 0, -5)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_jve6t")
 
 [node name="Tree55" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -105, 0, -5)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_hfvke")
 
 [node name="Tree56" parent="Trees" instance=ExtResource("2_t7iv1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -90, 0, -5)
-fruit_scene = SubResource("PackedScene_0dfen")
+fruit_scene = SubResource("PackedScene_3rd0p")
 
 [node name="InventorySystem" type="Node" parent="."]
 script = ExtResource("2_6lu5p")
@@ -535,10 +1316,10 @@ wild_boar_scene = ExtResource("12_qyxxj")
 manual_spawn_points = [NodePath("Marker3D"), NodePath("Marker3D2"), NodePath("Marker3D3"), NodePath("Marker3D4")]
 
 [node name="Marker3D" type="Marker3D" parent="NPCManager"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 5, 17)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21, 5, 10)
 
 [node name="Marker3D2" type="Marker3D" parent="NPCManager"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27, 5, 16)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, -53)
 
 [node name="Marker3D3" type="Marker3D" parent="NPCManager"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 5, -20)
@@ -548,15 +1329,12 @@ transform = Transform3D(1, 0, 0, 0, -1, 8.74228e-08, 0, -8.74228e-08, -1, 22, 5,
 
 [node name="UIManager" parent="." instance=ExtResource("9_akbbc")]
 
-[node name="GameModeManager" type="Node" parent="."]
+[node name="GameModeManager" type="Node3D" parent="."]
 script = ExtResource("10_to8gu")
-max_wildboars = 0
-ripe_fruit_price = 1750
-npc_stolen_penalty = 750
+water_pool_scene = ExtResource("14_0dfen")
+spawn_area_size = Vector3(-12, 0, 24)
+spawn_height_above_ground = 0.2
 
 [node name="jangkrik" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("13_5mlvf")
 autoplay = true
-
-[node name="GenanganAir" parent="." instance=ExtResource("14_0dfen")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0, 3)

@@ -1,6 +1,8 @@
-res://Scene/Level.tscn
-res://Script/PlayerController.gd
 res://Scene/HarvesterNPC.tscn
+res://Script/PlayerController.gd
 res://Scene/UIManager.tscn
+res://Scene/Level.tscn
 res://Scene/Genangan.tscn
 res://Scene/Player.tscn
+res://Scene/DeliveryZone.tscn
+res://Script/Player.gd
