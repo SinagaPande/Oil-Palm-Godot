@@ -1,6 +1,9 @@
-Sprite3D
+GPUParticles3D
+SimpleGrassTextured
 CollisionShape3D
+Node3D
 Area3D
+Sprite3D
 AudioStreamPlayer
 CharacterBody3D
 Node
@@ -10,6 +13,3 @@ Button
 VBoxContainer
 Control
 MeshInstance3D
-Marker3D
-Node3D
-StaticBody3D

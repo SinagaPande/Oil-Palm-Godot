@@ -42,6 +42,10 @@ var stuck_timer: float = 0.0
 var stuck_check_position: Vector3 = Vector3.ZERO
 var is_destroyed: bool = false
 
+# Variabel audio - DITAMBAHKAN DARI BRANCH ANSELMARIO
+var audio_player: AudioStreamPlayer3D
+var scream_sound: AudioStream
+
 const STUCK_THRESHOLD: float = 3.0
 const MIN_MOVEMENT_DISTANCE: float = 0.5
 const MAX_SEARCH_ATTEMPTS: int = 15
@@ -63,6 +67,7 @@ func _ready():
 		find_animation_player_auto()
 	
 	find_egrek_model_auto()
+	setup_audio_player()
 	call_deferred("delayed_initialize")
 
 func delayed_initialize():
@@ -78,6 +83,27 @@ func setup_collision_config():
 		set_collision_layer_value(3, false)
 		set_collision_layer_value(4, false)
 		set_collision_layer_value(5, false)
+
+# Setup audio player - DITAMBAHKAN DARI BRANCH ANSELMARIO
+func setup_audio_player():
+	# Membuat AudioStreamPlayer3D untuk suara pencuri
+	audio_player = AudioStreamPlayer3D.new()
+	add_child(audio_player)
+	audio_player.bus = "Master"
+	audio_player.volume_db = 0
+	audio_player.max_distance = 20
+	audio_player.attenuation_model = AudioStreamPlayer3D.ATTENUATION_INVERSE_DISTANCE
+	
+	# Memuat file suara screamman.mp3
+	scream_sound = load("res://soundeffect/screamman.mp3")
+	if not scream_sound:
+		print("Peringatan: File audio screamman.mp3 tidak ditemukan di res://soundeffect/")
+
+# Play scream sound - DITAMBAHKAN DARI BRANCH ANSELMARIO
+func play_scream_sound():
+	if audio_player and scream_sound:
+		audio_player.stream = scream_sound
+		audio_player.play()
 
 func play_animation(anim_name: String):
 	if animation_player and animation_player.has_animation(anim_name):
@@ -313,6 +339,7 @@ func state_enter(state: NPCState):
 			
 		NPCState.RETURN_TO_SPAWN:
 			play_animation("Jalan")
+			play_scream_sound()
 			nearest_spawn_point = find_nearest_spawn_point()
 			if not nearest_spawn_point:
 				destroy_npc()

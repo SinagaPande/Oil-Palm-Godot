@@ -5,7 +5,8 @@ enum BoarState {
 	SPAWN,
 	CHASE,
 	ATTACK,
-	IDLE
+	IDLE,
+	FLEE
 }
 
 # DIUBAH: Hapus @export dari variabel statistik
@@ -34,6 +35,10 @@ var animation_player: AnimationPlayer = null
 var current_animation: String = ""
 var is_attack_playing: bool = false
 
+# Variabel audio - DITAMBAHKAN DARI BRANCH ANSELMARIO
+var audio_player: AudioStreamPlayer3D
+var pig3_sound: AudioStream
+
 # Setter untuk statistik dari GameModeManager
 func set_stats(new_detection_range: float, new_move_speed: float, new_attack_range: float, new_attack_cooldown: float):
 	detection_range = new_detection_range
@@ -55,6 +60,9 @@ func _ready():
 	# Cari AnimationPlayer secara otomatis
 	find_animation_player_auto()
 	
+	# Setup audio player - DITAMBAHKAN DARI BRANCH ANSELMARIO
+	setup_audio_player()
+	
 	transition_to_state(BoarState.SPAWN)
 
 func find_animation_player_auto():
@@ -75,6 +83,46 @@ func find_animation_player_auto():
 		print("Animasi yang tersedia: ", animation_player.get_animation_list())
 	else:
 		print("Peringatan: AnimationPlayer tidak ditemukan untuk WildBoar")
+
+# Setup audio player - DITAMBAHKAN DARI BRANCH ANSELMARIO
+func setup_audio_player():
+	# Membuat AudioStreamPlayer3D untuk suara babi
+	audio_player = AudioStreamPlayer3D.new()
+	add_child(audio_player)
+	audio_player.bus = "Master"
+	audio_player.volume_db = 0
+	audio_player.max_distance = 20
+	audio_player.attenuation_model = AudioStreamPlayer3D.ATTENUATION_INVERSE_DISTANCE
+	
+	# Memuat file suara pig3.mp3
+	pig3_sound = load("res://soundeffect/pig3.mp3")
+	if not pig3_sound:
+		print("Peringatan: File audio pig3.mp3 tidak ditemukan di res://soundeffect/")
+
+# Play hit sound - DITAMBAHKAN DARI BRANCH ANSELMARIO
+func play_hit_sound():
+	if audio_player and pig3_sound:
+		audio_player.stream = pig3_sound
+		audio_player.play()
+
+# Flee from player - DITAMBAHKAN DARI BRANCH ANSELMARIO
+func flee_from_player():
+	## Babi lari ketika terkena ketapel
+	print("Babi terkena ketapel! Mulai kabur...")
+	transition_to_state(BoarState.FLEE)
+	play_hit_sound()
+		
+# Di WildBoar.gd, tambahkan fungsi:
+func return_to_spawn():
+	print("WildBoar kembali ke spawn dan akan hilang...")
+	
+	# Mainkan animasi kabur jika ada
+	if animation_player and animation_player.has_animation("RunAway"):
+		play_animation("RunAway", false)
+		await animation_player.animation_finished
+	
+	# **DESTROY** objek
+	queue_free()
 
 func setup_collision_config():
 	# Setup collision sederhana seperti HarvesterNPC
@@ -172,6 +220,20 @@ func state_process(delta):
 				velocity.x = 0
 				velocity.z = 0
 				play_animation(idle_animation_name, true)
+		
+		BoarState.FLEE:
+			# Babi lari menjauhi player dengan kecepatan 1.5x
+			var direction = (global_position - player_node.global_position).normalized()
+			direction.y = 0
+			velocity.x = direction.x * move_speed * 1.5
+			velocity.z = direction.z * move_speed * 1.5
+			
+			# Play animasi lari jika ada
+			play_animation(chase_animation_name, true)
+			
+			# Check apakah sudah cukup jauh dari player, jika ya hilang
+			if distance_to_player > detection_range * 1.5:
+				return_to_spawn()
 
 func perform_attack():
 	if not player_node or not is_instance_valid(player_node):
@@ -231,6 +293,7 @@ func state_enter(state: BoarState):
 			attack_timer = 0.0
 			is_attack_playing = false
 			play_animation(chase_animation_name, true)
+			play_hit_sound()
 			
 		BoarState.ATTACK:
 			# Hanya set state, animasi akan diputar di perform_attack()
@@ -238,6 +301,11 @@ func state_enter(state: BoarState):
 			
 		BoarState.IDLE:
 			play_animation(idle_animation_name, true)
+		
+		BoarState.FLEE:
+			# Play flee animation dan sound
+			play_animation(chase_animation_name, true)
+			play_hit_sound()
 
 func state_exit(state: BoarState):
 	# Reset attack flag saat keluar dari attack state
